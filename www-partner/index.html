@@ -1,1 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Zayko Partner — Android Restaurant App</title>
+  <style>
+    /* =========================================================================
+       1. MATERIAL DESIGN 3 (ANDROID) TOKENS — ZAYKO PARTNER
+       ========================================================================= */
+    :root {
+      --md-primary: #135D3A;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D4EDDF;
+      --md-on-primary-container: #072B19;
+      --md-secondary: #EA6A2B;
+      --md-bg: #FAF8F2;
+      --md-surface: #FFFFFF;
+      --md-surface-container-low: #F5F2EA;
+      --md-surface-container: #EFECE2;
+      --md-surface-container-high: #E7E3D7;
+      --md-outline: #737974;
+      --md-outline-variant: #E1DDD2;
+      --md-ink: #191C1A;
+      --md-muted: #5B635E;
+      --md-error: #BA1A1A;
+      --md-error-container: #FFDAD6;
+      --md-on-error-container: #410002;
+      --md-amber: #9A5B00;
+      --md-amber-container: #FFEDD5;
+      --md-lime: #C5E875;
 
+      --md-shape-xs: 8px;
+      --md-shape-sm: 12px;
+      --md-shape-md: 16px;
+      --md-shape-lg: 24px;
+      --md-shape-xl: 28px;
+      --md-shape-full: 9999px;
+
+      --md-elev-1: 0 1px 3px rgba(19, 93, 58, 0.08), 0 1px 2px rgba(25, 28, 26, 0.06);
+      --md-elev-2: 0 3px 8px rgba(19, 93, 58, 0.12), 0 1px 3px rgba(25, 28, 26, 0.08);
+      --md-elev-3: 0 8px 24px rgba(25, 28, 26, 0.18);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: #E8E4DA;
+      color: var(--md-ink);
+      font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes m3FadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-m3 {
+      animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* =========================================================================
+       2. ANDROID DEVICE SHELL & PERSISTENT STATUS BAR
+       ========================================================================= */
+    .android-shell {
+      width: 100%;
+      max-width: 428px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--md-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .android-shell.with-nav {
+      padding-bottom: 92px;
+    }
+
+    .android-status-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 28px;
+      padding: 0 16px;
+      background: rgba(250, 248, 242, 0.98);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--md-ink);
+      user-select: none;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(225, 221, 210, 0.45);
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .z-app-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: 800;
+      box-shadow: var(--md-elev-1);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .z-app-icon-lg {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      font-size: 34px;
+      box-shadow: var(--md-elev-2);
+    }
+
+    /* =========================================================================
+       3. MATERIAL 3 TOP APP BAR, CARDS, CHIPS & BUTTONS
+       ========================================================================= */
+    .m3-top-bar {
+      position: sticky;
+      top: 0;
+      padding-top: calc(10px + env(safe-area-inset-top, 0px));
+      z-index: 20;
+      background: rgba(250, 248, 242, 0.96);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--md-outline-variant);
+    }
+
+    .page-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .m3-card {
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 15px;
+      box-shadow: var(--md-elev-1);
+    }
+
+    .m3-card-tonal {
+      background: var(--md-surface-container-low);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+    }
+
+    .m3-card-pressable {
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.15s ease;
+    }
+
+    .m3-card-pressable:active {
+      transform: scale(0.985);
+      box-shadow: none;
+    }
+
+    .m3-banner-primary {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+    }
+
+    .m3-banner-error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+    }
+
+    .m3-banner-amber {
+      background: var(--md-amber-container);
+      color: var(--md-amber);
+      border-radius: var(--md-shape-sm);
+      padding: 12px 14px;
+    }
+
+    .m3-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: var(--md-shape-full);
+      font-size: 13.5px;
+      font-weight: 700;
+      transition: transform 0.1s ease, background 0.15s ease;
+      text-align: center;
+    }
+
+    .m3-btn:active:not(:disabled) {
+      transform: scale(0.975);
+    }
+
+    .m3-btn-sm {
+      min-height: 38px;
+      padding: 0 14px;
+      font-size: 12.5px;
+    }
+
+    .m3-btn-block {
+      width: 100%;
+    }
+
+    .m3-btn-filled {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      box-shadow: var(--md-elev-1);
+    }
+
+    .m3-btn-tonal {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-btn-outlined {
+      background: var(--md-surface);
+      color: var(--md-ink);
+      border: 1px solid var(--md-outline);
+    }
+
+    .m3-btn-danger {
+      background: var(--md-error);
+      color: #FFFFFF;
+    }
+
+    .m3-btn-danger-outline {
+      background: var(--md-surface);
+      color: var(--md-error);
+      border: 1px solid var(--md-error);
+    }
+
+    .m3-icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--md-shape-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-ink);
+      flex-shrink: 0;
+    }
+
+    .m3-icon-btn:active {
+      background: var(--md-surface-container);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Status Pill in Top Bar */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: var(--md-shape-full);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .status-pill.online {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .status-pill.offline {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Filter Chips */
+    .chip-rail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .m3-chip {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--md-shape-xs);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      color: var(--md-ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .m3-chip.selected {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    /* Badges */
+    .m3-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--md-shape-xs);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .m3-badge-primary {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-badge-amber {
+      background: var(--md-amber-container);
+      color: var(--md-amber);
+    }
+
+    .m3-badge-error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+    }
+
+    .m3-badge-locked {
+      background: var(--md-surface-container);
+      color: var(--md-muted);
+    }
+
+    /* Inputs */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .m3-input {
+      width: 100%;
+      background: var(--md-surface);
+      border: 1.5px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-sm);
+      padding: 13px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-ink);
+    }
+
+    .m3-input:focus {
+      outline: none;
+      border-color: var(--md-primary);
+    }
+
+    .phone-field {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-sm);
+      background: var(--md-surface);
+      overflow: hidden;
+    }
+
+    .phone-field:focus-within {
+      border-color: var(--md-primary);
+    }
+
+    .phone-code {
+      padding: 0 14px;
+      background: var(--md-surface-container-low);
+      border-right: 1px solid var(--md-outline-variant);
+      display: inline-flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .phone-field input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      background: transparent;
+      min-width: 0;
+    }
+
+    /* M3 Switch */
+    .m3-switch {
+      width: 52px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--md-surface-container-high);
+      border: 2px solid var(--md-outline);
+      position: relative;
+      transition: background 0.16s ease, border-color 0.16s ease;
+      flex-shrink: 0;
+    }
+
+    .m3-switch.on {
+      background: var(--md-primary);
+      border-color: var(--md-primary);
+    }
+
+    .m3-switch-thumb {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--md-outline);
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .m3-switch.on .m3-switch-thumb {
+      transform: translateX(20px);
+      background: #FFFFFF;
+    }
+
+    /* Diet Mark */
+    .diet-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1.5px solid var(--md-primary);
+      flex-shrink: 0;
+    }
+
+    .diet-mark span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--md-primary);
+    }
+
+    .diet-mark.nonveg {
+      border-color: var(--md-error);
+    }
+
+    .diet-mark.nonveg span {
+      background: var(--md-error);
+    }
+
+    /* Steppers & Checkboxes */
+    .v-stepper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .v-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+      padding-bottom: 16px;
+    }
+
+    .v-step:last-child { padding-bottom: 0; }
+
+    .v-step:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 24px;
+      bottom: 0;
+      width: 2px;
+      background: var(--md-outline-variant);
+    }
+
+    .v-step.done:not(:last-child)::before {
+      background: var(--md-primary);
+    }
+
+    .v-step-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--md-surface-container);
+      color: var(--md-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .v-step.done .v-step-icon {
+      background: var(--md-primary);
+      color: #FFFFFF;
+    }
+
+    .v-step.active .v-step-icon {
+      background: var(--md-primary-container);
+      color: var(--md-primary);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--md-surface);
+      border: 1.5px solid var(--md-primary);
+      margin-top: 10px;
+      width: 100%;
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--md-primary);
+    }
+
+    .check-box {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--md-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .check-row.checked .check-box {
+      background: var(--md-primary);
+    }
+
+    .reason-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--md-surface);
+      border: 1.5px solid var(--md-outline-variant);
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .reason-btn.selected {
+      border-color: var(--md-error);
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+    }
+
+    .detail-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--md-outline-variant);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-label { font-size: 11px; font-weight: 700; color: var(--md-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .detail-val { font-size: 14px; font-weight: 700; margin-top: 3px; word-break: break-word; }
+
+    /* =========================================================================
+       4. MATERIAL 3 NAVIGATION BAR (3 TABS WITH PILL INDICATOR)
+       ========================================================================= */
+    .m3-nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-top: 1px solid var(--md-outline-variant);
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      z-index: 30;
+    }
+
+    .m3-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--md-muted);
+      position: relative;
+    }
+
+    .m3-nav-pill {
+      width: 64px;
+      height: 32px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .m3-nav-item.active {
+      color: var(--md-ink);
+      font-weight: 700;
+    }
+
+    .m3-nav-item.active .m3-nav-pill {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-nav-badge {
+      position: absolute;
+      top: 0;
+      right: calc(50% - 26px);
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--md-secondary);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* =========================================================================
+       5. ANDROID BOTTOM SHEETS & SNACKBAR
+       ========================================================================= */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(25, 28, 26, 0.48);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-radius: 28px 28px 0 0;
+      padding: 10px 18px 24px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: var(--md-elev-3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--md-outline);
+      opacity: 0.4;
+      margin: 2px auto 4px;
+      flex-shrink: 0;
+    }
+
+    .android-snackbar {
+      position: fixed;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 396px;
+      z-index: 80;
+      background: #2E322F;
+      color: #F4F5F4;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 13px 16px;
+      border-radius: 10px;
+      box-shadow: var(--md-elev-3);
+      animation: m3FadeUp 0.15s ease-out;
+    }
+
+    .text-xs { font-size: 12px; }
+    .text-xxs { font-size: 11px; }
+    .text-sm { font-size: 13.5px; }
+    .text-base { font-size: 16px; }
+    .font-bold { font-weight: 700; }
+    .text-muted { color: var(--md-muted); }
+    .text-primary { color: var(--md-primary); }
+    .text-error { color: var(--md-error); }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .thermal-receipt {
+      background: #FFFFFF;
+      border: 1.5px dashed var(--md-outline);
+      border-radius: 12px;
+      padding: 16px 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #111111;
+      line-height: 1.5;
+    }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #printable-receipt, #printable-receipt * { visibility: visible !important; }
+      #printable-receipt {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        border: none !important;
+        padding: 12px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="android-shell" class="android-shell">
+    
+      </div>
+    </div>
+
+    <!-- Main App Viewport -->
+    <div id="app" style="flex:1; display:flex; flex-direction:column;"></div>
+
+    <!-- Android Bottom Sheet Container -->
+    <div id="modal-root" class="sheet-backdrop hidden" role="dialog" aria-modal="true"></div>
+
+    <!-- Android Snackbar -->
+    <div id="toast" class="android-snackbar hidden" role="status" aria-live="polite">
+      <span id="toast-msg"></span>
+    </div>
+  </div>
+
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      getDocs,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3tPo7KLznK4imXXcZeof2mutH84jgpLY",
+      authDomain: "zayko-food-delivery-854ec.firebaseapp.com",
+      projectId: "zayko-food-delivery-854ec",
+      storageBucket: "zayko-food-delivery-854ec.firebasestorage.app",
+      messagingSenderId: "72605066232",
+      appId: "1:72605066232:web:f01f4f55cb9f4ba2a7ac0d",
+      measurementId: "G-VB5GJ2B4TZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.ZaykoDB = {
+      auth,
+      db,
+      async signInAnon() {
+        if (auth.currentUser) return auth.currentUser;
+        const cred = await signInAnonymously(auth);
+        return cred.user;
+      },
+      async signInAdmin(email, password) {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        return cred.user;
+      },
+      async signOutUser() {
+        await signOut(auth);
+      },
+      onAuth(cb) {
+        return onAuthStateChanged(auth, cb);
+      },
+      listenCollection(colName, cb) {
+        return onSnapshot(
+          collection(db, colName),
+          (snap) => {
+            const list = [];
+            snap.forEach((d) => list.push({ ...d.data(), _docId: d.id }));
+            cb(list);
+          },
+          (err) => console.warn("Firestore listen error (" + colName + "):", err)
+        );
+      },
+      listenDoc(colName, docId, cb) {
+        return onSnapshot(
+          doc(db, colName, docId),
+          (snap) => {
+            if (snap.exists()) cb(snap.data());
+          },
+          (err) => console.warn("Firestore doc listen error (" + colName + "/" + docId + "):", err)
+        );
+      },
+      async setDoc(colName, docId, data) {
+        await setDoc(doc(db, colName, String(docId)), data, { merge: true });
+      },
+      async deleteDoc(colName, docId) {
+        await deleteDoc(doc(db, colName, String(docId)));
+      },
+      async seedIfEmpty(colName, docsMap) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          if (snap.empty) {
+            const entries = Object.entries(docsMap);
+            for (const [id, data] of entries) {
+              await setDoc(doc(db, colName, String(id)), data, { merge: true });
+            }
+          }
+        } catch (err) {
+          console.warn("Seed skipped (" + colName + "):", err);
+        }
+      },
+      compressImage(dataUrl, maxWidth = 720, quality = 0.65) {
+        return new Promise((resolve) => {
+          if (!dataUrl || !String(dataUrl).startsWith("data:image")) {
+            resolve(dataUrl || "");
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+    };
+    window.dispatchEvent(new Event("zayko-db-ready"));
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var ICONS = {
+        orders: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>',
+        menu: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>',
+        profile: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/></svg>',
+        phone: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+        pin: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+        lock: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+        food: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7Z"/><path d="M9 22h6"/></svg>',
+        checkBig: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      };
+
+      var state = {
+        screen: 'login',       // 'login' | 'otp' | 'register' | 'pending' | 'main'
+        activeTab: 'orders',   // 'orders' | 'menu' | 'profile'
+        orderFilter: 'new',
+        loginPhone: '',
+        otpValue: '',
+        otpSeconds: 30,
+        regDraft: { name: '', phone: '', address: '', gpsPinned: false, gpsCoords: '', cuisine: '', upiId: '', dietType: 'Veg and non-veg' },
+        restaurant: {
+          name: 'Green Leaf Kitchen',
+          ownerPhone: '+91 98640 22334',
+          address: 'GS Road, Near Dispur Last Gate, Guwahati',
+          gpsPinned: true,
+          gpsCoords: '26.1445° N, 91.7362° E',
+          cuisine: 'North Indian, Assamese',
+          dietType: 'Veg and non-veg',
+          upiId: 'greenleafkitchen@okhdfcbank',
+          openingHours: '10:00 AM – 10:00 PM',
+          isOnline: true,
+          pendingChangeRequest: null
+        },
+        ownStaff: [
+          { name: 'Bikash Das', phone: '9864099001' },
+          { name: 'Ramen Kalita', phone: '9864099002' }
+        ],
+        orders: [
+          { id: '1042', status: 'new', customerName: 'Rahul Sharma', customerPhone: '+91 98640 55112', address: 'Zoo Road, Guwahati', distanceKm: '2.4 km', paymentMethod: 'UPI', upiConfirmed: false, hasScreenshot: true, upiRef: 'UPI-43291084721', items: [{ name: 'Paneer Butter Masala', qty: 1, price: 220 }, { name: 'Butter Naan', qty: 2, price: 80 }], deliveryFee: 50, total: 350, riderName: '', riderPhone: '', cancelReason: '', placedAt: '2 mins ago' },
+          { id: '1043', status: 'new', customerName: 'Priya Das', customerPhone: '+91 98640 66221', address: 'GS Road, Guwahati', distanceKm: '3.1 km', paymentMethod: 'COD', upiConfirmed: false, items: [{ name: 'Chicken Biryani', qty: 1, price: 210 }], deliveryFee: 50, total: 260, riderName: '', riderPhone: '', cancelReason: '', placedAt: '5 mins ago' },
+          { id: '1041', status: 'preparing', customerName: 'Ananya Bora', customerPhone: '+91 98640 77334', address: 'Chandmari, Guwahati', distanceKm: '1.8 km', paymentMethod: 'UPI', upiConfirmed: true, items: [{ name: 'Assamese Veg Thali', qty: 2, price: 320 }], deliveryFee: 50, total: 370, riderName: '', riderPhone: '', cancelReason: '', placedAt: '14 mins ago' },
+          { id: '1040', status: 'out', customerName: 'Vikram Kalita', customerPhone: '+91 98640 88445', address: 'Dispur, Guwahati', distanceKm: '4.2 km', paymentMethod: 'COD', upiConfirmed: false, items: [{ name: 'Dal Tadka', qty: 1, price: 150 }, { name: 'Butter Naan', qty: 2, price: 80 }], deliveryFee: 50, total: 280, riderName: 'Bikash Das', riderPhone: '9864099001', cancelReason: '', placedAt: '26 mins ago' }
+        ],
+        menu: [
+          { id: 'item-1', name: 'Paneer Butter Masala', price: 220, description: 'Cottage cheese cubes simmered in rich creamy tomato gravy.', isVeg: true, inStock: true, photo: '' },
+          { id: 'item-2', name: 'Dal Tadka', price: 150, description: 'Yellow lentils tempered with ghee, cumin, and roasted garlic.', isVeg: true, inStock: true, photo: '' },
+          { id: 'item-3', name: 'Chicken Biryani', price: 210, description: 'Fragrant basmati rice layered with spiced tender chicken.', isVeg: false, inStock: true, photo: '' },
+          { id: 'item-4', name: 'Butter Naan', price: 40, description: 'Soft tandoor-baked flatbread brushed with fresh butter.', isVeg: true, inStock: true, photo: '' }
+        ],
+        activeOrderId: null,
+        cancelReasonSelected: 'An item is out of stock',
+        menuEditorDraft: null,
+        upiDraftValue: '',
+        supportTab: 'raise',
+        supportOrderId: '',
+        supportTopic: 'Order / Rider issue',
+        supportMessage: '',
+        supportError: '',
+        nextTicketNum: 305,
+        tickets: [
+          {
+            id: 'SUP-303',
+            orderId: '1040',
+            topic: 'Customer gate landmark clarification',
+            message: 'Rider Bikash Das is near Dispur; customer landmark confirmed as Blue Gate apartment.',
+            status: 'open',
+            createdAt: '18 mins ago',
+            resolutionNote: ''
+          }
+        ]
+      };
+
+      var appEl = document.getElementById('app');
+      var androidShell = document.getElementById('android-shell');
+      var modalRoot = document.getElementById('modal-root');
+      var toastEl = document.getElementById('toast');
+      var toastMsgEl = document.getElementById('toast-msg');
+      var deviceClockEl = document.getElementById('device-clock');
+      var notifDotEl = document.getElementById('notif-dot');
+      var toastTimer = null;
+      var otpInterval = null;
+
+      function updateDeviceClock() {
+        if (!deviceClockEl) return;
+        var now = new Date();
+        deviceClockEl.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      }
+      updateDeviceClock();
+      setInterval(updateDeviceClock, 30000);
+
+      var STORAGE_KEY = 'zayko_partner_android_v1';
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            screen: state.screen,
+            restaurant: state.restaurant,
+            orders: state.orders,
+            menu: state.menu,
+            tickets: state.tickets
+          }));
+        } catch (err) {}
+      }
+      function loadState() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            if (parsed.screen && ['login', 'main', 'pending'].indexOf(parsed.screen) !== -1) state.screen = parsed.screen;
+            if (parsed.restaurant) state.restaurant = parsed.restaurant;
+            if (Array.isArray(parsed.orders) && parsed.orders.length > 0) state.orders = parsed.orders;
+            if (Array.isArray(parsed.menu)) state.menu = parsed.menu;
+            if (Array.isArray(parsed.tickets)) state.tickets = parsed.tickets;
+          }
+        } catch (err) {}
+      }
+      loadState();
+
+      function esc(val) {
+        return String(val == null ? '' : val).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+      function inr(num) { return '₹' + Number(num || 0).toLocaleString('en-IN'); }
+      function telHref(phone) {
+        var digits = String(phone || '').replace(/[^\d+]/g, '');
+        return digits.length === 10 ? 'tel:+91' + digits : 'tel:' + digits;
+      }
+      function formatTenDigitPhone(phone) {
+        var digits = String(phone || '').replace(/\D/g, '');
+        if (digits.length === 12 && digits.indexOf('91') === 0) digits = digits.slice(2);
+        return digits.length === 10 ? '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5) : (phone || '');
+      }
+      function isValidUpiId(upi) { return /^[a-zA-Z0-9._-]{2,}@[a-zA-Z0-9.-]{2,}$/.test(String(upi || '').trim()); }
+
+      function showToast(msg) {
+        toastMsgEl.textContent = msg;
+        toastEl.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.add('hidden'); }, 2800);
+      }
+
+      function openModal(html) {
+        modalRoot.innerHTML = '<div class="bottom-sheet"><div class="sheet-drag-handle"></div>' + html + '</div>';
+        modalRoot.classList.remove('hidden');
+      }
+
+      function closeModal() {
+        modalRoot.classList.add('hidden');
+        modalRoot.innerHTML = '';
+      }
+
+      function startOtpCountdown() {
+        clearInterval(otpInterval);
+        state.otpSeconds = 30;
+        otpInterval = setInterval(function () {
+          if (state.screen !== 'otp') { clearInterval(otpInterval); return; }
+          if (state.otpSeconds > 0) {
+            state.otpSeconds -= 1;
+            var timerSpan = document.getElementById('otp-timer-text');
+            var resendBtn = document.getElementById('resend-otp-btn');
+            if (timerSpan) {
+              var sec = state.otpSeconds < 10 ? '0' + state.otpSeconds : String(state.otpSeconds);
+              timerSpan.textContent = 'Resend code in 0:' + sec;
+            }
+            if (state.otpSeconds === 0 && resendBtn) {
+              resendBtn.disabled = false;
+              if (timerSpan) timerSpan.textContent = 'You can resend the code now';
+            }
+          } else { clearInterval(otpInterval); }
+        }, 1000);
+      }
+
+      function findOrder(id) { return state.orders.find(function (o) { return o.id === id; }); }
+      function countOrdersByStatus(status) { return state.orders.filter(function (o) { return o.status === status; }).length; }
+
+      // =======================================================================
+      // AUTH & ONBOARDING SCREENS
+      // =======================================================================
+      function renderLoginScreen() {
+        return (
+          '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px 36px;" class="animate-m3">' +
+          '<div style="text-align:center; margin-bottom:24px;">' +
+          '<div class="z-app-icon z-app-icon-lg">Z</div>' +
+          '<p style="font-size:14px; font-weight:800; letter-spacing:0.14em; color:var(--md-primary); margin-top:14px; text-transform:uppercase;">ZAYKO PARTNER</p>' +
+          '<p class="text-xs text-muted font-bold" style="margin-top:3px;">Restaurant Management App</p>' +
+          '</div>' +
+          '<div class="m3-card" style="padding:20px;">' +
+          '<h1 style="font-size:19px; font-weight:700;">Partner login</h1>' +
+          '<p class="text-xs text-muted" style="margin:4px 0 16px;">Log in with your registered restaurant phone number.</p>' +
+          '<button type="button" class="m3-btn m3-btn-tonal m3-btn-sm m3-btn-block" style="margin-bottom:16px;" data-action="demo-autofill-login">Demo Auto-fill: Green Leaf Kitchen (+91 98640 22334)</button>' +
+          '<form id="login-form" novalidate>' +
+          '<div class="form-group"><label class="form-label" for="login-phone-input">Phone number</label><div class="phone-field"><span class="phone-code">+91</span><input id="login-phone-input" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" value="' + esc(state.loginPhone) + '" /></div></div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Send OTP</button>' +
+          '</form>' +
+          '</div>' +
+          '<div style="text-align:center; margin-top:20px;"><span class="text-xs text-muted">Own a restaurant? </span><button type="button" class="text-xs font-bold text-primary" style="text-decoration:underline;" data-action="go-register">Register it</button></div>' +
+          '</div>'
+        );
+      }
+
+      function renderOtpScreen() {
+        var sec = state.otpSeconds < 10 ? '0' + state.otpSeconds : String(state.otpSeconds);
+        return (
+          '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px 36px;" class="animate-m3">' +
+          '<div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">' +
+          '<button type="button" class="m3-icon-btn" aria-label="Back" data-action="go-login">←</button>' +
+          '<span class="text-xs font-bold text-muted">Partner verification</span>' +
+          '</div>' +
+          '<div class="m3-card" style="padding:20px;">' +
+          '<h1 style="font-size:19px; font-weight:700;">Verify your number</h1>' +
+          '<p class="text-xs text-muted" style="margin-top:4px;">Enter the 6-digit code sent to <strong>' + esc(formatTenDigitPhone(state.loginPhone)) + '</strong></p>' +
+          '<div class="m3-banner-primary text-xs" style="margin:14px 0; display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+          '<span>Demo OTP: <strong>123456</strong></span><button type="button" class="m3-btn m3-btn-filled m3-btn-sm" data-action="fill-demo-otp">Auto-fill</button>' +
+          '</div>' +
+          '<form id="otp-form" novalidate>' +
+          '<div class="form-group"><label class="form-label" for="otp-input">6-digit OTP</label><input id="otp-input" class="m3-input" type="tel" inputmode="numeric" maxlength="6" placeholder="123456" style="letter-spacing:0.28em; text-align:center; font-size:20px; font-weight:700;" value="' + esc(state.otpValue) + '" /></div>' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;"><span id="otp-timer-text" class="text-xxs text-muted font-bold">' + (state.otpSeconds > 0 ? 'Resend code in 0:' + sec : 'You can resend now') + '</span><div style="display:flex; gap:12px;"><button type="button" id="resend-otp-btn" class="text-xs font-bold text-primary" data-action="resend-otp"' + (state.otpSeconds > 0 ? ' disabled' : '') + '>Resend</button><button type="button" class="text-xs font-bold text-muted" style="text-decoration:underline;" data-action="go-login">Change</button></div></div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Verify &amp; Continue</button>' +
+          '</form>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderRegisterScreen() {
+        var d = state.regDraft;
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar" style="justify-content:flex-start;">' +
+          '<button type="button" class="m3-icon-btn" aria-label="Back" data-action="go-login">←</button>' +
+          '<div><h1 class="text-base font-bold">Register your restaurant</h1><p class="text-xxs text-muted">Reviewed by Zayko team before going live</p></div>' +
+          '</header>' +
+          '<div class="page-body">' +
+          '<form id="register-form" class="m3-card" novalidate>' +
+          '<div class="form-group"><label class="form-label" for="reg-name">Restaurant name</label><input id="reg-name" name="name" class="m3-input" type="text" placeholder="Name shown to customers" value="' + esc(d.name) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="reg-phone">Owner phone number</label><div class="phone-field"><span class="phone-code">+91</span><input id="reg-phone" name="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" value="' + esc(d.phone) + '" /></div></div>' +
+          '<div class="form-group"><label class="form-label" for="reg-address">Address</label><input id="reg-address" name="address" class="m3-input" type="text" placeholder="Shop number, street, area" value="' + esc(d.address) + '" /><div style="margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="pin-gps">' + ICONS.pin + '<span>Pin GPS</span></button>' + (d.gpsPinned ? '<span class="m3-badge m3-badge-primary">Pinned · ' + esc(d.gpsCoords) + '</span>' : '') + '</div></div>' +
+          '<div class="form-group"><label class="form-label" for="reg-cuisine">Cuisine</label><input id="reg-cuisine" name="cuisine" class="m3-input" type="text" placeholder="North Indian, Assamese, Biryani" value="' + esc(d.cuisine) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="reg-upi">UPI ID</label><input id="reg-upi" name="upiId" class="m3-input" type="text" placeholder="yourname@bank" value="' + esc(d.upiId) + '" /></div>' +
+          '<div class="form-group"><span class="form-label">Kitchen type</span><div style="display:flex; gap:8px;">' +
+          ['Pure veg', 'Veg and non-veg'].map(function (dt) {
+            var sel = d.dietType === dt;
+            return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-reg-diet" data-diet="' + dt + '">' + (sel ? '✓ ' : '') + dt + '</button>';
+          }).join('') +
+          '</div></div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Submit for approval</button>' +
+          '</form>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderPendingScreen() {
+        return (
+          '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px;" class="animate-m3">' +
+          '<div class="m3-card" style="padding:24px; text-align:center;">' +
+          '<div style="width:84px; height:84px; border-radius:50%; background:var(--md-lime); color:var(--md-on-primary-container); display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px;">' + ICONS.checkBig + '</div>' +
+          '<h1 style="font-size:20px; font-weight:700;">Thanks for registering</h1>' +
+          '<p class="text-xs text-muted" style="margin-top:6px;"><strong>' + esc(state.restaurant.name) + '</strong> is waiting for approval from the Zayko team.</p>' +
+          '<div class="m3-card-tonal" style="text-align:left; margin:18px 0;">' +
+          '<div class="v-stepper">' +
+          '<div class="v-step done"><span class="v-step-icon">✓</span><span class="text-sm font-bold">Details submitted</span></div>' +
+          '<div class="v-step active"><span class="v-step-icon">•</span><span class="text-sm font-bold">Admin review</span></div>' +
+          '<div class="v-step"><span class="v-step-icon"></span><span class="text-sm text-muted">Add menu &amp; go live</span></div>' +
+          '</div>' +
+          '</div>' +
+          '<div style="display:flex; flex-direction:column; gap:10px;">' +
+          '<a href="tel:+919864000111" class="m3-btn m3-btn-outlined m3-btn-block" data-action="call-toast" data-label="Zayko Support">' + ICONS.phone + '<span>Contact support</span></a>' +
+          '<button type="button" class="m3-btn m3-btn-filled m3-btn-block" data-action="simulate-approve">Simulate Admin Approval</button>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      // =======================================================================
+      // MAIN TABS (ORDERS, MENU, PROFILE)
+      // =======================================================================
+      function renderOrdersTab() {
+        var tabs = [
+          { key: 'new', label: 'New (' + countOrdersByStatus('new') + ')' },
+          { key: 'preparing', label: 'Preparing (' + countOrdersByStatus('preparing') + ')' },
+          { key: 'ready', label: 'Ready (' + countOrdersByStatus('ready') + ')' },
+          { key: 'out', label: 'Out (' + countOrdersByStatus('out') + ')' },
+          { key: 'delivered', label: 'Delivered (' + countOrdersByStatus('delivered') + ')' },
+          { key: 'cancelled', label: 'Cancelled (' + countOrdersByStatus('cancelled') + ')' }
+        ];
+        var filtered = state.orders.filter(function (o) { return o.status === state.orderFilter; });
+
+        var rail = '<div class="chip-rail no-scrollbar">' + tabs.map(function (t) {
+          var sel = state.orderFilter === t.key;
+          return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-order-filter" data-filter="' + t.key + '">' + (sel ? '✓ ' : '') + esc(t.label) + '</button>';
+        }).join('') + '</div>';
+
+        if (filtered.length === 0) {
+          return rail + '<div class="m3-card" style="text-align:center; padding:32px 18px;"><p class="text-sm font-bold">No orders in this section</p><p class="text-xs text-muted" style="margin-top:4px;">Incoming Guwahati orders appear here.</p></div>';
+        }
+
+        return rail + filtered.map(function (o) {
+          var summary = o.items.map(function (it) { return it.qty + ' × ' + it.name; }).join(', ');
+          var badgeCls = o.status === 'new' || o.status === 'out' ? 'm3-badge-amber' : o.status === 'cancelled' ? 'm3-badge-error' : 'm3-badge-primary';
+          var badgeLbl = { new: 'New', preparing: 'Preparing', ready: 'Ready', out: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled' }[o.status] || o.status;
+
+          return (
+            '<article class="m3-card m3-card-pressable" data-action="open-order-sheet" data-order-id="' + esc(o.id) + '" style="display:flex; flex-direction:column; gap:8px;">' +
+            '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">' +
+            '<div><div style="display:flex; align-items:center; gap:8px;"><strong class="text-base">Order #' + esc(o.id) + '</strong><span class="m3-badge ' + badgeCls + '">' + badgeLbl + '</span></div>' +
+            '<p class="text-xs text-muted" style="margin-top:3px;">' + esc(o.customerName) + ' · ' + esc(o.address) + ' (' + esc(o.distanceKm) + ')</p></div>' +
+            '<strong class="text-base text-primary">' + inr(o.total) + '</strong>' +
+            '</div>' +
+            '<p class="text-xs font-bold">' + esc(summary) + '</p>' +
+            '<div class="text-xxs font-bold" style="color:' + (o.paymentMethod === 'UPI' ? 'var(--md-primary)' : 'var(--md-ink)') + ';">' +
+            (o.paymentMethod === 'UPI' ? (o.upiConfirmed ? 'Paid by UPI · Payment confirmed' : 'Paid by UPI · Screenshot attached · Confirm ' + inr(o.total)) : 'Cash on delivery · Collect ' + inr(o.total)) +
+            '</div>' +
+            '<div style="padding-top:8px; border-top:1px solid var(--md-outline-variant); display:flex; align-items:center; justify-content:space-between;">' +
+            '<span class="text-xxs text-muted">' + esc(o.placedAt) + '</span><span class="text-xs font-bold text-primary">Open details →</span>' +
+            '</div>' +
+            '</article>'
+          );
+        }).join('');
+      }
+
+      function renderMenuTab() {
+        var r = state.restaurant;
+        return (
+          '<div class="m3-card" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">' +
+          '<div><div class="detail-label">Opening hours</div><div class="text-sm font-bold" style="margin-top:2px;">' + esc(r.openingHours) + '</div></div>' +
+          '<button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="open-hours-modal">Edit</button>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+          '<strong class="text-sm">Menu items (' + state.menu.length + ')</strong>' +
+          '<button type="button" class="m3-btn m3-btn-filled m3-btn-sm" data-action="open-menu-modal">+ Add item</button>' +
+          '</div>' +
+          state.menu.map(function (item) {
+            return (
+              '<article class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+              '<div style="display:flex; align-items:center; gap:12px;">' +
+              '<div style="width:62px; height:62px; border-radius:14px; background:var(--md-primary-container); color:var(--md-primary); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">' +
+              (item.photo ? '<img src="' + esc(item.photo) + '" alt="' + esc(item.name) + '" style="width:100%; height:100%; object-fit:cover;" />' : ICONS.food) +
+              '</div>' +
+              '<div style="flex:1; min-width:0;">' +
+              '<div style="display:flex; align-items:center; gap:6px;"><span class="diet-mark ' + (item.isVeg ? '' : 'nonveg') + '"><span></span></span><strong class="text-sm truncate">' + esc(item.name) + '</strong></div>' +
+              '<p class="text-xs font-bold text-primary" style="margin-top:3px;">' + inr(item.price) + ' <span class="text-muted">· ' + (item.isVeg ? 'Veg' : 'Non-veg') + '</span></p>' +
+              '<p class="text-xxs text-muted" style="margin-top:2px;">' + esc(item.description) + '</p>' +
+              '</div>' +
+              '</div>' +
+              '<div style="padding-top:10px; border-top:1px solid var(--md-outline-variant); display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+              '<div style="display:flex; align-items:center; gap:8px;"><button type="button" class="m3-switch ' + (item.inStock ? 'on' : '') + '" aria-label="Toggle in stock" data-action="toggle-stock" data-item-id="' + esc(item.id) + '"><span class="m3-switch-thumb"></span></button><span class="text-xs font-bold">' + (item.inStock ? 'In stock' : 'Out of stock') + '</span></div>' +
+              '<div style="display:flex; gap:8px;"><button type="button" class="m3-btn m3-btn-outlined m3-btn-sm" data-action="open-menu-modal" data-item-id="' + esc(item.id) + '">Edit</button><button type="button" class="m3-btn m3-btn-danger-outline m3-btn-sm" data-action="ask-delete-item" data-item-id="' + esc(item.id) + '">Delete</button></div>' +
+              '</div>' +
+              '</article>'
+            );
+          }).join('')
+        );
+      }
+
+      function renderProfileTab() {
+        var r = state.restaurant;
+        var lockedBadge = '<span class="m3-badge m3-badge-locked">' + ICONS.lock + '<span>Locked</span></span>';
+
+        return (
+          '<div class="' + (r.isOnline ? 'm3-banner-primary' : 'm3-banner-error') + '" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+          '<div><strong class="text-sm">' + (r.isOnline ? 'You are online' : 'You are offline') + '</strong><p class="text-xxs" style="margin-top:2px;">' + (r.isOnline ? 'Customers can place orders now.' : 'Hidden from customers.') + '</p></div>' +
+          '<button type="button" class="m3-btn ' + (r.isOnline ? 'm3-btn-danger-outline' : 'm3-btn-filled') + ' m3-btn-sm" data-action="ask-toggle-online">' + (r.isOnline ? 'Go offline' : 'Go online') + '</button>' +
+          '</div>' +
+          (r.pendingChangeRequest
+            ? '<div class="m3-banner-amber text-xs"><div style="display:flex; justify-content:space-between;"><strong>Pending Admin Approval</strong><button type="button" class="text-xs font-bold text-error" style="text-decoration:underline;" data-action="ask-withdraw-request">Withdraw</button></div><p style="margin-top:4px; color:var(--md-ink);">' + esc(r.pendingChangeRequest.summary) + '</p></div>'
+            : '') +
+          '<div class="m3-card">' +
+          '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><strong class="text-sm">Restaurant Details</strong><span class="m3-badge m3-badge-primary">Verified</span></div>' +
+          '<div class="detail-row"><div><div class="detail-label">Restaurant Name</div><div class="detail-val">' + esc(r.name) + '</div></div>' + lockedBadge + '</div>' +
+          '<div class="detail-row"><div><div class="detail-label">Owner Phone</div><div class="detail-val">' + esc(r.ownerPhone) + '</div></div>' + lockedBadge + '</div>' +
+          '<div class="detail-row"><div><div class="detail-label">Address</div><div class="detail-val">' + esc(r.address) + '</div></div>' + lockedBadge + '</div>' +
+          '<div class="detail-row"><div><div class="detail-label">Cuisine &amp; Type</div><div class="detail-val">' + esc(r.cuisine) + ' · ' + esc(r.dietType) + '</div></div>' + lockedBadge + '</div>' +
+          '<div class="detail-row" style="align-items:center;"><div><div class="detail-label">UPI ID (Direct Payments)</div><div class="detail-val text-primary">' + esc(r.upiId) + '</div></div><button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="open-edit-upi-modal">Edit UPI</button></div>' +
+          '</div>' +
+          '<button type="button" class="m3-btn m3-btn-outlined m3-btn-block" data-action="open-request-changes-modal"' + (r.pendingChangeRequest ? ' disabled' : '') + '>' + (r.pendingChangeRequest ? 'Change request pending Admin approval' : 'Request other detail changes (Admin)') + '</button>' +
+          '<div class="m3-card" style="display:flex; justify-content:space-between; align-items:center;"><div><div class="detail-label">Opening Hours</div><div class="detail-val">' + esc(r.openingHours) + '</div></div><button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="open-hours-modal">Edit</button></div>' +
+          '<div class="m3-card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;"><div><div class="detail-label">Partner Support</div><div class="detail-val">' + state.tickets.filter(function (t) { return t.status === 'open'; }).length + ' open ticket(s) · +91 98640 00111</div></div><button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="open-support-sheet">Help</button></div>' +
+          '<button type="button" class="m3-btn m3-btn-danger-outline m3-btn-block" data-action="ask-logout">Log out</button>'
+        );
+      }
+
+      function renderMainShell() {
+        var r = state.restaurant;
+        var newCount = countOrdersByStatus('new');
+        var bodyHtml = state.activeTab === 'orders' ? renderOrdersTab() : state.activeTab === 'menu' ? renderMenuTab() : renderProfileTab();
+        var navItems = [
+          { key: 'orders', label: 'Orders', icon: ICONS.orders, badge: newCount },
+          { key: 'menu', label: 'Menu', icon: ICONS.menu, badge: 0 },
+          { key: 'profile', label: 'Profile', icon: ICONS.profile, badge: 0 }
+        ];
+
+        return (
+          '<header class="m3-top-bar">' +
+          '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+          '<div class="z-app-icon">Z</div>' +
+          '<div style="min-width:0;"><h1 class="text-sm font-bold truncate">' + esc(r.name) + '</h1><p class="text-xxs text-muted">Zayko Partner</p></div>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; gap:4px;"><button type="button" class="status-pill ' + (r.isOnline ? 'online' : 'offline') + '" data-action="ask-toggle-online"><span class="status-dot"></span><span>' + (r.isOnline ? 'Accepting' : 'Offline') + '</span></button><button type="button" data-action="open-notifications" aria-label="Notifications" class="m3-icon-btn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span id="notif-dot" style="position:absolute; top:9px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--md-secondary);"></span></button></div>' +
+          '</header>' +
+          '<main class="page-body">' + bodyHtml + '</main>' +
+          '<nav class="m3-nav-bar" aria-label="Partner navigation">' +
+          navItems.map(function (it) {
+            var active = state.activeTab === it.key;
+            return (
+              '<button type="button" class="m3-nav-item ' + (active ? 'active' : '') + '" data-action="switch-tab" data-tab="' + it.key + '">' +
+              '<span class="m3-nav-pill">' + it.icon + '</span>' +
+              '<span>' + it.label + '</span>' +
+              (it.badge > 0 ? '<span class="m3-nav-badge">' + it.badge + '</span>' : '') +
+              '</button>'
+            );
+          }).join('') +
+          '</nav>'
+        );
+      }
+
+      // =======================================================================
+      // BOTTOM SHEETS (ORDER DETAILS, CANCEL, MENU EDITOR, UPI, NOTIFICATIONS)
+      // =======================================================================
+      function openOrderDetailSheet(orderId) {
+        var o = findOrder(orderId);
+        if (!o) return;
+        state.activeOrderId = o.id;
+
+        var html =
+          '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">' +
+          '<div><h2 class="text-base font-bold">Order #' + esc(o.id) + '</h2><p class="text-xs text-muted">' + esc(o.placedAt) + ' · ' + esc(o.distanceKm) + '</p></div>' +
+          '<div style="display:flex; align-items:center; gap:4px;"><button type="button" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="open-support-sheet" data-order-id="' + esc(o.id) + '">Help</button><button type="button" class="m3-icon-btn" aria-label="Close" data-action="close-modal">✕</button></div>' +
+          '</div>' +
+          '<div class="m3-card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">' +
+          '<div><div class="detail-label">Deliver to</div><strong class="text-sm">' + esc(o.customerName) + '</strong><p class="text-xs text-muted" style="margin-top:2px;">' + esc(o.address) + '</p></div>' +
+          '<a href="' + telHref(o.customerPhone) + '" class="m3-btn m3-btn-tonal m3-btn-sm" data-action="call-toast" data-label="Customer ' + esc(o.customerName) + '">' + ICONS.phone + '<span>Call</span></a>' +
+          '</div>' +
+          '<div class="m3-card">' +
+          o.items.map(function (it) { return '<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>' + it.qty + ' × ' + esc(it.name) + '</span><strong>' + inr(it.price) + '</strong></div>'; }).join('') +
+          '<div style="display:flex; justify-content:space-between; padding-top:8px; margin-top:6px; border-top:1px solid var(--md-outline-variant); font-weight:700;"><span>Total</span><span class="text-primary">' + inr(o.total) + '</span></div>' +
+          (['preparing', 'ready', 'out', 'delivered'].indexOf(o.status) !== -1
+            ? '<button type="button" data-action="open-receipt-sheet" data-order-id="' + esc(o.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm m3-btn-block" style="margin-top:10px;">Print Receipt</button>'
+            : '') +
+          '</div>';
+
+        if (o.status === 'new') {
+          if (o.paymentMethod === 'UPI') {
+            html +=
+              '<div class="m3-banner-primary"><strong class="text-xs">Paid by UPI · Customer Screenshot</strong><p class="text-xxs" style="margin-top:2px;">Verify payment in ' + esc(state.restaurant.upiId) + ' before accepting.</p>' +
+              '<div style="margin-top:10px; background:#FFFFFF; border:1px solid var(--md-outline-variant); border-radius:12px; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+              '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+              '<div style="width:44px; height:44px; border-radius:10px; background:var(--md-primary-container); color:var(--md-primary); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; flex-shrink:0;">₹</div>' +
+              '<div style="min-width:0;"><p class="text-xs font-bold" style="color:var(--md-ink);">UPI Receipt · ' + inr(o.total) + '</p><p class="text-xxs text-muted truncate">Ref: ' + esc(o.upiRef || 'UPI-43291084721') + '</p></div>' +
+              '</div>' +
+              '<button type="button" data-action="view-upi-screenshot" data-order-id="' + esc(o.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm" style="flex-shrink:0;">View</button>' +
+              '</div>' +
+              '<button type="button" class="check-row ' + (o.upiConfirmed ? 'checked' : '') + '" data-action="toggle-upi-confirm" data-order-id="' + esc(o.id) + '"><span class="check-box">' + (o.upiConfirmed ? '✓' : '') + '</span><span>I received ' + inr(o.total) + '</span></button></div>';
+          } else {
+            html += '<div class="m3-card-tonal text-xs"><strong>Cash on delivery</strong> · Collect ' + inr(o.total) + '</div>';
+          }
+          var acceptDisabled = o.paymentMethod === 'UPI' && !o.upiConfirmed;
+          html += '<div class="btn-row"><button type="button" class="m3-btn m3-btn-danger-outline" data-action="open-cancel-modal" data-order-id="' + esc(o.id) + '">Cancel</button><button type="button" class="m3-btn m3-btn-filled" data-action="ask-accept-order" data-order-id="' + esc(o.id) + '"' + (acceptDisabled ? ' disabled' : '') + '>Accept</button></div>';
+        } else if (o.status === 'preparing' || o.status === 'ready' || o.status === 'out') {
+          html +=
+            '<div class="m3-card">' +
+            '<strong class="text-xs">Own delivery staff</strong>' +
+            '<div style="display:flex; gap:6px; flex-wrap:wrap; margin:8px 0;">' +
+            state.ownStaff.map(function (st) {
+              return '<button type="button" class="m3-chip" data-action="pick-staff" data-order-id="' + esc(o.id) + '" data-name="' + esc(st.name) + '" data-phone="' + esc(st.phone) + '">' + esc(st.name) + '</button>';
+            }).join('') +
+            '</div>' +
+            '<div class="form-group"><input id="rider-name-input" class="m3-input" type="text" placeholder="Rider name" value="' + esc(o.riderName) + '" data-order-id="' + esc(o.id) + '" /></div>' +
+            '<div class="phone-field"><span class="phone-code">+91</span><input id="rider-phone-input" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit rider phone" value="' + esc(o.riderPhone) + '" data-order-id="' + esc(o.id) + '" /></div>' +
+            '</div>';
+          if (o.status === 'preparing') html += '<button type="button" class="m3-btn m3-btn-filled m3-btn-block" data-action="ask-mark-ready" data-order-id="' + esc(o.id) + '">Mark as ready</button>';
+          else if (o.status === 'ready') html += '<button type="button" class="m3-btn m3-btn-filled m3-btn-block" data-action="ask-dispatch-order" data-order-id="' + esc(o.id) + '">Dispatch out for delivery</button>';
+          else html += '<button type="button" class="m3-btn m3-btn-filled m3-btn-block" data-action="ask-mark-delivered" data-order-id="' + esc(o.id) + '">Mark delivered</button>';
+        } else {
+          html += '<div class="' + (o.status === 'delivered' ? 'm3-banner-primary' : 'm3-banner-error') + ' text-xs"><strong>' + (o.status === 'delivered' ? 'Order Delivered' : 'Order Cancelled') + '</strong>' + (o.cancelReason ? '<p style="margin-top:3px;">Reason: ' + esc(o.cancelReason) + '</p>' : '') + '</div>';
+        }
+        openModal(html);
+      }
+
+      function openCancelOrderModal(orderId) {
+        var o = findOrder(orderId);
+        if (!o) return;
+        var reasons = ['An item is out of stock', 'UPI payment was not received'];
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><h2 class="text-base font-bold">Cancel order #' + esc(o.id) + '</h2><p class="text-xs text-muted">Choose one reason below.</p></div><button type="button" class="m3-icon-btn" data-action="open-order-sheet" data-order-id="' + esc(o.id) + '">✕</button></div>' +
+          reasons.map(function (r) {
+            return '<button type="button" class="reason-btn ' + (state.cancelReasonSelected === r ? 'selected' : '') + '" data-action="select-cancel-reason" data-order-id="' + esc(o.id) + '" data-reason="' + esc(r) + '">' + esc(r) + '</button>';
+          }).join('') +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(o.id) + '">Keep</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-cancel-order" data-order-id="' + esc(o.id) + '">Cancel order</button></div>'
+        );
+      }
+
+      function openMenuItemModal(itemId) {
+        var existing = itemId ? state.menu.find(function (m) { return m.id === itemId; }) : null;
+        if (!state.menuEditorDraft || state.menuEditorDraft._sourceId !== (itemId || 'new')) {
+          state.menuEditorDraft = existing
+            ? { _sourceId: itemId, id: existing.id, name: existing.name, price: String(existing.price), description: existing.description, isVeg: existing.isVeg, inStock: existing.inStock, photo: existing.photo || '' }
+            : { _sourceId: 'new', id: '', name: '', price: '', description: '', isVeg: true, inStock: true, photo: '' };
+        }
+        var d = state.menuEditorDraft;
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">' + (d.id ? 'Edit item' : 'Add item') + '</h2><button type="button" class="m3-icon-btn" data-action="close-menu-modal">✕</button></div>' +
+          '<form id="menu-item-form" novalidate>' +
+          '<div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">' +
+          '<div id="menu-photo-preview" style="width:68px; height:68px; border-radius:14px; background:var(--md-primary-container); color:var(--md-primary); display:flex; align-items:center; justify-content:center; overflow:hidden;">' + (d.photo ? '<img src="' + esc(d.photo) + '" alt="Dish" style="width:100%; height:100%; object-fit:cover;" />' : ICONS.food) + '</div>' +
+          '<div><label for="menu-photo-input" class="m3-btn m3-btn-tonal m3-btn-sm" style="cursor:pointer;">Add photo</label><input id="menu-photo-input" type="file" accept="image/*" class="hidden" /></div>' +
+          '</div>' +
+          '<div class="form-group"><label class="form-label" for="me-name">Item name</label><input id="me-name" class="m3-input" type="text" value="' + esc(d.name) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="me-price">Price (₹)</label><input id="me-price" class="m3-input" type="number" inputmode="numeric" value="' + esc(d.price) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="me-desc">Description</label><textarea id="me-desc" class="m3-input" rows="2" style="resize:none;">' + esc(d.description) + '</textarea></div>' +
+          '<div class="form-group"><div style="display:flex; gap:8px;">' +
+          '<button type="button" class="m3-chip ' + (d.isVeg ? 'selected' : '') + '" data-action="set-me-veg" data-veg="true">' + (d.isVeg ? '✓ ' : '') + 'Veg</button>' +
+          '<button type="button" class="m3-chip ' + (!d.isVeg ? 'selected' : '') + '" data-action="set-me-veg" data-veg="false">' + (!d.isVeg ? '✓ ' : '') + 'Non-veg</button>' +
+          '</div></div>' +
+          '<div class="m3-card-tonal" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;"><strong class="text-xs">In stock</strong><button type="button" class="m3-switch ' + (d.inStock ? 'on' : '') + '" data-action="toggle-me-stock"><span class="m3-switch-thumb"></span></button></div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Save item</button>' +
+          '</form>'
+        );
+      }
+
+      function openEditUpiModal(prefill) {
+        state.upiDraftValue = typeof prefill === 'string' ? prefill : state.restaurant.upiId;
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Edit UPI ID</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<form id="edit-upi-form" novalidate><div class="form-group"><label class="form-label" for="new-upi-input">New UPI ID</label><input id="new-upi-input" name="upiId" class="m3-input" type="text" value="' + esc(state.upiDraftValue) + '" /></div>' +
+          '<p id="edit-upi-error" class="text-xs text-error hidden" style="margin-bottom:10px;"></p>' +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="submit" class="m3-btn m3-btn-filled">Review</button></div></form>'
+        );
+      }
+
+      function openRequestChangesModal() {
+        var r = state.restaurant;
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Request detail changes</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<form id="request-changes-form" novalidate>' +
+          '<div class="form-group"><label class="form-label" for="rc-name">Restaurant name</label><input id="rc-name" name="name" class="m3-input" type="text" value="' + esc(r.name) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="rc-phone">Owner phone</label><input id="rc-phone" name="phone" class="m3-input" type="text" value="' + esc(r.ownerPhone) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="rc-address">Address</label><input id="rc-address" name="address" class="m3-input" type="text" value="' + esc(r.address) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="rc-cuisine">Cuisine</label><input id="rc-cuisine" name="cuisine" class="m3-input" type="text" value="' + esc(r.cuisine) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="rc-reason">Reason *</label><textarea id="rc-reason" name="reason" class="m3-input" rows="2" style="resize:none;"></textarea></div>' +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="submit" class="m3-btn m3-btn-filled">Send to Admin</button></div></form>'
+        );
+      }
+
+      function openHoursModal() {
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Opening hours</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<form id="hours-form" novalidate><div class="form-group"><input id="hours-input" name="hours" class="m3-input" type="text" value="' + esc(state.restaurant.openingHours) + '" /></div>' +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="submit" class="m3-btn m3-btn-filled">Save</button></div></form>'
+        );
+      }
+
+      function openSupportSheet() {
+        var openCount = state.tickets.filter(function (t) { return t.status === 'open'; }).length;
+        var topics = ['Order / Rider issue', 'UPI payment discrepancy', 'Customer address issue', 'Menu / Store update', 'Other'];
+        var bodyHtml = '';
+
+        var orderTopics = ['Order / Rider issue', 'UPI payment discrepancy', 'Customer address issue'];
+        var isOrderRequired = orderTopics.indexOf(state.supportTopic) !== -1;
+
+        if (state.supportTab === 'raise') {
+          bodyHtml =
+            '<div class="m3-card" style="display:flex; flex-direction:column; gap:6px;">' +
+            '<p class="text-xs font-bold">Issue topic</p>' +
+            '<div style="display:flex; gap:6px; flex-wrap:wrap;">' +
+            topics.map(function (tp) {
+              var sel = state.supportTopic === tp;
+              return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-sup-topic" data-topic="' + esc(tp) + '">' + (sel ? '✓ ' : '') + esc(tp) + '</button>';
+            }).join('') +
+            '</div></div>' +
+            '<div class="form-group" style="margin-bottom:4px;"><label class="form-label" for="partner-sup-order">Related Order # ' + (isOrderRequired ? '<span class="text-error">* (Required)</span>' : '(optional)') + '</label>' +
+            '<input id="partner-sup-order" class="m3-input" type="text" placeholder="e.g. 1042" value="' + esc(state.supportOrderId) + '" />' +
+            '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">' +
+            state.orders.slice(0, 4).map(function (o) {
+              var sel = String(state.supportOrderId).trim() === o.id;
+              return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="pick-sup-order" data-order-id="' + esc(o.id) + '">#' + esc(o.id) + '</button>';
+            }).join('') +
+            '</div></div>' +
+            '<div class="form-group" style="margin-bottom:4px;"><label class="form-label" for="partner-sup-msg">Describe the issue *</label>' +
+            '<textarea id="partner-sup-msg" class="m3-input" rows="3" style="resize:none;" placeholder="Explain what Zayko Admin should help with...">' + esc(state.supportMessage) + '</textarea></div>' +
+            (state.supportError ? '<p class="text-xs text-error font-bold">' + esc(state.supportError) + '</p>' : '') +
+            '<div class="btn-row">' +
+            '<a href="tel:+919864000111" data-action="call-toast" data-label="Zayko Support (+91 98640 00111)" class="m3-btn m3-btn-tonal">Call Admin</a>' +
+            '<button type="button" data-action="submit-partner-ticket" class="m3-btn m3-btn-filled">Submit Ticket</button>' +
+            '</div>';
+        } else {
+          bodyHtml =
+            '<div style="display:flex; flex-direction:column; gap:10px;">' +
+            state.tickets.map(function (t) {
+              var isOpen = t.status === 'open';
+              return (
+                '<div class="m3-card" style="display:flex; flex-direction:column; gap:6px;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<div style="display:flex; align-items:center; gap:6px;"><strong class="text-xs">#' + esc(t.id) + '</strong><span class="m3-badge ' + (isOpen ? 'm3-badge-error' : 'm3-badge-primary') + '">' + (isOpen ? 'Open' : 'Resolved') + '</span></div>' +
+                (t.orderId ? '<span class="m3-badge m3-badge-locked">Order #' + esc(t.orderId) + '</span>' : '') +
+                '</div>' +
+                '<p class="text-xs font-bold">' + esc(t.topic) + '</p>' +
+                '<p class="text-xs text-muted">' + esc(t.message) + '</p>' +
+                '<p class="text-xxs text-muted">' + esc(t.createdAt) + '</p>' +
+                '</div>'
+              );
+            }).join('') +
+            '<a href="tel:+919864000111" data-action="call-toast" data-label="Zayko Support (+91 98640 00111)" class="m3-btn m3-btn-tonal m3-btn-block">Call Zayko Support (+91 98640 00111)</a>' +
+            '</div>';
+        }
+
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><h2 class="text-base font-bold">Partner Support</h2><p class="text-xxs text-muted">Synced with Zayko Admin Support Desk</p></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">' +
+          '<button type="button" data-action="set-sup-tab" data-tab="raise" class="m3-btn m3-btn-sm ' + (state.supportTab === 'raise' ? 'm3-btn-filled' : 'm3-btn-outlined') + '">Raise Issue</button>' +
+          '<button type="button" data-action="set-sup-tab" data-tab="tickets" class="m3-btn m3-btn-sm ' + (state.supportTab === 'tickets' ? 'm3-btn-filled' : 'm3-btn-outlined') + '">My Tickets (' + openCount + ')</button>' +
+          '</div>' +
+          bodyHtml
+        );
+      }
+
+      function openReceiptSheet(orderId) {
+        var o = findOrder(orderId);
+        if (!o) return;
+        var r = state.restaurant;
+        var subtotal = o.items.reduce(function (sum, it) { return sum + Number(it.price || 0); }, 0);
+        var isUpi = o.paymentMethod === 'UPI';
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+          '<div><h2 class="text-base font-bold">Order Receipt</h2><p class="text-xxs text-muted">Thermal printer &amp; share preview</p></div>' +
+          '<button type="button" class="m3-icon-btn" data-action="open-order-sheet" data-order-id="' + esc(o.id) + '">✕</button>' +
+          '</div>' +
+          '<div id="printable-receipt" class="thermal-receipt" style="font-variant-numeric:tabular-nums;">' +
+          '<div style="text-align:center; padding-bottom:10px; border-bottom:1.5px dashed #888;">' +
+          '<div style="display:inline-block; padding:2px 8px; border:1px solid #111; border-radius:4px; font-size:9.5px; font-weight:800; letter-spacing:0.12em; margin-bottom:6px;">ZAYKO ORDER RECEIPT</div>' +
+          '<div style="font-size:16px; font-weight:900; letter-spacing:0.02em; text-transform:uppercase; color:#000;">' + esc(r.name) + '</div>' +
+          '<div style="font-size:11px; color:#444; margin-top:2px;">' + esc(r.address) + '</div>' +
+          '<div style="margin:10px auto 4px; padding:6px 12px; border:2px solid #000; border-radius:6px; display:inline-block; background:#F8F8F8;">' +
+          '<div style="font-size:9px; font-weight:700; letter-spacing:0.1em; color:#333;">ORDER ID</div>' +
+          '<div style="font-size:26px; font-weight:900; color:#000000; letter-spacing:0.06em; line-height:1.1;">#' + esc(o.id) + '</div>' +
+          '</div>' +
+          '<div style="font-size:10.5px; color:#555; margin-top:2px;">Placed: ' + esc(o.placedAt) + ' · ' + esc(o.distanceKm) + '</div>' +
+          '</div>' +
+
+          '<div style="padding:10px 0; border-bottom:1.5px dashed #888; font-size:11.5px;">' +
+          '<div style="display:flex; justify-content:space-between; gap:8px;"><span style="color:#555;">CUSTOMER</span><strong style="color:#000; text-align:right;">' + esc(o.customerName) + '</strong></div>' +
+          '<div style="display:flex; justify-content:space-between; gap:8px; margin-top:3px;"><span style="color:#555;">DELIVER TO</span><span style="color:#111; text-align:right; max-width:68%;">' + esc(o.address) + '</span></div>' +
+          (o.riderName ? '<div style="display:flex; justify-content:space-between; gap:8px; margin-top:3px;"><span style="color:#555;">RIDER</span><strong style="color:#000; text-align:right;">' + esc(o.riderName) + ' (' + esc(formatTenDigitPhone(o.riderPhone)) + ')</strong></div>' : '') +
+          '</div>' +
+
+          '<div style="padding:10px 0; border-bottom:1.5px dashed #888;">' +
+          '<div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:#555; letter-spacing:0.06em; padding-bottom:5px; border-bottom:1px solid #DDD; margin-bottom:6px;">' +
+          '<span>QTY &amp; ITEM</span><span>AMOUNT</span>' +
+          '</div>' +
+          o.items.map(function (it) {
+            return '<div style="display:flex; justify-content:space-between; gap:8px; padding:2.5px 0;"><span style="font-weight:700; color:#111;">' + it.qty + ' × ' + esc(it.name) + '</span><span style="font-weight:700; color:#111;">' + inr(it.price) + '</span></div>';
+          }).join('') +
+          '</div>' +
+
+          '<div style="padding:10px 0; border-bottom:1.5px dashed #888; font-size:11.5px;">' +
+          '<div style="display:flex; justify-content:space-between; padding:2px 0;"><span style="color:#555;">Item Subtotal</span><span>' + inr(subtotal) + '</span></div>' +
+          '<div style="display:flex; justify-content:space-between; padding:2px 0;"><span style="color:#555;">Delivery Fee (' + esc(o.distanceKm) + ')</span><span>' + inr(o.deliveryFee) + '</span></div>' +
+          '<div style="display:flex; justify-content:space-between; padding-top:6px; margin-top:4px; border-top:1px solid #CCC; font-size:15px; font-weight:900; color:#000;"><span>GRAND TOTAL</span><span>' + inr(o.total) + '</span></div>' +
+          '<div style="margin-top:8px; padding:5px 8px; border:1px solid #111; border-radius:4px; text-align:center; font-size:11px; font-weight:800; letter-spacing:0.04em; background:#F4F4F4;">' +
+          (isUpi ? 'PAID ONLINE VIA UPI' : 'CASH ON DELIVERY · COLLECT ' + inr(o.total)) +
+          '</div>' +
+          '</div>' +
+
+          '<div style="text-align:center; padding-top:10px; font-size:10.5px; color:#444;">' +
+          '<div style="font-weight:700; color:#111;">Thank you for ordering with Zayko!</div>' +
+          '<div style="margin-top:2px;">Guwahati, Assam · Zayko brings cravings home</div>' +
+          '</div>' +
+          '</div>' +
+          '<div class="btn-row">' +
+          '<button type="button" class="m3-btn m3-btn-outlined" data-action="copy-receipt" data-order-id="' + esc(o.id) + '">Copy Text</button>' +
+          '<button type="button" class="m3-btn m3-btn-filled" data-action="print-receipt-now">Print</button>' +
+          '</div>'
+        );
+      }
+
+      function openNotificationsModal() {
+        var newOrders = state.orders.filter(function (o) { return o.status === 'new'; });
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="text-base font-bold">Order Alerts</h2><p class="text-xxs text-muted">New incoming Guwahati orders</p></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          (newOrders.length > 0
+            ? newOrders.map(function (o) {
+                return '<button type="button" data-action="open-order-from-notif" data-order-id="' + esc(o.id) + '" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; justify-content:space-between; align-items:center;"><div><p class="text-xs font-bold">Order #' + esc(o.id) + ' · ' + esc(o.customerName) + '</p><p class="text-xxs text-muted">' + inr(o.total) + ' · ' + esc(o.paymentMethod) + '</p></div><span class="m3-badge m3-badge-amber">New</span></button>';
+              }).join('')
+            : '<div class="m3-card-tonal text-xs text-muted" style="text-align:center; padding:16px;">No new incoming orders right now.</div>')
+        );
+      }
+
+      function render() {
+        var isMain = state.screen === 'main';
+        androidShell.classList.toggle('with-nav', isMain);
+        if (state.screen === 'login') appEl.innerHTML = renderLoginScreen();
+        else if (state.screen === 'otp') appEl.innerHTML = renderOtpScreen();
+        else if (state.screen === 'register') appEl.innerHTML = renderRegisterScreen();
+        else if (state.screen === 'pending') appEl.innerHTML = renderPendingScreen();
+        else appEl.innerHTML = renderMainShell();
+
+        if (notifDotEl) {
+          notifDotEl.style.display = countOrdersByStatus('new') > 0 ? 'inline-block' : 'none';
+        }
+        saveState();
+      }
+
+      androidShell.addEventListener('click', function (e) {
+        if (e.target === modalRoot) { state.menuEditorDraft = null; closeModal(); return; }
+        var el = e.target.closest('[data-action]');
+        if (!el) return;
+        var action = el.getAttribute('data-action');
+
+        if (action === 'open-notifications') { openNotificationsModal(); return; }
+        if (action === 'open-order-from-notif') {
+          if (state.screen === 'main') {
+            state.activeTab = 'orders';
+            state.orderFilter = 'new';
+            render();
+            openOrderDetailSheet(el.getAttribute('data-order-id'));
+          } else {
+            closeModal();
+            showToast('Sign in to view incoming orders');
+          }
+          return;
+        }
+        if (action === 'demo-autofill-login') { state.loginPhone = '9864022334'; render(); showToast('Filled Green Leaf Kitchen'); return; }
+        if (action === 'go-register') { state.screen = 'register'; render(); return; }
+        if (action === 'go-login') { clearInterval(otpInterval); state.screen = 'login'; render(); return; }
+        if (action === 'fill-demo-otp') { state.otpValue = '123456'; var inp = document.getElementById('otp-input'); if (inp) inp.value = '123456'; return; }
+        if (action === 'resend-otp') { startOtpCountdown(); render(); showToast('New OTP sent'); return; }
+        if (action === 'pin-gps') { state.regDraft.gpsPinned = true; state.regDraft.gpsCoords = '26.1445° N, 91.7362° E'; if (!state.regDraft.address.trim()) state.regDraft.address = 'GS Road, Christian Basti, Guwahati'; render(); showToast('GPS pinned'); return; }
+        if (action === 'set-reg-diet') { state.regDraft.dietType = el.getAttribute('data-diet'); render(); return; }
+        if (action === 'simulate-approve') { state.restaurant.isOnline = true; state.screen = 'main'; state.activeTab = 'orders'; render(); showToast(state.restaurant.name + ' is now live!'); return; }
+        if (action === 'switch-tab') { state.activeTab = el.getAttribute('data-tab'); render(); window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+        if (action === 'set-order-filter') { state.orderFilter = el.getAttribute('data-filter'); render(); return; }
+        if (action === 'ask-toggle-online') {
+          var off = state.restaurant.isOnline;
+          openModal('<h2 class="text-base font-bold">' + (off ? 'Go offline?' : 'Go online?') + '</h2><p class="text-xs text-muted">' + (off ? 'Your store will be hidden from customers.' : 'Your store will accept orders immediately.') + '</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn ' + (off ? 'm3-btn-danger' : 'm3-btn-filled') + '" data-action="confirm-toggle-online">' + (off ? 'Go offline' : 'Go online') + '</button></div>');
+          return;
+        }
+        if (action === 'confirm-toggle-online') { state.restaurant.isOnline = !state.restaurant.isOnline; syncPartnerToFirestore(); closeModal(); render(); showToast(state.restaurant.isOnline ? 'Store is online' : 'Store is offline'); return; }
+        if (action === 'open-order-sheet') { openOrderDetailSheet(el.getAttribute('data-order-id')); return; }
+        if (action === 'toggle-upi-confirm') { var oU = findOrder(el.getAttribute('data-order-id')); if (oU) { oU.upiConfirmed = !oU.upiConfirmed; openOrderDetailSheet(oU.id); } return; }
+        if (action === 'view-upi-screenshot') {
+          var oShot = findOrder(el.getAttribute('data-order-id'));
+          if (!oShot) return;
+          openModal(
+            '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Customer Payment Screenshot</h2><button type="button" class="m3-icon-btn" data-action="open-order-sheet" data-order-id="' + esc(oShot.id) + '">✕</button></div>' +
+            '<div class="m3-card" style="text-align:center; padding:18px; display:flex; flex-direction:column; gap:10px;">' +
+            (oShot.upiScreenshot ? '<img src="' + esc(oShot.upiScreenshot) + '" alt="Customer UPI Screenshot" style="max-width:100%; max-height:240px; border-radius:12px; object-fit:contain; margin:0 auto; border:1px solid var(--md-outline-variant);" />' : '<div style="width:52px; height:52px; border-radius:999px; background:var(--md-primary-container); color:var(--md-primary); display:inline-flex; align-items:center; justify-content:center; margin:0 auto; font-size:22px; font-weight:800;">✓</div>') +
+            '<p class="text-base font-bold text-primary">Paid ' + inr(oShot.total) + '</p>' +
+            '<p class="text-xs text-muted">To: ' + esc(state.restaurant.upiId) + '</p>' +
+            '<p class="text-xxs text-muted">From: ' + esc(oShot.customerName) + ' · Ref ' + esc(oShot.upiRef || 'UPI-43291084721') + '</p>' +
+            '</div>' +
+            '<button type="button" class="m3-btn m3-btn-filled m3-btn-block" data-action="open-order-sheet" data-order-id="' + esc(oShot.id) + '">Back to Order #' + esc(oShot.id) + '</button>'
+          );
+          return;
+        }
+        if (action === 'ask-accept-order') {
+          var oA = findOrder(el.getAttribute('data-order-id'));
+          if (!oA || (oA.paymentMethod === 'UPI' && !oA.upiConfirmed)) { showToast('Confirm UPI payment first'); return; }
+          openModal('<h2 class="text-base font-bold">Accept Order #' + esc(oA.id) + '?</h2><p class="text-xs text-muted">Move this order to Preparing?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oA.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-accept-order" data-order-id="' + esc(oA.id) + '">Accept</button></div>');
+          return;
+        }
+        if (action === 'confirm-accept-order') { var oAcc = findOrder(el.getAttribute('data-order-id')); if (oAcc) { oAcc.status = 'preparing'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oAcc.id, { status: 'preparing', upiConfirmed: oAcc.upiConfirmed }); state.orderFilter = 'preparing'; render(); openOrderDetailSheet(oAcc.id); showToast('Order #' + oAcc.id + ' accepted'); } return; }
+        if (action === 'open-cancel-modal') { state.cancelReasonSelected = 'An item is out of stock'; openCancelOrderModal(el.getAttribute('data-order-id')); return; }
+        if (action === 'select-cancel-reason') { state.cancelReasonSelected = el.getAttribute('data-reason'); openCancelOrderModal(el.getAttribute('data-order-id')); return; }
+        if (action === 'confirm-cancel-order') { var oC = findOrder(el.getAttribute('data-order-id')); if (oC) { oC.status = 'cancelled'; oC.cancelReason = state.cancelReasonSelected; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oC.id, { status: 'cancelled', cancelReason: oC.cancelReason }); state.orderFilter = 'cancelled'; closeModal(); render(); showToast('Order #' + oC.id + ' cancelled'); } return; }
+        if (action === 'pick-staff') { var oS = findOrder(el.getAttribute('data-order-id')); if (oS) { oS.riderName = el.getAttribute('data-name'); oS.riderPhone = el.getAttribute('data-phone'); openOrderDetailSheet(oS.id); } return; }
+        if (action === 'ask-mark-ready') {
+          var oR = findOrder(el.getAttribute('data-order-id'));
+          if (oR) openModal('<h2 class="text-base font-bold">Mark Order #' + esc(oR.id) + ' ready?</h2><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oR.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-mark-ready" data-order-id="' + esc(oR.id) + '">Mark ready</button></div>');
+          return;
+        }
+        if (action === 'confirm-mark-ready') { var oRd = findOrder(el.getAttribute('data-order-id')); if (oRd) { oRd.status = 'ready'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oRd.id, { status: 'ready' }); state.orderFilter = 'ready'; render(); openOrderDetailSheet(oRd.id); showToast('Order #' + oRd.id + ' ready'); } return; }
+        if (action === 'ask-dispatch-order') {
+          var oD = findOrder(el.getAttribute('data-order-id'));
+          if (!oD || !String(oD.riderName || '').trim() || String(oD.riderPhone || '').replace(/\D/g, '').length !== 10) { showToast('Enter rider name & 10-digit phone first'); return; }
+          openModal('<h2 class="text-base font-bold">Dispatch Order #' + esc(oD.id) + '?</h2><p class="text-xs text-muted">Assign ' + esc(oD.riderName) + '?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oD.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-dispatch-order" data-order-id="' + esc(oD.id) + '">Dispatch</button></div>');
+          return;
+        }
+        if (action === 'confirm-dispatch-order') { var oDp = findOrder(el.getAttribute('data-order-id')); if (oDp) { oDp.status = 'out'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oDp.id, { status: 'out', riderName: oDp.riderName, riderPhone: oDp.riderPhone, staffName: oDp.riderName, staffPhone: oDp.riderPhone }); state.orderFilter = 'out'; render(); openOrderDetailSheet(oDp.id); showToast('Order #' + oDp.id + ' dispatched'); } return; }
+        if (action === 'ask-mark-delivered') {
+          var oDl = findOrder(el.getAttribute('data-order-id'));
+          if (oDl) openModal('<h2 class="text-base font-bold">Mark Order #' + esc(oDl.id) + ' delivered?</h2><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oDl.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-mark-delivered" data-order-id="' + esc(oDl.id) + '">Confirm</button></div>');
+          return;
+        }
+        if (action === 'confirm-mark-delivered') { var oDn = findOrder(el.getAttribute('data-order-id')); if (oDn) { oDn.status = 'delivered'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oDn.id, { status: 'delivered' }); state.orderFilter = 'delivered'; closeModal(); render(); showToast('Order #' + oDn.id + ' delivered'); } return; }
+        if (action === 'toggle-stock') { var mIt = state.menu.find(function (m) { return m.id === el.getAttribute('data-item-id'); }); if (mIt) { mIt.inStock = !mIt.inStock; syncPartnerToFirestore(); render(); showToast(mIt.name + (mIt.inStock ? ' in stock' : ' out of stock')); } return; }
+        if (action === 'open-menu-modal') { state.menuEditorDraft = null; openMenuItemModal(el.getAttribute('data-item-id') || ''); return; }
+        if (action === 'close-menu-modal') { state.menuEditorDraft = null; closeModal(); return; }
+        if (action === 'set-me-veg' && state.menuEditorDraft) { state.menuEditorDraft.isVeg = el.getAttribute('data-veg') === 'true'; openMenuItemModal(state.menuEditorDraft.id); return; }
+        if (action === 'toggle-me-stock' && state.menuEditorDraft) { state.menuEditorDraft.inStock = !state.menuEditorDraft.inStock; openMenuItemModal(state.menuEditorDraft.id); return; }
+        if (action === 'ask-delete-item') {
+          var dIt = state.menu.find(function (m) { return m.id === el.getAttribute('data-item-id'); });
+          if (dIt) openModal('<h2 class="text-base font-bold">Delete ' + esc(dIt.name) + '?</h2><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-delete-item" data-item-id="' + esc(dIt.id) + '">Delete</button></div>');
+          return;
+        }
+        if (action === 'confirm-delete-item') { var rm = el.getAttribute('data-item-id'); state.menu = state.menu.filter(function (m) { return m.id !== rm; }); closeModal(); render(); showToast('Item deleted'); return; }
+        if (action === 'open-edit-upi-modal') { openEditUpiModal(state.restaurant.upiId); return; }
+        if (action === 'confirm-save-upi') { state.restaurant.upiId = state.upiDraftValue; syncPartnerToFirestore(); closeModal(); render(); showToast('UPI ID updated'); return; }
+        if (action === 'open-request-changes-modal') { openRequestChangesModal(); return; }
+        if (action === 'ask-withdraw-request') { openModal('<h2 class="text-base font-bold">Withdraw change request?</h2><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Keep</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-withdraw-request">Withdraw</button></div>'); return; }
+        if (action === 'confirm-withdraw-request') { state.restaurant.pendingChangeRequest = null; closeModal(); render(); showToast('Request withdrawn'); return; }
+        if (action === 'open-hours-modal') { openHoursModal(); return; }
+        if (action === 'ask-logout') { openModal('<h2 class="text-base font-bold">Log out?</h2><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-logout">Log out</button></div>'); return; }
+        if (action === 'confirm-logout') { clearInterval(otpInterval); state.screen = 'login'; state.otpValue = ''; closeModal(); render(); showToast('Logged out'); return; }
+        if (action === 'call-toast') { showToast('Calling ' + (el.getAttribute('data-label') || 'contact') + '...'); return; }
+        if (action === 'open-support-sheet') {
+          state.supportOrderId = el.getAttribute('data-order-id') || '';
+          state.supportTab = 'raise';
+          state.supportError = '';
+          openSupportSheet();
+          return;
+        }
+        if (action === 'set-sup-tab') {
+          state.supportTab = el.getAttribute('data-tab') || 'raise';
+          openSupportSheet();
+          return;
+        }
+        if (action === 'set-sup-topic') {
+          state.supportTopic = el.getAttribute('data-topic') || 'Other';
+          openSupportSheet();
+          return;
+        }
+        if (action === 'pick-sup-order') {
+          state.supportOrderId = el.getAttribute('data-order-id') || '';
+          state.supportError = '';
+          openSupportSheet();
+          return;
+        }
+        if (action === 'submit-partner-ticket') {
+          var orderTopicsCheck = ['Order / Rider issue', 'UPI payment discrepancy', 'Customer address issue'];
+          var needsOrder = orderTopicsCheck.indexOf(state.supportTopic) !== -1;
+          var ordVal = String(state.supportOrderId || '').trim();
+          if (needsOrder && !ordVal) {
+            state.supportError = 'Related Order # is required for ' + state.supportTopic + '.';
+            openSupportSheet();
+            return;
+          }
+          var msg = String(state.supportMessage || '').trim();
+          if (!msg) {
+            state.supportError = 'Please describe the issue before submitting.';
+            openSupportSheet();
+            return;
+          }
+          var tId = 'SUP-' + state.nextTicketNum;
+          state.nextTicketNum += 1;
+          var ptObj = {
+            id: tId, source: 'restaurant', senderName: state.restaurant.name, senderPhone: state.restaurant.ownerPhone,
+            orderId: String(state.supportOrderId || '').trim(),
+            topic: state.supportTopic,
+            message: msg,
+            status: 'open',
+            createdAt: 'Just now',
+            resolutionNote: ''
+          };
+          state.tickets.unshift(ptObj);
+          if (window.ZaykoDB) window.ZaykoDB.setDoc('tickets', tId, ptObj);
+          state.supportMessage = '';
+          state.supportOrderId = '';
+          state.supportError = '';
+          state.supportTab = 'tickets';
+          saveState();
+          openSupportSheet();
+          showToast('Ticket #' + tId + ' sent to Zayko Admin');
+          return;
+        }
+        if (action === 'open-receipt-sheet') {
+          openReceiptSheet(el.getAttribute('data-order-id'));
+          return;
+        }
+        if (action === 'print-receipt-now') {
+          if (typeof window.print === 'function') {
+            window.print();
+          } else {
+            showToast('Print dialog opened');
+          }
+          return;
+        }
+        if (action === 'copy-receipt') {
+          var ro = findOrder(el.getAttribute('data-order-id'));
+          if (ro) {
+            var txt = state.restaurant.name + '\nOrder #' + ro.id + '\nCustomer: ' + ro.customerName + ' (' + ro.address + ')\n' +
+              ro.items.map(function (it) { return it.qty + ' x ' + it.name + ' - ' + inr(it.price); }).join('\n') +
+              '\nDelivery: ' + inr(ro.deliveryFee) + '\nTotal: ' + inr(ro.total) + ' (' + ro.paymentMethod + ')';
+            try {
+              var ta = document.createElement('textarea');
+              ta.value = txt;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.focus();
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+            } catch (err) {}
+            showToast('Receipt #' + ro.id + ' copied');
+          }
+          return;
+        }
+        if (action === 'close-modal') { closeModal(); }
+      });
+
+      androidShell.addEventListener('input', function (e) {
+        var t = e.target;
+        if (!t || !t.id) return;
+        if (t.id === 'login-phone-input') { t.value = t.value.replace(/\D/g, '').slice(0, 10); state.loginPhone = t.value; }
+        else if (t.id === 'otp-input') { t.value = t.value.replace(/\D/g, '').slice(0, 6); state.otpValue = t.value; }
+        else if (t.id === 'reg-name') state.regDraft.name = t.value;
+        else if (t.id === 'reg-phone') { t.value = t.value.replace(/\D/g, '').slice(0, 10); state.regDraft.phone = t.value; }
+        else if (t.id === 'reg-address') state.regDraft.address = t.value;
+        else if (t.id === 'reg-cuisine') state.regDraft.cuisine = t.value;
+        else if (t.id === 'reg-upi') state.regDraft.upiId = t.value;
+        else if (t.id === 'rider-name-input') { var o1 = findOrder(t.getAttribute('data-order-id')); if (o1) o1.riderName = t.value; }
+        else if (t.id === 'rider-phone-input') { t.value = t.value.replace(/\D/g, '').slice(0, 10); var o2 = findOrder(t.getAttribute('data-order-id')); if (o2) o2.riderPhone = t.value; }
+        else if (t.id === 'new-upi-input') { state.upiDraftValue = t.value; }
+        else if (t.id === 'partner-sup-order') { state.supportOrderId = t.value; }
+        else if (t.id === 'partner-sup-msg') { state.supportMessage = t.value; state.supportError = ''; }
+        else if (state.menuEditorDraft) {
+          if (t.id === 'me-name') state.menuEditorDraft.name = t.value;
+          else if (t.id === 'me-price') state.menuEditorDraft.price = t.value;
+          else if (t.id === 'me-desc') state.menuEditorDraft.description = t.value;
+        }
+      });
+
+      androidShell.addEventListener('change', function (e) {
+        if (e.target && e.target.id === 'menu-photo-input' && state.menuEditorDraft) {
+          var file = e.target.files && e.target.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = async function (ev) {
+            var rawPhoto = String(ev.target.result || '');
+            state.menuEditorDraft.photo = window.ZaykoDB ? await window.ZaykoDB.compressImage(rawPhoto, 720, 0.65) : rawPhoto;
+            var box = document.getElementById('menu-photo-preview');
+            if (box) box.innerHTML = '<img src="' + esc(state.menuEditorDraft.photo) + '" alt="Dish" style="width:100%; height:100%; object-fit:cover;" />';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      androidShell.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || !form.id) return;
+        e.preventDefault();
+        if (form.id === 'login-form') {
+          if (String(state.loginPhone || '').replace(/\D/g, '').length !== 10) { showToast('Enter a valid 10-digit mobile number'); return; }
+          state.otpValue = ''; state.screen = 'otp'; startOtpCountdown(); render(); showToast('OTP sent (Demo: 123456)');
+        } else if (form.id === 'otp-form') {
+          if (String(state.otpValue || '').trim() !== '123456') { showToast('Invalid OTP. Use 123456'); return; }
+          clearInterval(otpInterval); state.screen = 'main'; state.activeTab = 'orders'; if (window.ZaykoDB) window.ZaykoDB.signInAnon().catch(function(){}); syncPartnerToFirestore(); render(); showToast('Signed in to ' + state.restaurant.name);
+        } else if (form.id === 'register-form') {
+          var fd = new FormData(form);
+          var rN = String(fd.get('name') || '').trim(), rP = String(fd.get('phone') || '').replace(/\D/g, ''), rA = String(fd.get('address') || '').trim(), rC = String(fd.get('cuisine') || '').trim(), rU = String(fd.get('upiId') || '').trim();
+          if (!rN || rP.length !== 10 || !rA || !rC || !isValidUpiId(rU)) { showToast('Fill all fields and a valid UPI ID'); return; }
+          state.restaurant = { name: rN, ownerPhone: formatTenDigitPhone(rP), address: rA, gpsPinned: true, gpsCoords: '26.1445° N, 91.7362° E', cuisine: rC, dietType: state.regDraft.dietType, upiId: rU, openingHours: '10:00 AM – 10:00 PM', isOnline: false, pendingChangeRequest: null };
+          state.screen = 'pending'; render(); showToast('Registration submitted');
+        } else if (form.id === 'menu-item-form' && state.menuEditorDraft) {
+          var d = state.menuEditorDraft, iN = String(d.name || '').trim(), iP = Math.round(Number(d.price));
+          if (!iN || isNaN(iP) || iP < 1) { showToast('Enter valid name & price'); return; }
+          if (d.id) {
+            var ex = state.menu.find(function (m) { return m.id === d.id; });
+            if (ex) { ex.name = iN; ex.price = iP; ex.description = d.description || 'Freshly prepared.'; ex.isVeg = d.isVeg; ex.inStock = d.inStock; ex.photo = d.photo; }
+          } else {
+            state.menu.unshift({ id: 'item-' + Date.now(), name: iN, price: iP, description: d.description || 'Freshly prepared.', isVeg: d.isVeg, inStock: d.inStock, photo: d.photo });
+          }
+          state.menuEditorDraft = null; syncPartnerToFirestore(); closeModal(); render(); showToast('Saved ' + iN);
+        } else if (form.id === 'edit-upi-form') {
+          var nu = String(new FormData(form).get('upiId') || '').trim();
+          if (!isValidUpiId(nu)) { showToast('Enter a valid UPI ID'); return; }
+          state.upiDraftValue = nu;
+          openModal('<h2 class="text-base font-bold">Confirm UPI ID update?</h2><p class="text-xs text-muted">New UPI: <strong>' + esc(nu) + '</strong></p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-save-upi">Save</button></div>');
+        } else if (form.id === 'request-changes-form') {
+          var rc = new FormData(form), rsn = String(rc.get('reason') || '').trim();
+          if (!rsn) { showToast('Enter a reason for Zayko Admin'); return; }
+          var crId = 'req-' + Date.now();
+          state.restaurant.pendingChangeRequest = { id: crId, summary: String(rc.get('name')) + ' · ' + String(rc.get('address')), reason: rsn };
+          if (window.ZaykoDB) window.ZaykoDB.setDoc('changeRequests', crId, { id: crId, restaurantId: PARTNER_REST_ID, restaurantName: state.restaurant.name, field: 'address', fieldLabel: 'Profile Update', currentValue: state.restaurant.address, requestedValue: String(rc.get('address')), reason: rsn, requestedAt: 'Just now', status: 'pending' });
+          closeModal(); render(); showToast('Sent to Zayko Admin');
+        } else if (form.id === 'hours-form') {
+          var hrs = String(new FormData(form).get('hours') || '').trim();
+          if (hrs) { state.restaurant.openingHours = hrs; syncPartnerToFirestore(); closeModal(); render(); showToast('Opening hours updated'); }
+        }
+      });
+
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { state.menuEditorDraft = null; closeModal(); } });
+
+      // =========================================================================
+      // FIREBASE REAL-TIME SYNC (PARTNER APP)
+      // =========================================================================
+      var PARTNER_REST_ID = 'green-leaf-kitchen';
+
+      function syncPartnerToFirestore() {
+        if (!window.ZaykoDB) return;
+        window.ZaykoDB.setDoc('restaurants', PARTNER_REST_ID, {
+          id: PARTNER_REST_ID,
+          name: state.restaurant.name,
+          ownerPhone: state.restaurant.ownerPhone,
+          phone: state.restaurant.ownerPhone,
+          address: state.restaurant.address,
+          cuisine: state.restaurant.cuisine,
+          dietType: state.restaurant.dietType,
+          upiId: state.restaurant.upiId,
+          openingHours: state.restaurant.openingHours,
+          isOnline: state.restaurant.isOnline,
+          status: state.screen === 'pending' ? 'pending' : 'live',
+          menu: state.menu
+        });
+      }
+
+      function initPartnerFirestore() {
+        if (!window.ZaykoDB) return;
+        var db = window.ZaykoDB;
+
+        db.listenDoc('restaurants', PARTNER_REST_ID, function (r) {
+          if (!r) return;
+          state.restaurant.name = r.name || state.restaurant.name;
+          state.restaurant.ownerPhone = r.ownerPhone || r.phone || state.restaurant.ownerPhone;
+          state.restaurant.address = r.address || state.restaurant.address;
+          state.restaurant.cuisine = r.cuisine || state.restaurant.cuisine;
+          state.restaurant.upiId = r.upiId || state.restaurant.upiId;
+          state.restaurant.openingHours = r.openingHours || state.restaurant.openingHours;
+          if (typeof r.isOnline === 'boolean') state.restaurant.isOnline = r.isOnline;
+          if (Array.isArray(r.menu) && r.menu.length > 0) state.menu = r.menu;
+          render();
+        });
+
+        db.listenCollection('orders', function (list) {
+          if (!list || list.length === 0) return;
+          var mine = list.filter(function (o) {
+            return !o.restaurantId || o.restaurantId === PARTNER_REST_ID || o.restaurantName === state.restaurant.name;
+          });
+          if (mine.length > 0) {
+            mine.sort(function (a, b) { return Number(b.id) - Number(a.id); });
+            state.orders = mine.map(function (o) {
+              return {
+                id: String(o.id || o._docId),
+                status: o.status || 'new',
+                customerName: o.customerName || 'Customer',
+                customerPhone: o.customerPhone || '',
+                address: o.customerAddress || o.address || '',
+                distanceKm: o.distanceKm || '2.4 km',
+                paymentMethod: (o.paymentMethod === 'UPI' || o.paymentMethod === 'upi' || o.paymentType === 'upi') ? 'UPI' : 'COD',
+                upiConfirmed: Boolean(o.upiConfirmed),
+                hasScreenshot: Boolean(o.upiScreenshot || o.hasScreenshot),
+                upiScreenshot: o.upiScreenshot || '',
+                upiRef: o.upiRef || 'UPI-' + String(o.id),
+                items: Array.isArray(o.items) ? o.items : (o.itemsList || []),
+                deliveryFee: Number(o.deliveryFee || 50),
+                total: Number(o.total || 0),
+                riderName: o.riderName || o.staffName || '',
+                riderPhone: o.riderPhone || o.staffPhone || '',
+                cancelReason: o.cancelReason || '',
+                placedAt: o.placedAt || 'Just now'
+              };
+            });
+            render();
+          }
+        });
+
+        db.listenCollection('tickets', function (list) {
+          if (!list || list.length === 0) return;
+          state.tickets = list.filter(function (t) { return t.source === 'restaurant' || !t.source; });
+          render();
+        });
+      }
+
+      if (window.ZaykoDB) initPartnerFirestore();
+      else window.addEventListener('zayko-db-ready', initPartnerFirestore);
+
+      render();
+    })();
+  </script>
+</body>
+</html>
