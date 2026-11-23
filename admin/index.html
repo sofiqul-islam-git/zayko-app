@@ -1,1 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Zayko Admin — Android Management Console</title>
+  <style>
+    /* =========================================================================
+       1. MATERIAL DESIGN 3 (ANDROID) TOKENS — ZAYKO ADMIN
+       ========================================================================= */
+    :root {
+      --md-primary: #135D3A;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D4EDDF;
+      --md-on-primary-container: #072B19;
+      --md-secondary: #EA6A2B;
+      --md-bg: #FAF8F2;
+      --md-surface: #FFFFFF;
+      --md-surface-container-low: #F5F2EA;
+      --md-surface-container: #EFECE2;
+      --md-surface-container-high: #E7E3D7;
+      --md-outline: #737974;
+      --md-outline-variant: #E1DDD2;
+      --md-ink: #191C1A;
+      --md-muted: #5B635E;
+      --md-error: #BA1A1A;
+      --md-error-container: #FFDAD6;
+      --md-on-error-container: #410002;
+      --md-amber: #9A5B00;
+      --md-amber-container: #FFEDD5;
 
+      --md-shape-xs: 8px;
+      --md-shape-sm: 12px;
+      --md-shape-md: 16px;
+      --md-shape-lg: 24px;
+      --md-shape-full: 9999px;
+
+      --md-elev-1: 0 1px 3px rgba(19, 93, 58, 0.08), 0 1px 2px rgba(25, 28, 26, 0.06);
+      --md-elev-2: 0 3px 8px rgba(19, 93, 58, 0.12), 0 1px 3px rgba(25, 28, 26, 0.08);
+      --md-elev-3: 0 8px 24px rgba(25, 28, 26, 0.18);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: #E8E4DA;
+      color: var(--md-ink);
+      font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button { border: none; background: none; cursor: pointer; }
+    button:disabled { opacity: 0.42; cursor: not-allowed; }
+    a { color: inherit; text-decoration: none; }
+    .hidden { display: none !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes m3FadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-m3 { animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1); }
+
+    /* =========================================================================
+       2. ANDROID DEVICE SHELL & PERSISTENT STATUS BAR
+       ========================================================================= */
+    .android-shell {
+      width: 100%;
+      max-width: 428px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--md-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .android-shell.with-nav { padding-bottom: 92px; }
+
+    .android-status-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 28px;
+      padding: 0 16px;
+      background: rgba(250, 248, 242, 0.98);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--md-ink);
+      user-select: none;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(225, 221, 210, 0.45);
+    }
+
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    .z-app-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: var(--md-elev-1);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .z-app-icon-lg {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      font-size: 34px;
+      box-shadow: var(--md-elev-2);
+    }
+
+    /* =========================================================================
+       3. MATERIAL 3 TOP BAR, CARDS, CHIPS, INPUTS & BUTTONS
+       ========================================================================= */
+    .m3-top-bar {
+      position: sticky;
+      top: 0;
+      padding-top: calc(10px + env(safe-area-inset-top, 0px));
+      z-index: 20;
+      background: rgba(250, 248, 242, 0.96);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--md-outline-variant);
+    }
+
+    .page-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .m3-card {
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+      box-shadow: var(--md-elev-1);
+    }
+
+    .m3-card-tonal {
+      background: var(--md-surface-container-low);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 13px;
+    }
+
+    .m3-card-pressable {
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+    .m3-card-pressable:active { transform: scale(0.985); }
+
+    .m3-banner-primary {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-radius: var(--md-shape-md);
+      padding: 13px;
+    }
+
+    .m3-banner-error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+      border-radius: var(--md-shape-md);
+      padding: 13px;
+    }
+
+    .m3-banner-amber {
+      background: var(--md-amber-container);
+      color: var(--md-amber);
+      border-radius: var(--md-shape-sm);
+      padding: 11px 13px;
+    }
+
+    .m3-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 46px;
+      padding: 0 16px;
+      border-radius: var(--md-shape-full);
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.1s ease;
+      text-align: center;
+    }
+    .m3-btn:active:not(:disabled) { transform: scale(0.975); }
+    .m3-btn-sm { min-height: 36px; padding: 0 12px; font-size: 12px; }
+    .m3-btn-block { width: 100%; }
+    .m3-btn-filled { background: var(--md-primary); color: #FFFFFF; box-shadow: var(--md-elev-1); }
+    .m3-btn-tonal { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+    .m3-btn-outlined { background: var(--md-surface); color: var(--md-ink); border: 1px solid var(--md-outline); }
+    .m3-btn-danger { background: var(--md-error); color: #FFFFFF; }
+    .m3-btn-danger-outline { background: var(--md-surface); color: var(--md-error); border: 1px solid var(--md-error); }
+
+    .m3-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--md-shape-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-ink);
+      flex-shrink: 0;
+    }
+
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .chip-rail {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .m3-chip {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: var(--md-shape-xs);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      color: var(--md-ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .m3-chip.selected {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .m3-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2.5px 8px;
+      border-radius: var(--md-shape-xs);
+      font-size: 10.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .m3-badge-primary { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+    .m3-badge-amber { background: var(--md-amber-container); color: var(--md-amber); }
+    .m3-badge-error { background: var(--md-error-container); color: var(--md-on-error-container); }
+    .m3-badge-neutral { background: var(--md-surface-container); color: var(--md-muted); }
+
+    .m3-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-full);
+      padding: 4px 14px;
+      min-height: 44px;
+    }
+    .m3-search-bar input { flex: 1; border: none; outline: none; background: transparent; font-size: 13px; min-width: 0; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+    .m3-input {
+      width: 100%;
+      background: var(--md-surface);
+      border: 1.5px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-sm);
+      padding: 11px 13px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--md-ink);
+    }
+    .m3-input:focus { outline: none; border-color: var(--md-primary); }
+
+    .check-row {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 8px;
+    }
+    .check-row.checked { background: var(--md-primary-container); border-color: var(--md-primary); }
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--md-outline);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .check-row.checked .check-box { background: var(--md-primary); border-color: var(--md-primary); }
+
+    /* =========================================================================
+       4. MATERIAL 3 NAVIGATION BAR (5 TABS WITH PILL INDICATOR)
+       ========================================================================= */
+    .m3-nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-top: 1px solid var(--md-outline-variant);
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+      z-index: 30;
+    }
+
+    .m3-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--md-muted);
+      position: relative;
+    }
+
+    .m3-nav-pill {
+      width: 52px;
+      height: 28px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .m3-nav-item.active { color: var(--md-ink); font-weight: 700; }
+    .m3-nav-item.active .m3-nav-pill { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+
+    .m3-nav-badge {
+      position: absolute;
+      top: -1px;
+      right: calc(50% - 22px);
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: var(--md-secondary);
+      color: #FFFFFF;
+      font-size: 9.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* =========================================================================
+       5. ANDROID BOTTOM SHEETS & SNACKBAR
+       ========================================================================= */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(25, 28, 26, 0.48);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-radius: 28px 28px 0 0;
+      padding: 10px 18px 24px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: var(--md-elev-3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--md-outline);
+      opacity: 0.4;
+      margin: 2px auto 4px;
+      flex-shrink: 0;
+    }
+
+    .android-snackbar {
+      position: fixed;
+      bottom: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 396px;
+      z-index: 80;
+      background: #2E322F;
+      color: #F4F5F4;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 13px 16px;
+      border-radius: 10px;
+      box-shadow: var(--md-elev-3);
+      animation: m3FadeUp 0.15s ease-out;
+    }
+
+    .text-xs { font-size: 12px; }
+    .text-xxs { font-size: 10.5px; }
+    .text-sm { font-size: 13.5px; }
+    .text-base { font-size: 16px; }
+    .font-bold { font-weight: 700; }
+    .text-muted { color: var(--md-muted); }
+    .text-primary { color: var(--md-primary); }
+    .text-error { color: var(--md-error); }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+  <div id="android-shell" class="android-shell">
+    
+      </div>
+    </div>
+
+    <!-- Main App Viewport -->
+    <div id="app" style="flex:1; display:flex; flex-direction:column;"></div>
+
+    <!-- Android Bottom Sheet Container -->
+    <div id="modal-root" class="sheet-backdrop hidden" role="dialog" aria-modal="true"></div>
+
+    <!-- Android Snackbar -->
+    <div id="toast" class="android-snackbar hidden" role="status" aria-live="polite">
+      <span id="toast-msg"></span>
+    </div>
+  </div>
+
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      getDocs,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3tPo7KLznK4imXXcZeof2mutH84jgpLY",
+      authDomain: "zayko-food-delivery-854ec.firebaseapp.com",
+      projectId: "zayko-food-delivery-854ec",
+      storageBucket: "zayko-food-delivery-854ec.firebasestorage.app",
+      messagingSenderId: "72605066232",
+      appId: "1:72605066232:web:f01f4f55cb9f4ba2a7ac0d",
+      measurementId: "G-VB5GJ2B4TZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.ZaykoDB = {
+      auth,
+      db,
+      async signInAnon() {
+        if (auth.currentUser) return auth.currentUser;
+        const cred = await signInAnonymously(auth);
+        return cred.user;
+      },
+      async signInAdmin(email, password) {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        return cred.user;
+      },
+      async signOutUser() {
+        await signOut(auth);
+      },
+      onAuth(cb) {
+        return onAuthStateChanged(auth, cb);
+      },
+      listenCollection(colName, cb) {
+        return onSnapshot(
+          collection(db, colName),
+          (snap) => {
+            const list = [];
+            snap.forEach((d) => list.push({ ...d.data(), _docId: d.id }));
+            cb(list);
+          },
+          (err) => console.warn("Firestore listen error (" + colName + "):", err)
+        );
+      },
+      listenDoc(colName, docId, cb) {
+        return onSnapshot(
+          doc(db, colName, docId),
+          (snap) => {
+            if (snap.exists()) cb(snap.data());
+          },
+          (err) => console.warn("Firestore doc listen error (" + colName + "/" + docId + "):", err)
+        );
+      },
+      async setDoc(colName, docId, data) {
+        await setDoc(doc(db, colName, String(docId)), data, { merge: true });
+      },
+      async deleteDoc(colName, docId) {
+        await deleteDoc(doc(db, colName, String(docId)));
+      },
+      async seedIfEmpty(colName, docsMap) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          if (snap.empty) {
+            const entries = Object.entries(docsMap);
+            for (const [id, data] of entries) {
+              await setDoc(doc(db, colName, String(id)), data, { merge: true });
+            }
+          }
+        } catch (err) {
+          console.warn("Seed skipped (" + colName + "):", err);
+        }
+      },
+      compressImage(dataUrl, maxWidth = 720, quality = 0.65) {
+        return new Promise((resolve) => {
+          if (!dataUrl || !String(dataUrl).startsWith("data:image")) {
+            resolve(dataUrl || "");
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+    };
+    window.dispatchEvent(new Event("zayko-db-ready"));
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var ICONS = {
+        overview: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>',
+        stores: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/></svg>',
+        orders: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>',
+        support: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+        settings: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+        phone: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+      };
+
+      var state = {
+        isAuthenticated: false,
+        activeTab: 'overview', // 'overview' | 'restaurants' | 'orders' | 'support' | 'settings'
+        loginEmail: '',
+        loginPassword: '',
+        showPassword: false,
+        loginError: '',
+
+        restaurantFilter: 'pending',
+        restaurantSearch: '',
+        orderFilter: 'all',
+        orderSearch: '',
+        ticketStatusFilter: 'all',
+        ticketSourceFilter: 'all',
+
+        verifyChecks: { details: false, phone: false, upi: false, delivery: false },
+        verifyNote: '',
+        rejectReason: '',
+        pauseReason: '',
+        showCancelOverrideForm: false,
+        showMarkDeliveredConfirm: false,
+        ticketDraftNote: '',
+        showTicketStatusConfirm: false,
+        pendingSaveAction: null,
+
+        settings: {
+          deliveryFee: 50,
+          baseDistanceKm: 5,
+          extraPerKmFee: 10,
+          maxRadiusKm: 7,
+          supportPhone: '+91 98640 00111'
+        },
+
+        restaurants: [
+          { id: 'rest-1', name: 'Assam Spice House', ownerName: 'Partha Sarathi Bora', phone: '+91 98640 22110', address: 'RG Baruah Road, Sundarpur, Guwahati', cuisine: 'Assamese, North Indian', upiId: 'assamspicehouse@okaxis', openingHours: '11:00 AM – 10:30 PM', status: 'pending', isOnline: false, appliedAt: '25 mins ago', verificationNote: '' },
+          { id: 'rest-2', name: 'Guwahati Biryani Co.', ownerName: 'Tariq Ahmed', phone: '+91 98640 33991', address: 'GS Road, Christian Basti, Guwahati', cuisine: 'Biryani, Mughlai', upiId: 'guwahatibiryani@okicici', openingHours: '12:00 PM – 11:00 PM', status: 'pending', isOnline: false, appliedAt: '1 hour ago', verificationNote: '' },
+          { id: 'rest-3', name: 'Green Leaf Kitchen', ownerName: 'Rohan Das', phone: '+91 98640 22334', address: 'GS Road, Near Dispur Last Gate, Guwahati', cuisine: 'North Indian, Assamese', upiId: 'greenleafkitchen@okhdfcbank', openingHours: '10:00 AM – 10:00 PM', status: 'live', isOnline: true, appliedAt: 'Approved', verificationNote: 'Verified owner & UPI ID' },
+          { id: 'rest-4', name: 'Paltan Tandoor', ownerName: 'Gurpreet Singh', phone: '+91 98640 66112', address: 'Paltan Bazar, Guwahati', cuisine: 'North Indian, Tandoor, Rolls', upiId: 'paltantandoor@oksbi', openingHours: '11:30 AM – 11:00 PM', status: 'live', isOnline: true, appliedAt: 'Approved', verificationNote: 'Verified storefront' },
+          { id: 'rest-6', name: 'Zoo Road Momos', ownerName: 'Tenzing Bhutia', phone: '+91 98640 88225', address: 'RG Baruah Road, Guwahati', cuisine: 'Momos, Chinese, Tibetan', upiId: 'zooroadmomos@okicici', openingHours: '12:00 PM – 10:30 PM', status: 'paused', isOnline: false, appliedAt: 'Approved', verificationNote: 'Paused for kitchen upgrade' }
+        ],
+
+        changeRequests: [
+          { id: 'req-1', restaurantId: 'rest-3', restaurantName: 'Green Leaf Kitchen', field: 'address', fieldLabel: 'Restaurant Address', currentValue: 'GS Road, Near Dispur Last Gate, Guwahati', requestedValue: '2nd Floor, Commerce Point, GS Road, Dispur, Guwahati', reason: 'Moved entrance to Commerce Point main road frontage.', requestedAt: '35 mins ago', status: 'pending' },
+          { id: 'req-2', restaurantId: 'rest-4', restaurantName: 'Paltan Tandoor', field: 'phone', fieldLabel: 'Owner Phone', currentValue: '+91 98640 66112', requestedValue: '+91 98640 90909', reason: 'Updated primary kitchen dispatch phone number.', requestedAt: '2 hours ago', status: 'pending' }
+        ],
+
+        orders: [
+          { id: '1042', status: 'preparing', paymentType: 'upi', upiRef: 'UPI-43291084721', restaurantName: 'Green Leaf Kitchen', restaurantPhone: '+91 98640 55432', customerName: 'Ananya Das', customerPhone: '+91 98640 11223', customerAddress: 'Flat 4B, GS Road, Guwahati', items: [{ name: 'Paneer Butter Masala', qty: 1, price: 240 }, { name: 'Assamese Veg Thali', qty: 1, price: 240 }], subtotal: 480, deliveryFee: 50, total: 530, staffName: '', staffPhone: '', placedAt: '12 mins ago', cancelReason: '' },
+          { id: '1039', status: 'out', paymentType: 'upi', upiRef: 'UPI-43291084109', restaurantName: 'Green Leaf Kitchen', restaurantPhone: '+91 98640 55432', customerName: 'Neha Sharma', customerPhone: '+91 98640 33445', customerAddress: 'Lane 3, Beltola, Guwahati', items: [{ name: 'Dal Tadka', qty: 1, price: 190 }, { name: 'Butter Naan', qty: 2, price: 100 }], subtotal: 290, deliveryFee: 50, total: 340, staffName: 'Bikash Das', staffPhone: '+91 98640 12345', placedAt: '28 mins ago', cancelReason: '' },
+          { id: '1037', status: 'out', paymentType: 'cod', restaurantName: 'Paltan Tandoor', restaurantPhone: '+91 98640 66112', customerName: 'Rohan Borah', customerPhone: '+91 98640 44556', customerAddress: 'House 19, Six Mile, Guwahati', items: [{ name: 'Chicken Tikka Roll', qty: 2, price: 260 }, { name: 'Tandoori Roti', qty: 3, price: 90 }], subtotal: 350, deliveryFee: 50, total: 400, staffName: 'Suresh Kalita', staffPhone: '+91 98640 54321', placedAt: '41 mins ago', cancelReason: '' },
+          { id: '1035', status: 'delivered', paymentType: 'cod', restaurantName: 'Green Leaf Kitchen', restaurantPhone: '+91 98640 55432', customerName: 'Sidharth Gogoi', customerPhone: '+91 98640 66778', customerAddress: 'Pan Bazar, Guwahati', items: [{ name: 'Assamese Fish Tenga Meal', qty: 1, price: 270 }], subtotal: 270, deliveryFee: 50, total: 320, staffName: 'Manoj Kalita', staffPhone: '+91 98640 99887', placedAt: '1 hour ago', cancelReason: '' },
+          { id: '1031', status: 'cancelled', paymentType: 'upi', upiRef: 'UPI-43291082001', restaurantName: 'Paltan Tandoor', restaurantPhone: '+91 98640 66112', customerName: 'Priyam Kalita', customerPhone: '+91 98640 77889', customerAddress: 'Block C, Zoo Road, Guwahati', items: [{ name: 'Paneer Tikka Masala', qty: 1, price: 250 }], subtotal: 250, deliveryFee: 50, total: 300, staffName: '', staffPhone: '', placedAt: '2 hours ago', cancelReason: 'An item is out of stock' }
+        ],
+
+        tickets: [
+          { id: 'SUP-304', source: 'customer', senderName: 'Ananya Das', senderPhone: '+91 98640 11223', orderId: '1042', topic: 'Extra spicy note for Paneer Butter Masala', message: 'Please ask Green Leaf Kitchen to keep Paneer Butter Masala mild-medium spicy.', status: 'open', createdAt: '10 mins ago', resolutionNote: '' },
+          { id: 'SUP-303', source: 'restaurant', senderName: 'Green Leaf Kitchen', senderPhone: '+91 98640 55432', orderId: '1039', topic: 'Customer gate landmark clarification', message: 'Rider Bikash Das is near Beltola Lane 3; landmark confirmed as Blue Gate apartment.', status: 'open', createdAt: '18 mins ago', resolutionNote: '' },
+          { id: 'SUP-301', source: 'customer', senderName: 'Priyam Kalita', senderPhone: '+91 98640 77889', orderId: '1031', topic: 'UPI payment confirmation on cancelled order', message: 'Order #1031 cancelled due to stock; confirmed no UPI debit occurred.', status: 'resolved', createdAt: '2 hours ago', resolutionNote: 'Verified with restaurant & customer — no UPI payment was captured.' }
+        ],
+
+        activities: [
+          { tag: 'Order', text: 'Order #1042 placed at Green Leaf Kitchen (₹530 · Direct UPI).', time: '12m ago' },
+          { tag: 'Dispatch', text: 'Rider Bikash Das dispatched Order #1039 to Beltola.', time: '28m ago' },
+          { tag: 'Request', text: 'Green Leaf Kitchen requested address update.', time: '35m ago' },
+          { tag: 'Onboarding', text: 'Assam Spice House submitted new registration.', time: '25m ago' }
+        ]
+      };
+
+      var appEl = document.getElementById('app');
+      var androidShell = document.getElementById('android-shell');
+      var modalRoot = document.getElementById('modal-root');
+      var toastEl = document.getElementById('toast');
+      var toastMsgEl = document.getElementById('toast-msg');
+      var deviceClockEl = document.getElementById('device-clock');
+      var notifDotEl = document.getElementById('notif-dot');
+      var toastTimer = null;
+
+      function updateDeviceClock() {
+        if (!deviceClockEl) return;
+        var now = new Date();
+        deviceClockEl.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      }
+      updateDeviceClock();
+      setInterval(updateDeviceClock, 30000);
+
+      var STORAGE_KEY = 'zayko_admin_android_v1';
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            isAuthenticated: state.isAuthenticated,
+            settings: state.settings,
+            restaurants: state.restaurants,
+            changeRequests: state.changeRequests,
+            orders: state.orders,
+            tickets: state.tickets,
+            activities: state.activities
+          }));
+        } catch (err) {}
+      }
+      function loadState() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var p = JSON.parse(raw);
+          if (p && typeof p === 'object') {
+            if (typeof p.isAuthenticated === 'boolean') state.isAuthenticated = p.isAuthenticated;
+            if (p.settings) state.settings = p.settings;
+            if (Array.isArray(p.restaurants)) state.restaurants = p.restaurants;
+            if (Array.isArray(p.changeRequests)) state.changeRequests = p.changeRequests;
+            if (Array.isArray(p.orders)) state.orders = p.orders;
+            if (Array.isArray(p.tickets)) state.tickets = p.tickets;
+            if (Array.isArray(p.activities)) state.activities = p.activities;
+          }
+        } catch (err) {}
+      }
+      loadState();
+      var SHARED_REQ_KEY = 'zayko_shared_requests_v1';
+      function syncSharedRequests() {
+        try {
+          var raw = localStorage.getItem(SHARED_REQ_KEY);
+          if (!raw) return;
+          var list = JSON.parse(raw);
+          if (!Array.isArray(list)) return;
+          list.forEach(function (sr) {
+            if (!state.changeRequests.some(function (x) { return x.id === sr.id; })) {
+              state.changeRequests.unshift(sr);
+            }
+          });
+        } catch (err) {}
+      }
+      function writeSharedRequests() {
+        try {
+          localStorage.setItem(SHARED_REQ_KEY, JSON.stringify(state.changeRequests));
+        } catch (err) {}
+      }
+      syncSharedRequests();
+
+      function esc(v) {
+        return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+      function inr(amt) { return '₹' + Number(amt || 0).toLocaleString('en-IN'); }
+      function telHref(phone) { return 'tel:' + String(phone || '').replace(/[^+\d]/g, ''); }
+      function showToast(msg) {
+        toastMsgEl.textContent = msg;
+        toastEl.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.add('hidden'); }, 2800);
+      }
+      function openModal(html) {
+        modalRoot.innerHTML = '<div class="bottom-sheet"><div class="sheet-drag-handle"></div>' + html + '</div>';
+        modalRoot.classList.remove('hidden');
+      }
+      function closeModal() {
+        modalRoot.classList.add('hidden');
+        modalRoot.innerHTML = '';
+      }
+      function recordActivity(tag, text) {
+        state.activities.unshift({ tag: tag, text: text, time: 'Just now' });
+        if (state.activities.length > 8) state.activities.length = 8;
+      }
+
+      function getPendingRestaurantsCount() { return state.restaurants.filter(function (r) { return r.status === 'pending'; }).length; }
+      function getPendingRequestsCount() { return state.changeRequests.filter(function (r) { return r.status === 'pending'; }).length; }
+      function getOpenTicketsCount() { return state.tickets.filter(function (t) { return t.status === 'open'; }).length; }
+      function isLiveOrderStatus(s) { return s === 'new' || s === 'preparing' || s === 'ready' || s === 'out'; }
+      function getOrderBadge(s) {
+        return {
+          new: { label: 'New', cls: 'm3-badge-amber' },
+          preparing: { label: 'Preparing', cls: 'm3-badge-primary' },
+          ready: { label: 'Ready', cls: 'm3-badge-primary' },
+          out: { label: 'Out for delivery', cls: 'm3-badge-amber' },
+          delivered: { label: 'Delivered', cls: 'm3-badge-primary' },
+          cancelled: { label: 'Cancelled', cls: 'm3-badge-error' }
+        }[s] || { label: s, cls: 'm3-badge-neutral' };
+      }
+
+      // =======================================================================
+      // LOGIN SCREEN
+      // =======================================================================
+      function renderLoginScreen() {
+        return (
+          '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px 36px;" class="animate-m3">' +
+          '<div style="text-align:center; margin-bottom:24px;">' +
+          '<div class="z-app-icon z-app-icon-lg">Z</div>' +
+          '<p style="font-size:15px; font-weight:800; letter-spacing:0.16em; color:var(--md-primary); margin-top:14px; text-transform:uppercase;">ZAYKO ADMIN</p>' +
+          '<p class="text-xs text-muted font-bold" style="margin-top:3px;">Guwahati Operations Console</p>' +
+          '</div>' +
+          '<div class="m3-card" style="padding:20px; display:flex; flex-direction:column; gap:14px;">' +
+          '<div class="m3-card-tonal"><p class="text-xxs font-bold text-primary" style="text-transform:uppercase;">Firebase Admin Auth</p><p class="text-xs text-muted" style="margin-top:2px;">Sign in with your Firebase Authentication admin email and password.</p></div>' +
+          '<form id="admin-login-form" novalidate>' +
+          '<div class="form-group"><label class="form-label" for="admin-email">Email ID</label><input id="admin-email" class="m3-input" type="email" placeholder="admin@zayko.in" value="' + esc(state.loginEmail) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="admin-password">Password</label><div style="position:relative;"><input id="admin-password" class="m3-input" type="' + (state.showPassword ? 'text' : 'password') + '" placeholder="Enter admin password" value="' + esc(state.loginPassword) + '" style="padding-right:64px;" /><button type="button" data-action="toggle-pw" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); padding:6px 10px; font-size:12px; font-weight:700; color:var(--md-primary);">' + (state.showPassword ? 'Hide' : 'Show') + '</button></div></div>' +
+          (state.loginError ? '<p class="text-xs text-error font-bold" style="margin-bottom:10px;">' + esc(state.loginError) + '</p>' : '') +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Sign In to Console</button>' +
+          '</form>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      // =======================================================================
+      // 5 TAB VIEWS
+      // =======================================================================
+      function renderOverviewTab() {
+        var validOrders = state.orders.filter(function (o) { return o.status !== 'cancelled'; });
+        var gmv = validOrders.reduce(function (sum, o) { return sum + o.total; }, 0);
+        var pendingApp = getPendingRestaurantsCount();
+        var pendingReq = getPendingRequestsCount();
+        var openTickets = getOpenTicketsCount();
+        var liveOrders = state.orders.filter(function (o) { return isLiveOrderStatus(o.status); });
+
+        return (
+          '<div class="kpi-grid">' +
+          '<div class="m3-card"><p class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Today\'s Orders</p><p style="font-size:22px; font-weight:800; margin-top:4px;">' + state.orders.length + '</p><p class="text-xxs font-bold text-primary">' + liveOrders.length + ' active</p></div>' +
+          '<div class="m3-card"><p class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Today\'s GMV</p><p style="font-size:22px; font-weight:800; margin-top:4px; color:var(--md-primary);">' + inr(gmv) + '</p><p class="text-xxs text-muted">Excl. cancelled</p></div>' +
+          '<div class="m3-card"><p class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Approvals</p><p style="font-size:22px; font-weight:800; margin-top:4px; color:var(--md-amber);">' + pendingApp + '</p><p class="text-xxs text-muted">+' + pendingReq + ' change req</p></div>' +
+          '<div class="m3-card"><p class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Open Tickets</p><p style="font-size:22px; font-weight:800; margin-top:4px; color:var(--md-error);">' + openTickets + '</p><p class="text-xxs text-muted">Support desk</p></div>' +
+          '</div>' +
+
+          '<div style="display:flex; flex-direction:column; gap:8px;">' +
+          '<button type="button" data-action="jump-stores" data-filter="pending" class="m3-card m3-card-pressable" style="display:flex; align-items:center; justify-content:space-between; text-align:left;"><div><p class="text-xs font-bold">Review Restaurant Approvals</p><p class="text-xxs text-muted">' + pendingApp + ' waiting verification</p></div><span class="m3-badge m3-badge-amber">' + pendingApp + ' →</span></button>' +
+          '<button type="button" data-action="jump-stores" data-filter="requests" class="m3-card m3-card-pressable" style="display:flex; align-items:center; justify-content:space-between; text-align:left;"><div><p class="text-xs font-bold">Detail Change Requests</p><p class="text-xxs text-muted">' + pendingReq + ' profile updates</p></div><span class="m3-badge m3-badge-primary">' + pendingReq + ' →</span></button>' +
+          '<button type="button" data-action="jump-support" data-status="open" class="m3-card m3-card-pressable" style="display:flex; align-items:center; justify-content:space-between; text-align:left;"><div><p class="text-xs font-bold">Resolve Support Tickets</p><p class="text-xxs text-muted">' + openTickets + ' open issues</p></div><span class="m3-badge m3-badge-error">' + openTickets + ' →</span></button>' +
+          '</div>' +
+
+          '<div class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><strong class="text-sm">Live Guwahati Orders</strong><button type="button" data-action="switch-tab" data-tab="orders" class="text-xs font-bold text-primary">View all →</button></div>' +
+          liveOrders.map(function (o) {
+            var b = getOrderBadge(o.status);
+            return '<div data-action="open-order-sheet" data-order-id="' + esc(o.id) + '" class="m3-card-tonal m3-card-pressable" style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><div style="min-width:0;"><div style="display:flex; align-items:center; gap:6px;"><strong class="text-xs">Order #' + esc(o.id) + '</strong><span class="m3-badge ' + b.cls + '">' + b.label + '</span></div><p class="text-xxs text-muted truncate" style="margin-top:2px;">' + esc(o.restaurantName) + ' → ' + esc(o.customerName) + '</p></div><strong class="text-xs text-primary">' + inr(o.total) + '</strong></div>';
+          }).join('') +
+          '</div>' +
+
+          '<div class="m3-card" style="display:flex; flex-direction:column; gap:8px;">' +
+          '<strong class="text-sm">Recent Activity</strong>' +
+          state.activities.slice(0, 4).map(function (a) {
+            return '<div class="m3-card-tonal" style="padding:10px;"><span class="m3-badge m3-badge-primary" style="margin-bottom:4px;">' + esc(a.tag) + '</span><p class="text-xs font-bold">' + esc(a.text) + '</p><p class="text-xxs text-muted" style="margin-top:2px;">' + esc(a.time) + '</p></div>';
+          }).join('') +
+          '</div>'
+        );
+      }
+
+      function renderStoresTab() {
+        var pending = state.restaurants.filter(function (r) { return r.status === 'pending'; });
+        var active = state.restaurants.filter(function (r) { return r.status === 'live'; });
+        var paused = state.restaurants.filter(function (r) { return r.status === 'paused'; });
+        var reqs = state.changeRequests.filter(function (r) { return r.status === 'pending'; });
+
+        var rail =
+          '<div class="chip-rail no-scrollbar">' +
+          [
+            { k: 'pending', l: 'Pending (' + pending.length + ')' },
+            { k: 'active', l: 'Active (' + active.length + ')' },
+            { k: 'paused', l: 'Paused (' + paused.length + ')' },
+            { k: 'requests', l: 'Requests (' + reqs.length + ')' }
+          ].map(function (c) {
+            var sel = state.restaurantFilter === c.k;
+            return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-rest-filter" data-filter="' + c.k + '">' + (sel ? '✓ ' : '') + c.l + '</button>';
+          }).join('') +
+          '</div>';
+
+        if (state.restaurantFilter === 'pending') {
+          if (pending.length === 0) return rail + '<div class="m3-card" style="text-align:center; padding:26px;"><p class="text-sm font-bold">No pending approvals</p></div>';
+          return rail + pending.map(function (r) {
+            return (
+              '<article class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+              '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;"><div><strong class="text-sm">' + esc(r.name) + '</strong><p class="text-xxs text-muted">Applied ' + esc(r.appliedAt) + '</p></div><span class="m3-badge m3-badge-amber">Pending</span></div>' +
+              '<div class="m3-card-tonal text-xs" style="display:flex; flex-direction:column; gap:3px;"><p><strong>Owner:</strong> ' + esc(r.ownerName) + ' (' + esc(r.phone) + ')</p><p><strong>Address:</strong> ' + esc(r.address) + '</p><p><strong>UPI:</strong> <span class="text-primary font-bold">' + esc(r.upiId) + '</span></p></div>' +
+              '<div class="btn-row"><button type="button" class="m3-btn m3-btn-danger-outline m3-btn-sm" data-action="open-reject-sheet" data-rest-id="' + esc(r.id) + '">Reject</button><button type="button" class="m3-btn m3-btn-filled m3-btn-sm" data-action="open-verify-sheet" data-rest-id="' + esc(r.id) + '">Verify &amp; Go Live</button></div>' +
+              '</article>'
+            );
+          }).join('');
+        }
+
+        if (state.restaurantFilter === 'requests') {
+          if (reqs.length === 0) return rail + '<div class="m3-card" style="text-align:center; padding:26px;"><p class="text-sm font-bold">No pending change requests</p></div>';
+          return rail + reqs.map(function (req) {
+            return (
+              '<article class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+              '<div style="display:flex; justify-content:space-between;"><strong>' + esc(req.restaurantName) + '</strong><span class="m3-badge m3-badge-amber">' + esc(req.fieldLabel) + '</span></div>' +
+              '<div class="m3-card-tonal text-xs"><p class="text-muted" style="text-decoration:line-through;">' + esc(req.currentValue) + '</p><p class="font-bold text-primary" style="margin-top:3px;">→ ' + esc(req.requestedValue) + '</p><p class="text-xxs text-muted" style="margin-top:4px;">Note: ' + esc(req.reason) + '</p></div>' +
+              '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined m3-btn-sm" data-action="dismiss-req" data-req-id="' + esc(req.id) + '">Dismiss</button><button type="button" class="m3-btn m3-btn-filled m3-btn-sm" data-action="approve-req" data-req-id="' + esc(req.id) + '">Approve</button></div>' +
+              '</article>'
+            );
+          }).join('');
+        }
+
+        var list = state.restaurantFilter === 'active' ? active : paused;
+        var q = state.restaurantSearch.trim().toLowerCase();
+        var filtered = list.filter(function (r) {
+          return !q || r.name.toLowerCase().indexOf(q) !== -1 || r.address.toLowerCase().indexOf(q) !== -1;
+        });
+
+        return (
+          rail +
+          '<div class="m3-search-bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--md-muted)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="rest-search-input" type="search" value="' + esc(state.restaurantSearch) + '" placeholder="Search restaurants..." /></div>' +
+          (filtered.length === 0
+            ? '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No restaurants found</p></div>'
+            : filtered.map(function (r) {
+                var isPaused = r.status === 'paused';
+                return (
+                  '<article class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+                  '<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div style="display:flex; align-items:center; gap:6px;"><strong class="text-sm">' + esc(r.name) + '</strong><span class="m3-badge ' + (isPaused ? 'm3-badge-error' : 'm3-badge-primary') + '">' + (isPaused ? 'Paused' : 'Live') + '</span></div><p class="text-xxs text-muted">' + esc(r.cuisine) + '</p></div><a href="' + telHref(r.phone) + '" data-action="call-toast" data-target="' + esc(r.ownerName) + '" data-phone="' + esc(r.phone) + '" class="m3-btn m3-btn-tonal m3-btn-sm">Call</a></div>' +
+                  '<div class="m3-card-tonal text-xs" style="display:flex; flex-direction:column; gap:2px;"><p><strong>Address:</strong> ' + esc(r.address) + '</p><p><strong>UPI:</strong> <span class="text-primary font-bold">' + esc(r.upiId) + '</span></p></div>' +
+                  '<div class="btn-row"><button type="button" class="m3-btn m3-btn-sm ' + (isPaused ? 'm3-btn-tonal' : 'm3-btn-danger-outline') + '" data-action="open-pause-sheet" data-rest-id="' + esc(r.id) + '">' + (isPaused ? 'Resume' : 'Pause') + '</button><button type="button" class="m3-btn m3-btn-outlined m3-btn-sm" data-action="open-edit-rest-sheet" data-rest-id="' + esc(r.id) + '">Edit Details</button></div>' +
+                  '</article>'
+                );
+              }).join(''))
+        );
+      }
+
+      function renderOrdersTab() {
+        var filters = [{ k: 'all', l: 'All' }, { k: 'live', l: 'Live' }, { k: 'delivered', l: 'Delivered' }, { k: 'cancelled', l: 'Cancelled' }];
+        var q = state.orderSearch.trim().toLowerCase();
+        var filtered = state.orders.filter(function (o) {
+          var mf = state.orderFilter === 'all' || (state.orderFilter === 'live' ? isLiveOrderStatus(o.status) : o.status === state.orderFilter);
+          if (!mf) return false;
+          return !q || o.id.toLowerCase().indexOf(q) !== -1 || o.customerName.toLowerCase().indexOf(q) !== -1 || o.restaurantName.toLowerCase().indexOf(q) !== -1;
+        });
+
+        return (
+          '<div class="chip-rail no-scrollbar">' + filters.map(function (f) {
+            var sel = state.orderFilter === f.k;
+            return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-order-filter" data-filter="' + f.k + '">' + (sel ? '✓ ' : '') + f.l + '</button>';
+          }).join('') + '</div>' +
+          '<div class="m3-search-bar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--md-muted)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="order-search-input" type="search" value="' + esc(state.orderSearch) + '" placeholder="Search order #, customer, restaurant..." /></div>' +
+          (filtered.length === 0
+            ? '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No matching orders</p></div>'
+            : filtered.map(function (o) {
+                var b = getOrderBadge(o.status);
+                return (
+                  '<article data-action="open-order-sheet" data-order-id="' + esc(o.id) + '" class="m3-card m3-card-pressable" style="display:flex; flex-direction:column; gap:6px;">' +
+                  '<div style="display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:6px;"><strong class="text-sm">Order #' + esc(o.id) + '</strong><span class="m3-badge ' + b.cls + '">' + b.label + '</span><span class="m3-badge ' + (o.paymentType === 'upi' ? 'm3-badge-primary' : 'm3-badge-neutral') + '">' + (o.paymentType === 'upi' ? 'UPI' : 'COD') + '</span></div><strong class="text-sm text-primary">' + inr(o.total) + '</strong></div>' +
+                  '<p class="text-xs font-bold">' + esc(o.restaurantName) + ' → ' + esc(o.customerName) + '</p>' +
+                  '<p class="text-xxs text-muted truncate">' + esc(o.customerAddress) + '</p>' +
+                  (o.staffName ? '<p class="text-xxs font-bold text-primary">Rider: ' + esc(o.staffName) + '</p>' : '') +
+                  '</article>'
+                );
+              }).join(''))
+        );
+      }
+
+      function renderSupportTab() {
+        var filtered = state.tickets.filter(function (t) {
+          if (state.ticketStatusFilter !== 'all' && t.status !== state.ticketStatusFilter) return false;
+          if (state.ticketSourceFilter !== 'all' && t.source !== state.ticketSourceFilter) return false;
+          return true;
+        });
+
+        return (
+          '<div class="chip-rail no-scrollbar">' +
+          [{ k: 'all', l: 'All' }, { k: 'open', l: 'Open (' + getOpenTicketsCount() + ')' }, { k: 'resolved', l: 'Resolved' }].map(function (f) {
+            var sel = state.ticketStatusFilter === f.k;
+            return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-ticket-status" data-filter="' + f.k + '">' + (sel ? '✓ ' : '') + f.l + '</button>';
+          }).join('') +
+          '</div>' +
+          '<div class="chip-rail no-scrollbar">' +
+          [{ k: 'all', l: 'All Sources' }, { k: 'customer', l: 'Customer' }, { k: 'restaurant', l: 'Restaurant' }].map(function (f) {
+            var sel = state.ticketSourceFilter === f.k;
+            return '<button type="button" class="m3-chip ' + (sel ? 'selected' : '') + '" data-action="set-ticket-source" data-filter="' + f.k + '">' + f.l + '</button>';
+          }).join('') +
+          '</div>' +
+          (filtered.length === 0
+            ? '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No tickets in this view</p></div>'
+            : filtered.map(function (t) {
+                var isOpen = t.status === 'open';
+                return (
+                  '<article data-action="open-ticket-sheet" data-ticket-id="' + esc(t.id) + '" class="m3-card m3-card-pressable" style="display:flex; flex-direction:column; gap:6px;">' +
+                  '<div style="display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:6px;"><strong class="text-xs">#' + esc(t.id) + '</strong><span class="m3-badge m3-badge-neutral">' + (t.source === 'customer' ? 'Customer' : 'Restaurant') + '</span><span class="m3-badge ' + (isOpen ? 'm3-badge-error' : 'm3-badge-primary') + '">' + (isOpen ? 'Open' : 'Resolved') + '</span></div>' + (t.orderId ? '<span class="m3-badge m3-badge-primary">#' + esc(t.orderId) + '</span>' : '') + '</div>' +
+                  '<p class="text-sm font-bold">' + esc(t.topic) + '</p>' +
+                  '<p class="text-xs text-muted">' + esc(t.message) + '</p>' +
+                  '<p class="text-xxs text-muted">' + esc(t.senderName) + ' · ' + esc(t.createdAt) + '</p>' +
+                  '</article>'
+                );
+              }).join(''))
+        );
+      }
+
+      function renderSettingsTab() {
+        var st = state.settings;
+        return (
+          '<form id="global-settings-form" class="m3-card" novalidate>' +
+          '<h2 class="text-base font-bold">Guwahati Delivery &amp; Support</h2>' +
+          '<p class="text-xs text-muted" style="margin:3px 0 14px;">Applied across Customer &amp; Partner apps.</p>' +
+          '<div class="form-group"><label class="form-label" for="set-fee">Minimum Delivery Fee (₹)</label><input id="set-fee" name="fee" class="m3-input" type="number" value="' + esc(st.deliveryFee) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="set-base">Distance Covered in Base Fee (km)</label><input id="set-base" name="base" class="m3-input" type="number" step="0.5" value="' + esc(st.baseDistanceKm) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="set-extra">Extra Charge After Base (₹/km)</label><input id="set-extra" name="extra" class="m3-input" type="number" value="' + esc(st.extraPerKmFee) + '" /></div>' +
+          '<div class="form-group"><label class="form-label" for="set-radius">Max Delivery Radius (km)</label><input id="set-radius" name="radius" class="m3-input" type="number" step="0.5" value="' + esc(st.maxRadiusKm) + '" /></div>' +
+          '<div class="m3-banner-primary text-xs font-bold" style="margin-bottom:14px;">Pricing Rule: ₹' + esc(st.deliveryFee) + ' up to ' + esc(st.baseDistanceKm) + ' km, then ₹' + esc(st.extraPerKmFee) + '/km (max ' + esc(st.maxRadiusKm) + ' km).</div>' +
+          '<div class="form-group"><label class="form-label" for="set-phone">Support Phone / WhatsApp</label><input id="set-phone" name="phone" class="m3-input" type="text" value="' + esc(st.supportPhone) + '" /></div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Save Global Settings</button>' +
+          '</form>'
+        );
+      }
+
+      function renderMainShell() {
+        var titles = { overview: 'Overview', restaurants: 'Restaurants', orders: 'Master Orders', support: 'Support Desk', settings: 'Global Settings' };
+        var bodyHtml = state.activeTab === 'restaurants' ? renderStoresTab() : state.activeTab === 'orders' ? renderOrdersTab() : state.activeTab === 'support' ? renderSupportTab() : state.activeTab === 'settings' ? renderSettingsTab() : renderOverviewTab();
+        var pendingTotal = getPendingRestaurantsCount() + getPendingRequestsCount();
+        var openTickets = getOpenTicketsCount();
+
+        var navItems = [
+          { k: 'overview', l: 'Overview', i: ICONS.overview, b: 0 },
+          { k: 'restaurants', l: 'Stores', i: ICONS.stores, b: pendingTotal },
+          { k: 'orders', l: 'Orders', i: ICONS.orders, b: 0 },
+          { k: 'support', l: 'Support', i: ICONS.support, b: openTickets },
+          { k: 'settings', l: 'Settings', i: ICONS.settings, b: 0 }
+        ];
+
+        return (
+          '<header class="m3-top-bar">' +
+          '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+          '<div class="z-app-icon">Z</div>' +
+          '<div style="min-width:0;"><h1 class="text-base font-bold truncate">' + (titles[state.activeTab] || 'Overview') + '</h1><p class="text-xxs text-muted">Zayko Admin · Guwahati</p></div>' +
+          '</div>' +
+          '<div style="display:flex; align-items:center; gap:4px;"><button type="button" data-action="open-notifications" aria-label="Notifications" class="m3-icon-btn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span id="notif-dot" style="position:absolute; top:9px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--md-secondary);"></span></button><button type="button" data-action="logout" class="m3-btn m3-btn-outlined m3-btn-sm">Logout</button></div>' +
+          '</header>' +
+          '<main class="page-body">' + bodyHtml + '</main>' +
+          '<nav class="m3-nav-bar" aria-label="Admin navigation">' +
+          navItems.map(function (it) {
+            var active = state.activeTab === it.k;
+            return (
+              '<button type="button" class="m3-nav-item ' + (active ? 'active' : '') + '" data-action="switch-tab" data-tab="' + it.k + '">' +
+              '<span class="m3-nav-pill">' + it.i + '</span><span>' + it.l + '</span>' +
+              (it.b > 0 ? '<span class="m3-nav-badge">' + it.b + '</span>' : '') +
+              '</button>'
+            );
+          }).join('') +
+          '</nav>'
+        );
+      }
+
+      // =======================================================================
+      // BOTTOM SHEETS
+      // =======================================================================
+      function openVerifySheet(restId) {
+        var r = state.restaurants.find(function (x) { return x.id === restId; });
+        if (!r) return;
+        var items = [
+          { k: 'details', t: 'Confirmed name, Guwahati address & cuisine', s: r.name + ' · ' + r.address },
+          { k: 'phone', t: 'Confirmed owner phone & hours', s: r.ownerName + ' (' + r.phone + ')' },
+          { k: 'upi', t: 'Verified Restaurant UPI ID', s: r.upiId },
+          { k: 'delivery', t: 'Confirmed own delivery staff', s: 'Partner uses own delivery staff' }
+        ];
+        var doneCount = items.filter(function (i) { return !!state.verifyChecks[i.k]; }).length;
+        var allOk = doneCount === 4;
+
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="text-base font-bold">Verify ' + esc(r.name) + '</h2><p class="text-xxs text-muted">' + doneCount + '/4 checks completed</p></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<div>' +
+          items.map(function (i) {
+            var chk = !!state.verifyChecks[i.k];
+            return '<button type="button" class="check-row ' + (chk ? 'checked' : '') + '" data-action="toggle-verify" data-rest-id="' + esc(r.id) + '" data-key="' + i.k + '"><span class="check-box">' + (chk ? '✓' : '') + '</span><span><strong class="text-xs" style="display:block;">' + esc(i.t) + '</strong><span class="text-xxs text-muted">' + esc(i.s) + '</span></span></button>';
+          }).join('') +
+          '</div>' +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-approve-rest" data-rest-id="' + esc(r.id) + '"' + (allOk ? '' : ' disabled') + '>Approve &amp; Go Live</button></div>'
+        );
+      }
+
+      function openRejectSheet(restId) {
+        var r = state.restaurants.find(function (x) { return x.id === restId; });
+        if (!r) return;
+        var reasons = ['Invalid UPI ID', 'Incomplete Guwahati address', 'Owner unreachable', 'No own delivery staff'];
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Reject ' + esc(r.name) + '?</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<div style="display:flex; gap:6px; flex-wrap:wrap;">' + reasons.map(function (rs) {
+            return '<button type="button" class="m3-chip ' + (state.rejectReason === rs ? 'selected' : '') + '" data-action="pick-reject" data-rest-id="' + esc(r.id) + '" data-reason="' + esc(rs) + '">' + esc(rs) + '</button>';
+          }).join('') + '</div>' +
+          '<input id="reject-reason-inp" class="m3-input" type="text" placeholder="Custom rejection reason..." value="' + esc(state.rejectReason) + '" />' +
+          '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Keep</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-reject-rest" data-rest-id="' + esc(r.id) + '">Confirm Reject</button></div>'
+        );
+      }
+
+      function openOrderSheet(orderId) {
+        var o = state.orders.find(function (x) { return x.id === orderId; });
+        if (!o) return;
+        var b = getOrderBadge(o.status);
+        var isLive = isLiveOrderStatus(o.status);
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><div style="display:flex; align-items:center; gap:8px;"><h2 class="text-base font-bold">Order #' + esc(o.id) + '</h2><span class="m3-badge ' + b.cls + '">' + b.label + '</span></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<div class="btn-row">' +
+          '<a href="' + telHref(o.customerPhone) + '" data-action="call-toast" data-target="' + esc(o.customerName) + '" data-phone="' + esc(o.customerPhone) + '" class="m3-btn m3-btn-tonal m3-btn-sm">' + ICONS.phone + '<span>Call Customer</span></a>' +
+          '<a href="' + telHref(o.restaurantPhone) + '" data-action="call-toast" data-target="' + esc(o.restaurantName) + '" data-phone="' + esc(o.restaurantPhone) + '" class="m3-btn m3-btn-tonal m3-btn-sm">' + ICONS.phone + '<span>Call Store</span></a>' +
+          '</div>' +
+          (o.paymentType === 'upi' ? '<div class="m3-banner-primary text-xs"><strong>Direct UPI · Customer Screenshot Attached</strong><p class="text-xxs" style="margin-top:2px;">Ref: ' + esc(o.upiRef || 'UPI-43291084721') + '</p></div>' : '') +
+          (o.staffName ? '<div class="m3-card-tonal" style="display:flex; justify-content:space-between; align-items:center;"><div><p class="text-xxs font-bold text-primary">RIDER</p><p class="text-xs font-bold">' + esc(o.staffName) + ' (' + esc(o.staffPhone) + ')</p></div><a href="' + telHref(o.staffPhone) + '" data-action="call-toast" data-target="' + esc(o.staffName) + '" data-phone="' + esc(o.staffPhone) + '" class="m3-btn m3-btn-filled m3-btn-sm">Call Rider</a></div>' : '') +
+          '<div class="m3-card">' + o.items.map(function (it) { return '<div style="display:flex; justify-content:space-between; padding:3px 0;"><span>' + it.qty + ' × ' + esc(it.name) + '</span><strong>' + inr(it.price) + '</strong></div>'; }).join('') +
+          '<div style="display:flex; justify-content:space-between; padding-top:6px; margin-top:6px; border-top:1px solid var(--md-outline-variant); font-weight:700;"><span>Total</span><span class="text-primary">' + inr(o.total) + '</span></div></div>' +
+          (isLive
+            ? '<div class="btn-row"><button type="button" class="m3-btn m3-btn-danger-outline m3-btn-sm" data-action="admin-cancel-order" data-order-id="' + esc(o.id) + '">Cancel Override</button><button type="button" class="m3-btn m3-btn-filled m3-btn-sm" data-action="admin-deliver-order" data-order-id="' + esc(o.id) + '">Mark Delivered</button></div>'
+            : '')
+        );
+      }
+
+      function openTicketSheet(ticketId) {
+        var t = state.tickets.find(function (x) { return x.id === ticketId; });
+        if (!t) return;
+        var isOpen = t.status === 'open';
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="text-base font-bold">Ticket #' + esc(t.id) + '</h2><p class="text-xxs text-muted">' + esc(t.senderName) + ' · ' + esc(t.createdAt) + '</p></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<div class="m3-card"><p class="text-sm font-bold">' + esc(t.topic) + '</p><p class="text-xs text-muted" style="margin-top:4px;">' + esc(t.message) + '</p></div>' +
+          '<a href="' + telHref(t.senderPhone) + '" data-action="call-toast" data-target="' + esc(t.senderName) + '" data-phone="' + esc(t.senderPhone) + '" class="m3-btn m3-btn-tonal m3-btn-sm m3-btn-block">' + ICONS.phone + '<span>Call ' + esc(t.senderName) + '</span></a>' +
+          '<textarea id="ticket-note-inp" class="m3-input" rows="2" placeholder="Resolution note..." style="resize:none;">' + esc(state.ticketDraftNote) + '</textarea>' +
+          '<button type="button" data-action="toggle-ticket-status" data-ticket-id="' + esc(t.id) + '" class="m3-btn m3-btn-block ' + (isOpen ? 'm3-btn-filled' : 'm3-btn-outlined') + '">' + (isOpen ? 'Mark Resolved' : 'Reopen Ticket') + '</button>'
+        );
+      }
+
+      function openNotificationsSheet() {
+        var pApp = getPendingRestaurantsCount();
+        var pReq = getPendingRequestsCount();
+        var oTkt = getOpenTicketsCount();
+        openModal(
+          '<div style="display:flex; justify-content:space-between; align-items:center;"><div><h2 class="text-base font-bold">Admin Alerts</h2><p class="text-xxs text-muted">Pending items requiring action</p></div><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+          '<button type="button" data-action="jump-stores-notif" data-filter="pending" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; justify-content:space-between;"><span>Pending Store Approvals</span><span class="m3-badge m3-badge-amber">' + pApp + '</span></button>' +
+          '<button type="button" data-action="jump-stores-notif" data-filter="requests" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; justify-content:space-between;"><span>Detail Change Requests</span><span class="m3-badge m3-badge-primary">' + pReq + '</span></button>' +
+          '<button type="button" data-action="jump-support-notif" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; justify-content:space-between;"><span>Open Support Tickets</span><span class="m3-badge m3-badge-error">' + oTkt + '</span></button>'
+        );
+      }
+
+      function render() {
+        androidShell.classList.toggle('with-nav', state.isAuthenticated);
+        appEl.innerHTML = state.isAuthenticated ? renderMainShell() : renderLoginScreen();
+        if (notifDotEl) {
+          var totalAlerts = getPendingRestaurantsCount() + getPendingRequestsCount() + getOpenTicketsCount();
+          notifDotEl.style.display = totalAlerts > 0 ? 'inline-block' : 'none';
+        }
+        saveState();
+      }
+
+      androidShell.addEventListener('click', function (e) {
+        if (e.target === modalRoot) { closeModal(); return; }
+        var el = e.target.closest('[data-action]');
+        if (!el) return;
+        var a = el.getAttribute('data-action');
+
+        if (a === 'autofill-admin') { state.loginEmail = 'admin@zayko.in'; state.loginPassword = 'admin123'; state.loginError = ''; render(); showToast('Filled demo admin credentials'); return; }
+        if (a === 'toggle-pw') { state.showPassword = !state.showPassword; render(); return; }
+        if (a === 'logout') { if (window.ZaykoDB) window.ZaykoDB.signOutUser().catch(function(){}); state.isAuthenticated = false; state.loginPassword = ''; closeModal(); render(); showToast('Logged out'); return; }
+        if (a === 'open-notifications') { openNotificationsSheet(); return; }
+        if (a === 'jump-stores-notif') { closeModal(); if (state.isAuthenticated) { state.activeTab = 'restaurants'; state.restaurantFilter = el.getAttribute('data-filter') || 'pending'; render(); } return; }
+        if (a === 'jump-support-notif') { closeModal(); if (state.isAuthenticated) { state.activeTab = 'support'; state.ticketStatusFilter = 'open'; render(); } return; }
+        if (a === 'switch-tab') { state.activeTab = el.getAttribute('data-tab') || 'overview'; render(); window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+        if (a === 'jump-stores') { state.activeTab = 'restaurants'; state.restaurantFilter = el.getAttribute('data-filter') || 'pending'; render(); return; }
+        if (a === 'jump-support') { state.activeTab = 'support'; state.ticketStatusFilter = 'open'; render(); return; }
+        if (a === 'set-rest-filter') { state.restaurantFilter = el.getAttribute('data-filter'); render(); return; }
+        if (a === 'set-order-filter') { state.orderFilter = el.getAttribute('data-filter'); render(); return; }
+        if (a === 'set-ticket-status') { state.ticketStatusFilter = el.getAttribute('data-filter'); render(); return; }
+        if (a === 'set-ticket-source') { state.ticketSourceFilter = el.getAttribute('data-filter'); render(); return; }
+        if (a === 'open-verify-sheet') { state.verifyChecks = { details: false, phone: false, upi: false, delivery: false }; openVerifySheet(el.getAttribute('data-rest-id')); return; }
+        if (a === 'toggle-verify') { var k = el.getAttribute('data-key'); state.verifyChecks[k] = !state.verifyChecks[k]; openVerifySheet(el.getAttribute('data-rest-id')); return; }
+        if (a === 'confirm-approve-rest') {
+          var rApp = state.restaurants.find(function (x) { return x.id === el.getAttribute('data-rest-id'); });
+          if (rApp) {
+            rApp.status = 'live';
+            rApp.isOnline = true;
+            if (window.ZaykoDB) window.ZaykoDB.setDoc('restaurants', rApp.id, { status: 'live', isOnline: true });
+            recordActivity('Live', rApp.name + ' approved to go live.');
+            closeModal();
+            render();
+            showToast(rApp.name + ' is now Live');
+          }
+          return;
+        }
+        if (a === 'open-reject-sheet') { state.rejectReason = ''; openRejectSheet(el.getAttribute('data-rest-id')); return; }
+        if (a === 'pick-reject') { state.rejectReason = el.getAttribute('data-reason'); openRejectSheet(el.getAttribute('data-rest-id')); return; }
+        if (a === 'confirm-reject-rest') {
+          var idx = state.restaurants.findIndex(function (x) { return x.id === el.getAttribute('data-rest-id'); });
+          if (idx !== -1) {
+            var rem = state.restaurants.splice(idx, 1)[0];
+            recordActivity('Rejected', 'Rejected ' + rem.name);
+            closeModal();
+            render();
+            showToast('Rejected ' + rem.name);
+          }
+          return;
+        }
+        if (a === 'open-pause-sheet') {
+          var rP = state.restaurants.find(function (x) { return x.id === el.getAttribute('data-rest-id'); });
+          if (!rP) return;
+          var isP = rP.status === 'paused';
+          openModal('<h2 class="text-base font-bold">' + (isP ? 'Resume ' : 'Pause ') + esc(rP.name) + '?</h2><p class="text-xs text-muted">' + (isP ? 'Restore visibility for customers.' : 'Temporarily hide store from customers.') + '</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn ' + (isP ? 'm3-btn-filled' : 'm3-btn-danger') + '" data-action="confirm-toggle-pause" data-rest-id="' + esc(rP.id) + '">' + (isP ? 'Resume' : 'Pause') + '</button></div>');
+          return;
+        }
+        if (a === 'confirm-toggle-pause') {
+          var rT = state.restaurants.find(function (x) { return x.id === el.getAttribute('data-rest-id'); });
+          if (rT) { rT.status = rT.status === 'paused' ? 'live' : 'paused'; rT.isOnline = rT.status === 'live'; if (window.ZaykoDB) window.ZaykoDB.setDoc('restaurants', rT.id, { status: rT.status, isOnline: rT.isOnline }); closeModal(); render(); showToast(rT.name + ' ' + rT.status); }
+          return;
+        }
+        if (a === 'open-edit-rest-sheet') {
+          var rE = state.restaurants.find(function (x) { return x.id === el.getAttribute('data-rest-id'); });
+          if (!rE) return;
+          openModal(
+            '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Edit ' + esc(rE.name) + '</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+            '<form id="edit-rest-form" data-rest-id="' + esc(rE.id) + '" novalidate>' +
+            '<div class="form-group"><label class="form-label" for="er-name">Name</label><input id="er-name" name="name" class="m3-input" value="' + esc(rE.name) + '" /></div>' +
+            '<div class="form-group"><label class="form-label" for="er-addr">Address</label><input id="er-addr" name="address" class="m3-input" value="' + esc(rE.address) + '" /></div>' +
+            '<div class="form-group"><label class="form-label" for="er-upi">UPI ID</label><input id="er-upi" name="upiId" class="m3-input" value="' + esc(rE.upiId) + '" /></div>' +
+            '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="submit" class="m3-btn m3-btn-filled">Save</button></div></form>'
+          );
+          return;
+        }
+        if (a === 'dismiss-req') {
+          var rqD = state.changeRequests.find(function (x) { return x.id === el.getAttribute('data-req-id'); });
+          if (rqD) openModal('<h2 class="text-base font-bold">Dismiss change request?</h2><p class="text-xs text-muted">Dismiss ' + esc(rqD.fieldLabel) + ' request for ' + esc(rqD.restaurantName) + '?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Keep</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-dismiss-req" data-req-id="' + esc(rqD.id) + '">Dismiss</button></div>');
+          return;
+        }
+        if (a === 'confirm-dismiss-req') {
+          var rqDc = state.changeRequests.find(function (x) { return x.id === el.getAttribute('data-req-id'); });
+          if (rqDc) { rqDc.status = 'dismissed'; writeSharedRequests(); if (window.ZaykoDB) window.ZaykoDB.setDoc('changeRequests', rqDc.id, { status: 'dismissed' }); closeModal(); render(); showToast('Request dismissed'); }
+          return;
+        }
+        if (a === 'approve-req') {
+          var rqA = state.changeRequests.find(function (x) { return x.id === el.getAttribute('data-req-id'); });
+          if (rqA) openModal(
+            '<h2 class="text-base font-bold">Approve ' + esc(rqA.fieldLabel) + ' update?</h2>' +
+            '<div class="m3-card-tonal text-xs"><p class="text-xxs font-bold text-muted">CURRENT</p><p class="text-muted" style="text-decoration:line-through; margin-top:2px;">' + esc(rqA.currentValue) + '</p></div>' +
+            '<div class="form-group" style="margin-bottom:4px;"><label class="form-label" for="req-edit-val">Approved New Value (editable)</label><input id="req-edit-val" class="m3-input" type="text" value="' + esc(rqA.requestedValue) + '" /></div>' +
+            '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="close-modal">Cancel</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-approve-req" data-req-id="' + esc(rqA.id) + '">Confirm &amp; Approve</button></div>'
+          );
+          return;
+        }
+        if (a === 'confirm-approve-req') {
+          var rqAc = state.changeRequests.find(function (x) { return x.id === el.getAttribute('data-req-id'); });
+          if (rqAc) {
+            var editedInp = document.getElementById('req-edit-val');
+            var finalVal = editedInp && editedInp.value.trim() ? editedInp.value.trim() : rqAc.requestedValue;
+            rqAc.requestedValue = finalVal;
+            var tr = state.restaurants.find(function (x) { return x.id === rqAc.restaurantId; });
+            if (tr) tr[rqAc.field] = finalVal;
+            rqAc.status = 'approved';
+            writeSharedRequests();
+            if (window.ZaykoDB) { window.ZaykoDB.setDoc('changeRequests', rqAc.id, { status: 'approved', requestedValue: finalVal }); if (tr) window.ZaykoDB.setDoc('restaurants', tr.id, { [rqAc.field]: finalVal }); }
+            recordActivity('Updated', 'Approved ' + rqAc.fieldLabel + ' for ' + rqAc.restaurantName);
+            closeModal();
+            render();
+            showToast('Approved update for ' + rqAc.restaurantName);
+          }
+          return;
+        }
+        if (a === 'open-order-sheet') { openOrderSheet(el.getAttribute('data-order-id')); return; }
+        if (a === 'admin-deliver-order') {
+          var oD = state.orders.find(function (x) { return x.id === el.getAttribute('data-order-id'); });
+          if (oD) openModal('<h2 class="text-base font-bold">Confirm Mark Delivered?</h2><p class="text-xs text-muted">Mark Order #' + esc(oD.id) + ' (' + esc(oD.restaurantName) + ') as Delivered?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oD.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-admin-deliver" data-order-id="' + esc(oD.id) + '">Confirm</button></div>');
+          return;
+        }
+        if (a === 'confirm-admin-deliver') {
+          var oDc = state.orders.find(function (x) { return x.id === el.getAttribute('data-order-id'); });
+          if (oDc) { oDc.status = 'delivered'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oDc.id, { status: 'delivered' }); recordActivity('Delivered', 'Order #' + oDc.id + ' marked delivered.'); closeModal(); render(); showToast('Order #' + oDc.id + ' delivered'); }
+          return;
+        }
+        if (a === 'admin-cancel-order') {
+          var oC = state.orders.find(function (x) { return x.id === el.getAttribute('data-order-id'); });
+          if (oC) openModal('<h2 class="text-base font-bold">Confirm Cancel Override?</h2><p class="text-xs text-muted">Cancel Order #' + esc(oC.id) + ' (' + esc(oC.customerName) + ')?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-order-sheet" data-order-id="' + esc(oC.id) + '">Keep</button><button type="button" class="m3-btn m3-btn-danger" data-action="confirm-admin-cancel" data-order-id="' + esc(oC.id) + '">Confirm Cancel</button></div>');
+          return;
+        }
+        if (a === 'confirm-admin-cancel') {
+          var oCc = state.orders.find(function (x) { return x.id === el.getAttribute('data-order-id'); });
+          if (oCc) { oCc.status = 'cancelled'; oCc.cancelReason = 'Cancelled via Admin Override'; if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', oCc.id, { status: 'cancelled', cancelReason: oCc.cancelReason }); recordActivity('Cancelled', 'Order #' + oCc.id + ' cancelled by Admin.'); closeModal(); render(); showToast('Order #' + oCc.id + ' cancelled'); }
+          return;
+        }
+        if (a === 'open-ticket-sheet') {
+          var tk = state.tickets.find(function (x) { return x.id === el.getAttribute('data-ticket-id'); });
+          state.ticketDraftNote = tk ? tk.resolutionNote || '' : '';
+          openTicketSheet(el.getAttribute('data-ticket-id'));
+          return;
+        }
+        if (a === 'toggle-ticket-status') {
+          var tkU = state.tickets.find(function (x) { return x.id === el.getAttribute('data-ticket-id'); });
+          if (tkU) {
+            var nextSt = tkU.status === 'open' ? 'Resolved' : 'Open';
+            openModal('<h2 class="text-base font-bold">Confirm Ticket Update?</h2><p class="text-xs text-muted">Mark Ticket #' + esc(tkU.id) + ' as ' + nextSt + '?</p><div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-ticket-sheet" data-ticket-id="' + esc(tkU.id) + '">Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-toggle-ticket" data-ticket-id="' + esc(tkU.id) + '">Confirm</button></div>');
+          }
+          return;
+        }
+        if (a === 'confirm-toggle-ticket') {
+          var tkUc = state.tickets.find(function (x) { return x.id === el.getAttribute('data-ticket-id'); });
+          if (tkUc) {
+            tkUc.resolutionNote = state.ticketDraftNote.trim();
+            tkUc.status = tkUc.status === 'open' ? 'resolved' : 'open'; if (window.ZaykoDB) window.ZaykoDB.setDoc('tickets', tkUc.id, { status: tkUc.status, resolutionNote: tkUc.resolutionNote });
+            closeModal();
+            render();
+            showToast('Ticket #' + tkUc.id + ' ' + tkUc.status);
+          }
+          return;
+        }
+        if (a === 'call-toast') { showToast('Calling ' + (el.getAttribute('data-target') || 'contact') + '...'); return; }
+        if (a === 'confirm-save-edit-rest') {
+          var p = state.pendingSaveAction;
+          if (p) {
+            var rEdit = state.restaurants.find(function (x) { return x.id === p.id; });
+            if (rEdit) {
+              rEdit.name = p.name;
+              rEdit.address = p.address;
+              rEdit.upiId = p.upiId;
+              if (window.ZaykoDB) window.ZaykoDB.setDoc('restaurants', rEdit.id, { name: rEdit.name, address: rEdit.address, upiId: rEdit.upiId }); recordActivity('Admin Edit', 'Updated profile details for ' + rEdit.name + '.');
+              showToast('Saved details for ' + rEdit.name);
+            }
+            state.pendingSaveAction = null;
+          }
+          closeModal();
+          render();
+          return;
+        }
+        if (a === 'close-modal') { state.pendingSaveAction = null; closeModal(); }
+      });
+
+      androidShell.addEventListener('input', function (e) {
+        var t = e.target;
+        if (!t || !t.id) return;
+        if (t.id === 'admin-email') state.loginEmail = t.value;
+        else if (t.id === 'admin-password') state.loginPassword = t.value;
+        else if (t.id === 'rest-search-input') {
+          var p = t.selectionStart; state.restaurantSearch = t.value; render();
+          var r = document.getElementById('rest-search-input'); if (r) { r.focus(); r.setSelectionRange(p, p); }
+        } else if (t.id === 'order-search-input') {
+          var p2 = t.selectionStart; state.orderSearch = t.value; render();
+          var r2 = document.getElementById('order-search-input'); if (r2) { r2.focus(); r2.setSelectionRange(p2, p2); }
+        } else if (t.id === 'reject-reason-inp') state.rejectReason = t.value;
+        else if (t.id === 'ticket-note-inp') state.ticketDraftNote = t.value;
+      });
+
+      androidShell.addEventListener('submit', function (e) {
+        var f = e.target;
+        if (!f || !f.id) return;
+        e.preventDefault();
+        if (f.id === 'admin-login-form') {
+          var em = state.loginEmail.trim().toLowerCase();
+          var pw = state.loginPassword;
+          if (!em || !pw) {
+            state.loginError = 'Enter your Firebase Admin email and password.';
+            render();
+            return;
+          }
+          if (!window.ZaykoDB) {
+            state.loginError = 'Firebase is still loading. Please try again.';
+            render();
+            return;
+          }
+          window.ZaykoDB.signInAdmin(em, pw)
+            .then(function () {
+              state.loginError = '';
+              state.isAuthenticated = true;
+              state.activeTab = 'overview';
+              render();
+              showToast('Signed in to Zayko Admin');
+            })
+            .catch(function (err) {
+              state.loginError = (err && err.message) ? err.message : 'Invalid admin email or password.';
+              render();
+            });
+        } else if (f.id === 'edit-rest-form') {
+          var fd = new FormData(f);
+          var rest = state.restaurants.find(function (x) { return x.id === f.getAttribute('data-rest-id'); });
+          if (rest) {
+            var nName = String(fd.get('name') || rest.name).trim();
+            var nAddr = String(fd.get('address') || rest.address).trim();
+            var nUpi = String(fd.get('upiId') || rest.upiId).trim();
+            if (!nName || !nAddr || !nUpi) {
+              showToast('All restaurant fields are required');
+              return;
+            }
+            var diffs = [];
+            if (rest.name !== nName) diffs.push({ l: 'Name', f: rest.name, t: nName });
+            if (rest.address !== nAddr) diffs.push({ l: 'Address', f: rest.address, t: nAddr });
+            if (rest.upiId !== nUpi) diffs.push({ l: 'UPI ID', f: rest.upiId, t: nUpi });
+            state.pendingSaveAction = { id: rest.id, name: nName, address: nAddr, upiId: nUpi };
+            openModal(
+              '<div style="display:flex; justify-content:space-between; align-items:center;"><h2 class="text-base font-bold">Confirm Save Changes?</h2><button type="button" class="m3-icon-btn" data-action="close-modal">✕</button></div>' +
+              '<p class="text-xs text-muted">Review updated details for <strong>' + esc(nName) + '</strong> before saving.</p>' +
+              (diffs.length > 0
+                ? diffs.map(function (d) {
+                    return '<div class="m3-card-tonal text-xs"><p class="text-xxs font-bold text-muted" style="text-transform:uppercase;">' + esc(d.l) + '</p><p class="text-muted" style="text-decoration:line-through; margin-top:2px;">' + esc(d.f) + '</p><p class="font-bold text-primary">→ ' + esc(d.t) + '</p></div>';
+                  }).join('')
+                : '<div class="m3-card-tonal text-xs text-muted">No fields changed. Confirm to save anyway.</div>') +
+              '<div class="btn-row"><button type="button" class="m3-btn m3-btn-outlined" data-action="open-edit-rest-sheet" data-rest-id="' + esc(rest.id) + '">Go Back</button><button type="button" class="m3-btn m3-btn-filled" data-action="confirm-save-edit-rest">Confirm &amp; Save</button></div>'
+            );
+          }
+        } else if (f.id === 'global-settings-form') {
+          var sfd = new FormData(f);
+          state.settings.deliveryFee = Math.round(Number(sfd.get('fee') || 50));
+          state.settings.baseDistanceKm = Number(sfd.get('base') || 5);
+          state.settings.extraPerKmFee = Math.round(Number(sfd.get('extra') || 10));
+          state.settings.maxRadiusKm = Number(sfd.get('radius') || 7);
+          state.settings.supportPhone = String(sfd.get('phone') || '+91 98640 00111').trim();
+          if (window.ZaykoDB) window.ZaykoDB.setDoc('settings', 'global', state.settings); recordActivity('Settings', 'Updated global delivery & support configuration.');
+          render();
+          showToast('Global settings saved');
+        }
+      });
+
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+      // =========================================================================
+      // FIREBASE REAL-TIME SYNC (ADMIN CONSOLE)
+      // =========================================================================
+      function initAdminFirestore() {
+        if (!window.ZaykoDB) return;
+        var db = window.ZaykoDB;
+
+        db.onAuth(function (user) {
+          if (user && !user.isAnonymous && !state.isAuthenticated) {
+            state.isAuthenticated = true;
+            render();
+          }
+        });
+
+        db.listenCollection('restaurants', function (list) {
+          if (list && list.length > 0) {
+            state.restaurants = list;
+            render();
+          }
+        });
+
+        db.listenCollection('changeRequests', function (list) {
+          if (list && list.length > 0) {
+            state.changeRequests = list;
+            render();
+          }
+        });
+
+        db.listenCollection('orders', function (list) {
+          if (list && list.length > 0) {
+            list.sort(function (a, b) { return Number(b.id) - Number(a.id); });
+            state.orders = list.map(function (o) {
+              return {
+                ...o,
+                id: String(o.id || o._docId),
+                paymentType: (o.paymentType === 'upi' || o.paymentMethod === 'UPI') ? 'upi' : 'cod',
+                items: Array.isArray(o.items) ? o.items : (o.itemsList || [])
+              };
+            });
+            render();
+          }
+        });
+
+        db.listenCollection('tickets', function (list) {
+          if (list && list.length > 0) {
+            state.tickets = list;
+            render();
+          }
+        });
+
+        db.listenDoc('settings', 'global', function (s) {
+          if (s) {
+            state.settings = Object.assign({}, state.settings, s);
+            render();
+          }
+        });
+      }
+
+      if (window.ZaykoDB) initAdminFirestore();
+      else window.addEventListener('zayko-db-ready', initAdminFirestore);
+
+      render();
+    })();
+  </script>
+</body>
+</html>
