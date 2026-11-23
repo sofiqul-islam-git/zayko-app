@@ -1,1 +1,2918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Zayko — Android Customer App</title>
+  <style>
+    /* =========================================================================
+       1. MATERIAL DESIGN 3 (ANDROID) TOKENS — ZAYKO FOREST & CREAM THEME
+       ========================================================================= */
+    :root {
+      --md-primary: #135D3A;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D4EDDF;
+      --md-on-primary-container: #072B19;
+      --md-secondary: #EA6A2B;
+      --md-secondary-container: #FFE8DC;
+      --md-on-secondary-container: #5C2205;
 
+      --md-bg: #FAF8F2;
+      --md-surface: #FFFFFF;
+      --md-surface-container-low: #F5F2EA;
+      --md-surface-container: #EFECE2;
+      --md-surface-container-high: #E7E3D7;
+      --md-outline: #737974;
+      --md-outline-variant: #E1DDD2;
+
+      --md-ink: #191C1A;
+      --md-muted: #5B635E;
+      --md-error: #BA1A1A;
+      --md-error-container: #FFDAD6;
+      --md-on-error-container: #410002;
+      --md-amber: #9A5B00;
+      --md-amber-container: #FFEDD5;
+
+      --md-shape-xs: 8px;
+      --md-shape-sm: 12px;
+      --md-shape-md: 16px;
+      --md-shape-lg: 24px;
+      --md-shape-xl: 28px;
+      --md-shape-full: 9999px;
+
+      --md-elev-1: 0 1px 3px rgba(19, 93, 58, 0.08), 0 1px 2px rgba(25, 28, 26, 0.06);
+      --md-elev-2: 0 3px 8px rgba(19, 93, 58, 0.12), 0 1px 3px rgba(25, 28, 26, 0.08);
+      --md-elev-3: 0 8px 24px rgba(25, 28, 26, 0.18);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: #E8E4DA;
+      color: var(--md-ink);
+      font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes m3FadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-m3 {
+      animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* =========================================================================
+       2. ANDROID DEVICE SHELL & STATUS BAR
+       ========================================================================= */
+    .android-shell {
+      width: 100%;
+      max-width: 428px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--md-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .android-shell.with-nav {
+      padding-bottom: 144px;
+    }
+
+    .android-status-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 28px;
+      padding: 0 16px;
+      background: rgba(250, 248, 242, 0.98);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--md-ink);
+      user-select: none;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(225, 221, 210, 0.45);
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Brand Z App Icon */
+    .z-app-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: 800;
+      box-shadow: var(--md-elev-1);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .z-app-icon-lg {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      font-size: 36px;
+      box-shadow: var(--md-elev-2);
+    }
+
+    /* =========================================================================
+       3. MATERIAL 3 TOP APP BAR, CARDS, CHIPS & BUTTONS
+       ========================================================================= */
+    .m3-top-bar {
+      position: sticky;
+      top: 0;
+      padding-top: calc(10px + env(safe-area-inset-top, 0px));
+      z-index: 20;
+      background: rgba(250, 248, 242, 0.96);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--md-outline-variant);
+    }
+
+    .page-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .m3-card {
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+      box-shadow: var(--md-elev-1);
+    }
+
+    .m3-card-tonal {
+      background: var(--md-surface-container-low);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-md);
+      padding: 14px;
+    }
+
+    .m3-card-pressable {
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .m3-card-pressable:active {
+      transform: scale(0.985);
+      box-shadow: none;
+    }
+
+    .m3-banner-primary {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-radius: var(--md-shape-md);
+      padding: 13px 14px;
+    }
+
+    .m3-banner-error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+      border-radius: var(--md-shape-md);
+      padding: 13px 14px;
+    }
+
+    .m3-banner-amber {
+      background: var(--md-amber-container);
+      color: var(--md-amber);
+      border-radius: var(--md-shape-sm);
+      padding: 11px 13px;
+    }
+
+    /* M3 Buttons (48px min-height for comfortable Android touch targets) */
+    .m3-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: var(--md-shape-full);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      transition: transform 0.1s ease, background 0.15s ease, box-shadow 0.15s ease;
+      text-align: center;
+    }
+
+    .m3-btn:active:not(:disabled) {
+      transform: scale(0.975);
+    }
+
+    .m3-btn-sm {
+      min-height: 38px;
+      padding: 0 14px;
+      font-size: 12.5px;
+    }
+
+    .m3-btn-block {
+      width: 100%;
+    }
+
+    .m3-btn-filled {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      box-shadow: var(--md-elev-1);
+    }
+
+    .m3-btn-tonal {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-btn-outlined {
+      background: var(--md-surface);
+      color: var(--md-primary);
+      border: 1px solid var(--md-outline);
+    }
+
+    .m3-icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--md-shape-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-ink);
+      background: transparent;
+      flex-shrink: 0;
+      transition: background 0.14s ease;
+    }
+
+    .m3-icon-btn:hover, .m3-icon-btn:active {
+      background: var(--md-surface-container);
+    }
+
+    /* M3 Filter & Segmented Chips */
+    .chip-rail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .m3-chip {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--md-shape-xs);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      color: var(--md-ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.14s ease, border-color 0.14s ease;
+    }
+
+    .m3-chip.selected {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    /* M3 Segmented Button Group */
+    .m3-segmented {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      border: 1px solid var(--md-outline);
+      border-radius: var(--md-shape-full);
+      overflow: hidden;
+      background: var(--md-surface);
+    }
+
+    .m3-seg-btn {
+      min-height: 40px;
+      padding: 0 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--md-ink);
+      border-right: 1px solid var(--md-outline-variant);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .m3-seg-btn:last-child {
+      border-right: none;
+    }
+
+    .m3-seg-btn.selected {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      font-weight: 700;
+    }
+
+    /* M3 Search Bar & Outlined Inputs */
+    .m3-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--md-surface-container-low);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-full);
+      padding: 6px 8px 6px 16px;
+      min-height: 50px;
+    }
+
+    .m3-search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 0;
+    }
+
+    .m3-input {
+      width: 100%;
+      background: var(--md-surface);
+      border: 1.5px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-sm);
+      padding: 13px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--md-ink);
+      transition: border-color 0.14s ease;
+    }
+
+    .m3-input:focus {
+      outline: none;
+      border-color: var(--md-primary);
+    }
+
+    .phone-field {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid var(--md-outline-variant);
+      border-radius: var(--md-shape-sm);
+      background: var(--md-surface);
+      overflow: hidden;
+    }
+
+    .phone-field:focus-within {
+      border-color: var(--md-primary);
+    }
+
+    .phone-code {
+      padding: 0 14px;
+      background: var(--md-surface-container-low);
+      border-right: 1px solid var(--md-outline-variant);
+      display: inline-flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .phone-field input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      background: transparent;
+      min-width: 0;
+    }
+
+    /* Badges & Diet Marks */
+    .m3-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--md-shape-xs);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .m3-badge-primary {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-badge-neutral {
+      background: var(--md-surface-container);
+      color: var(--md-muted);
+    }
+
+    .m3-badge-error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+    }
+
+    .diet-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1.5px solid var(--md-primary);
+      flex-shrink: 0;
+    }
+
+    .diet-mark span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--md-primary);
+    }
+
+    .diet-mark.nonveg {
+      border-color: var(--md-error);
+    }
+
+    .diet-mark.nonveg span {
+      background: var(--md-error);
+    }
+
+    /* Quantity Stepper */
+    .m3-stepper {
+      min-width: 92px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      border-radius: var(--md-shape-full);
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .m3-stepper.tonal {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .m3-stepper button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .m3-stepper span {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Material 3 Switch */
+    .m3-switch {
+      width: 52px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--md-surface-container-high);
+      border: 2px solid var(--md-outline);
+      position: relative;
+      transition: background 0.16s ease, border-color 0.16s ease;
+      flex-shrink: 0;
+    }
+
+    .m3-switch.on {
+      background: var(--md-primary);
+      border-color: var(--md-primary);
+    }
+
+    .m3-switch-thumb {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--md-outline);
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .m3-switch.on .m3-switch-thumb {
+      transform: translateX(20px);
+      background: #FFFFFF;
+    }
+
+    /* =========================================================================
+       4. ANDROID EXTENDED FAB CART BAR & M3 NAVIGATION BAR
+       ========================================================================= */
+    .fab-cart-wrap {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 428px;
+      padding: 0 16px;
+      z-index: 30;
+    }
+
+    .fab-cart-btn {
+      width: 100%;
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      border-radius: var(--md-shape-md);
+      padding: 12px 16px;
+      box-shadow: var(--md-elev-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .m3-nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-top: 1px solid var(--md-outline-variant);
+      padding: 10px 8px calc(10px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      z-index: 30;
+    }
+
+    .m3-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--md-muted);
+    }
+
+    .m3-nav-pill {
+      width: 62px;
+      height: 32px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .m3-nav-item.active {
+      color: var(--md-ink);
+      font-weight: 700;
+    }
+
+    .m3-nav-item.active .m3-nav-pill {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    /* =========================================================================
+       5. ANDROID BOTTOM SHEETS & SNACKBAR
+       ========================================================================= */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(25, 28, 26, 0.48);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 428px;
+      background: var(--md-surface-container-low);
+      border-radius: 28px 28px 0 0;
+      padding: 10px 18px 24px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: var(--md-elev-3);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: m3FadeUp 0.18s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .sheet-drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--md-outline);
+      opacity: 0.4;
+      margin: 2px auto 4px;
+      flex-shrink: 0;
+    }
+
+    .android-snackbar {
+      position: fixed;
+      bottom: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 396px;
+      z-index: 70;
+      background: #2E322F;
+      color: #F4F5F4;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 13px 16px;
+      border-radius: 10px;
+      box-shadow: var(--md-elev-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      animation: m3FadeUp 0.15s ease-out;
+    }
+
+    .text-xs { font-size: 12px; }
+    .text-xxs { font-size: 11px; }
+    .text-sm { font-size: 13.5px; }
+    .text-base { font-size: 16px; }
+    .font-bold { font-weight: 700; }
+    .font-medium { font-weight: 500; }
+    .text-muted { color: var(--md-muted); }
+    .text-primary { color: var(--md-primary); }
+    .text-error { color: var(--md-error); }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+  <div id="android-shell" class="android-shell">
+    <!-- Main Screen Viewport -->
+    <main id="view-container" style="flex: 1; display: flex; flex-direction: column;"></main>
+
+    <!-- Extended FAB Cart Bar -->
+    <div id="floating-cart-bar" class="fab-cart-wrap hidden">
+      <button type="button" data-action="open-cart" class="fab-cart-btn">
+        <div style="text-align: left; min-width: 0;">
+          <p id="floating-cart-meta" class="text-xs font-bold" style="color: var(--md-primary-container);">0 items · ₹0</p>
+          <p id="floating-cart-restaurant" class="text-sm font-bold truncate" style="max-width: 210px;">Bamboo Kitchen</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.18); padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700; flex-shrink: 0;">
+          View cart →
+        </div>
+      </button>
+    </div>
+
+    <!-- Material 3 Bottom Navigation Bar -->
+    <nav id="bottom-nav" class="m3-nav-bar hidden" aria-label="Android bottom navigation">
+      <button type="button" data-action="navigate-tab" data-tab="home" class="m3-nav-item">
+        <span class="m3-nav-pill">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span>Home</span>
+      </button>
+      <button type="button" data-action="navigate-tab" data-tab="saved" class="m3-nav-item">
+        <span class="m3-nav-pill">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </span>
+        <span>Saved</span>
+      </button>
+      <button type="button" data-action="navigate-tab" data-tab="orders" class="m3-nav-item">
+        <span class="m3-nav-pill">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </span>
+        <span>Orders</span>
+      </button>
+      <button type="button" data-action="navigate-tab" data-tab="profile" class="m3-nav-item">
+        <span class="m3-nav-pill">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <!-- Android Bottom Sheet: Choose Delivery Address -->
+    <div id="location-modal" class="sheet-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="bottom-sheet">
+        <div class="sheet-drag-handle"></div>
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">
+          <div>
+            <h2 class="text-base font-bold">Choose delivery address</h2>
+            <p class="text-xs text-muted" style="margin-top: 2px;">Max delivery radius: 7 km across Guwahati</p>
+          </div>
+          <button type="button" data-action="close-location-modal" aria-label="Close" class="m3-icon-btn">✕</button>
+        </div>
+        <div id="location-options" style="display: flex; flex-direction: column; gap: 10px; max-height: 290px; overflow-y: auto;"></div>
+        <button type="button" data-action="open-addresses-from-modal" class="m3-btn m3-btn-filled m3-btn-block">
+          + Add new address
+        </button>
+      </div>
+    </div>
+
+    <!-- Android Bottom Sheet: Help & Support -->
+    <div id="support-modal" class="sheet-backdrop hidden" role="dialog" aria-modal="true">
+      <div id="support-modal-sheet" class="bottom-sheet"></div>
+    </div>
+
+    <!-- Android Bottom Sheet: UPI Payment & Screenshot Upload -->
+    <div id="upi-payment-modal" class="sheet-backdrop hidden" role="dialog" aria-modal="true">
+      <div id="upi-payment-sheet" class="bottom-sheet"></div>
+    </div>
+
+    <!-- Android Bottom Sheet: Order & App Notifications -->
+    <div id="notifications-modal" class="sheet-backdrop hidden" role="dialog" aria-modal="true">
+      <div id="notifications-sheet" class="bottom-sheet"></div>
+    </div>
+
+    <!-- Android Snackbar -->
+    <div id="toast-banner" class="android-snackbar hidden" role="status" aria-live="polite">
+      <span id="toast-message">Notification</span>
+    </div>
+  </div>
+
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      getDocs,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3tPo7KLznK4imXXcZeof2mutH84jgpLY",
+      authDomain: "zayko-food-delivery-854ec.firebaseapp.com",
+      projectId: "zayko-food-delivery-854ec",
+      storageBucket: "zayko-food-delivery-854ec.firebasestorage.app",
+      messagingSenderId: "72605066232",
+      appId: "1:72605066232:web:f01f4f55cb9f4ba2a7ac0d",
+      measurementId: "G-VB5GJ2B4TZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.ZaykoDB = {
+      auth,
+      db,
+      async signInAnon() {
+        if (auth.currentUser) return auth.currentUser;
+        const cred = await signInAnonymously(auth);
+        return cred.user;
+      },
+      async signInAdmin(email, password) {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        return cred.user;
+      },
+      async signOutUser() {
+        await signOut(auth);
+      },
+      onAuth(cb) {
+        return onAuthStateChanged(auth, cb);
+      },
+      listenCollection(colName, cb) {
+        return onSnapshot(
+          collection(db, colName),
+          (snap) => {
+            const list = [];
+            snap.forEach((d) => list.push({ ...d.data(), _docId: d.id }));
+            cb(list);
+          },
+          (err) => console.warn("Firestore listen error (" + colName + "):", err)
+        );
+      },
+      listenDoc(colName, docId, cb) {
+        return onSnapshot(
+          doc(db, colName, docId),
+          (snap) => {
+            if (snap.exists()) cb(snap.data());
+          },
+          (err) => console.warn("Firestore doc listen error (" + colName + "/" + docId + "):", err)
+        );
+      },
+      async setDoc(colName, docId, data) {
+        await setDoc(doc(db, colName, String(docId)), data, { merge: true });
+      },
+      async deleteDoc(colName, docId) {
+        await deleteDoc(doc(db, colName, String(docId)));
+      },
+      async seedIfEmpty(colName, docsMap) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          if (snap.empty) {
+            const entries = Object.entries(docsMap);
+            for (const [id, data] of entries) {
+              await setDoc(doc(db, colName, String(id)), data, { merge: true });
+            }
+          }
+        } catch (err) {
+          console.warn("Seed skipped (" + colName + "):", err);
+        }
+      },
+      compressImage(dataUrl, maxWidth = 720, quality = 0.65) {
+        return new Promise((resolve) => {
+          if (!dataUrl || !String(dataUrl).startsWith("data:image")) {
+            resolve(dataUrl || "");
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+    };
+    window.dispatchEvent(new Event("zayko-db-ready"));
+  </script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var MIN_DELIVERY_FEE = 50;
+      var BASE_DISTANCE_KM = 5;
+      var EXTRA_PER_KM_FEE = 10;
+      var MAX_RADIUS_KM = 7;
+      var SUPPORT_HOTLINE = '+91 98640 00111';
+
+      function calculateDeliveryFee(distanceKm) {
+        var km = Number(distanceKm || 0);
+        if (km > MAX_RADIUS_KM) return { outOfRange: true, fee: 0, extraKm: 0 };
+        if (km <= BASE_DISTANCE_KM) return { outOfRange: false, fee: MIN_DELIVERY_FEE, extraKm: 0 };
+        var extraKm = Math.ceil(km - BASE_DISTANCE_KM);
+        return { outOfRange: false, fee: MIN_DELIVERY_FEE + extraKm * EXTRA_PER_KM_FEE, extraKm: extraKm };
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatPhoneDisplay(raw) {
+        var digits = String(raw || '').replace(/\D/g, '').slice(-10);
+        if (digits.length === 10) return '+91 ' + digits.slice(0, 5) + ' ' + digits.slice(5);
+        return raw || '+91 98640 12345';
+      }
+
+      function copyTextToClipboard(text) {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function buildUpiDeepLink(upiId, restaurantName, amount) {
+        return (
+          'upi://pay?pa=' + encodeURIComponent(upiId) +
+          '&pn=' + encodeURIComponent(restaurantName) +
+          '&am=' + encodeURIComponent(String(amount)) +
+          '&cu=INR&tn=Zayko+Order'
+        );
+      }
+
+      function getFoodArtwork(type) {
+        var arts = {
+          thali: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#D4EDDF"/><circle cx="60" cy="62" r="40" fill="#FFFFFF" stroke="#135D3A" stroke-width="3"/><circle cx="60" cy="68" r="15" fill="#FAF8F2" stroke="#D8D2C5" stroke-width="2"/><circle cx="42" cy="48" r="10" fill="#EA6A2B"/><circle cx="60" cy="42" r="10" fill="#EAB308"/><circle cx="78" cy="48" r="10" fill="#135D3A"/><ellipse cx="44" cy="78" rx="9" ry="5" fill="#D97706"/><ellipse cx="77" cy="76" rx="8" ry="6" fill="#84CC16"/></svg>',
+          curry: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#FFE8DC"/><circle cx="60" cy="64" r="36" fill="#EA6A2B"/><circle cx="60" cy="64" r="28" fill="#C2410C"/><circle cx="50" cy="58" r="7" fill="#FDBA74"/><circle cx="70" cy="62" r="8" fill="#FDBA74"/><circle cx="58" cy="74" r="6" fill="#FED7AA"/><path d="M46 42 Q50 32 54 42 M62 40 Q66 30 70 40" stroke="#135D3A" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+          momos: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#D4EDDF"/><ellipse cx="60" cy="70" rx="38" ry="26" fill="#FFFFFF" stroke="#135D3A" stroke-width="2.5"/><path d="M36 68 Q48 48 60 68 Z" fill="#FAF8F2" stroke="#9CA3AF" stroke-width="2"/><path d="M56 64 Q68 44 80 64 Z" fill="#FAF8F2" stroke="#9CA3AF" stroke-width="2"/><path d="M46 80 Q58 60 72 80 Z" fill="#FAF8F2" stroke="#9CA3AF" stroke-width="2"/><circle cx="84" cy="44" r="10" fill="#EA6A2B"/></svg>',
+          paneer: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#FFEDD5"/><circle cx="60" cy="62" r="36" fill="#EA6A2B"/><rect x="42" y="48" width="14" height="14" rx="3" fill="#FFFBEB"/><rect x="64" y="50" width="14" height="14" rx="3" fill="#FFFBEB"/><rect x="52" y="68" width="15" height="14" rx="3" fill="#FFFBEB"/><circle cx="46" cy="74" r="3" fill="#135D3A"/><circle cx="74" cy="72" r="3" fill="#135D3A"/></svg>',
+          biryani: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#FFE8DC"/><ellipse cx="60" cy="68" rx="38" ry="28" fill="#135D3A"/><ellipse cx="60" cy="62" rx="32" ry="20" fill="#FDE68A"/><circle cx="48" cy="60" r="6" fill="#EA6A2B"/><circle cx="68" cy="58" r="7" fill="#D97706"/><circle cx="58" cy="68" r="5" fill="#FFFFFF"/><path d="M44 46 L52 50 M68 48 L76 44" stroke="#135D3A" stroke-width="2.5" stroke-linecap="round"/></svg>',
+          naan: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#FAF3E0"/><path d="M32 76 C28 50, 56 30, 82 38 C96 42, 92 78, 72 88 C52 96, 36 88, 32 76 Z" fill="#F5DEB3" stroke="#B45309" stroke-width="2.5"/><circle cx="52" cy="54" r="4" fill="#92400E" opacity="0.55"/><circle cx="70" cy="66" r="5" fill="#92400E" opacity="0.55"/></svg>',
+          pizza: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#FFE8DC"/><circle cx="60" cy="60" r="38" fill="#D97706"/><circle cx="60" cy="60" r="31" fill="#FDE68A"/><circle cx="48" cy="50" r="6" fill="#DC2626"/><circle cx="72" cy="54" r="6" fill="#DC2626"/><circle cx="56" cy="74" r="6" fill="#DC2626"/></svg>',
+          burger: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#D4EDDF"/><path d="M28 58 C28 34, 92 34, 92 58 Z" fill="#D97706"/><rect x="26" y="58" width="68" height="8" rx="4" fill="#22C55E"/><rect x="28" y="66" width="64" height="12" rx="5" fill="#7C2D12"/><rect x="30" y="78" width="60" height="12" rx="6" fill="#D97706"/></svg>',
+          healthy: '<svg viewBox="0 0 120 120" width="100%" height="100%"><rect width="120" height="120" fill="#D4EDDF"/><circle cx="60" cy="62" r="36" fill="#FFFFFF" stroke="#135D3A" stroke-width="3"/><circle cx="48" cy="54" r="12" fill="#22C55E"/><circle cx="70" cy="54" r="11" fill="#84CC16"/><circle cx="58" cy="72" r="12" fill="#135D3A"/></svg>'
+        };
+        return arts[type] || arts.thali;
+      }
+
+      function renderDietBadge(isVeg) {
+        return '<span class="diet-mark ' + (isVeg ? '' : 'nonveg') + '" title="' + (isVeg ? 'Veg' : 'Non-veg') + '"><span></span></span>';
+      }
+
+      function renderItemStars(orderId, itemId, currentVal, locked) {
+        return [1, 2, 3, 4, 5].map(function (star) {
+          var filled = star <= currentVal;
+          if (locked) {
+            return '<span style="color:' + (filled ? 'var(--md-secondary)' : '#D5CFC3') + '; font-size:17px; line-height:1;">★</span>';
+          }
+          return (
+            '<button type="button" data-action="set-item-star" data-order-id="' + escapeHtml(orderId) +
+            '" data-item-id="' + escapeHtml(itemId) + '" data-value="' + star +
+            '" aria-label="Rate ' + star + ' out of 5" style="padding:4px; color:' +
+            (filled ? 'var(--md-secondary)' : '#D5CFC3') + '; font-size:24px; line-height:1;">★</button>'
+          );
+        }).join('');
+      }
+
+      var CATEGORIES = ['All', 'Meals', 'Pizza', 'Burgers', 'Healthy', 'Biryani'];
+      var SEARCH_CUISINES = ['All', 'North Indian', 'Assamese', 'Pure Veg', 'Pizza', 'Burgers'];
+      var SUPPORT_TOPICS = ['Wrong or missing item', 'Food quality', 'Late delivery', 'Payment issue', 'Something else'];
+
+      var RESTAURANTS = [
+        {
+          id: 'bamboo-kitchen',
+          name: 'Bamboo Kitchen',
+          upiId: 'bambookitchen@okicici',
+          cuisines: ['North Indian', 'Assamese'],
+          categories: ['Meals'],
+          rating: 4.7,
+          reviewCount: '240+',
+          deliveryTime: '25-35 min',
+          deliveryInfo: '₹50 up to 5 km · +₹10/km after 5 km (max 7 km)',
+          tagline: 'Fresh thali & local Assamese favourites',
+          artwork: 'thali',
+          menu: [
+            { id: 'bk-1', name: 'Assamese Veg Thali', price: 160, isVeg: true, desc: 'Steamed Joha rice, dal, seasonal bhaji, aloo pitika & khar.', artwork: 'thali' },
+            { id: 'bk-2', name: 'Chicken Curry Meal', price: 220, isVeg: false, desc: 'Homestyle Assamese chicken curry served with steamed rice and salad.', artwork: 'curry' },
+            { id: 'bk-3', name: 'Steamed Momos', price: 100, isVeg: true, desc: '6 soft handmade veg dumplings served with spicy tomato chutney.', artwork: 'momos' }
+          ]
+        },
+        {
+          id: 'the-curry-leaf',
+          name: 'The Curry Leaf',
+          upiId: 'thecurryleaf@okaxis',
+          cuisines: ['North Indian'],
+          categories: ['Meals', 'Biryani'],
+          rating: 4.6,
+          reviewCount: '185+',
+          deliveryTime: '20-30 min',
+          deliveryInfo: '₹50 up to 5 km · +₹10/km after 5 km (max 7 km)',
+          tagline: 'Slow-cooked biryanis & homestyle curries',
+          artwork: 'biryani',
+          menu: [
+            { id: 'cl-1', name: 'Chicken Biryani', price: 260, isVeg: false, desc: 'Fragrant basmati rice slow-cooked with spiced chicken & raita.', artwork: 'biryani' },
+            { id: 'cl-2', name: 'Chicken Curry Meal', price: 220, isVeg: false, desc: 'Rich spiced chicken curry served with jeera rice & two rotis.', artwork: 'curry' },
+            { id: 'cl-3', name: 'Veg Dum Biryani', price: 180, isVeg: true, desc: 'Aromatic saffron rice layered with spiced seasonal vegetables.', artwork: 'biryani' }
+          ]
+        },
+        {
+          id: 'green-leaf-kitchen',
+          name: 'Green Leaf Kitchen',
+          upiId: 'greenleafkitchen@okhdfcbank',
+          cuisines: ['Pure Veg', 'North Indian'],
+          categories: ['Meals', 'Healthy'],
+          rating: 4.5,
+          reviewCount: '310+',
+          deliveryTime: '25-30 min',
+          deliveryInfo: '₹50 up to 5 km · +₹10/km after 5 km (max 7 km)',
+          tagline: 'Pure veg North Indian meals & fresh bowls',
+          artwork: 'paneer',
+          menu: [
+            { id: 'gl-1', name: 'Paneer Butter Masala', price: 220, isVeg: true, desc: 'Soft cottage cheese simmered in velvety tomato-cashew gravy.', artwork: 'paneer' },
+            { id: 'gl-2', name: 'Dal Tadka', price: 150, isVeg: true, desc: 'Yellow lentils tempered with desi ghee, cumin & roasted garlic.', artwork: 'thali' },
+            { id: 'gl-3', name: 'Butter Naan', price: 40, isVeg: true, desc: 'Tandoor-baked soft flatbread brushed with melted butter.', artwork: 'naan' },
+            { id: 'gl-4', name: 'Sprouts & Paneer Salad Bowl', price: 140, isVeg: true, desc: 'Fresh sprouts, grilled paneer, cucumber & lemon-mint dressing.', artwork: 'healthy' }
+          ]
+        },
+        {
+          id: 'crust-and-patty',
+          name: 'Crust & Patty',
+          upiId: 'crustandpatty@okicici',
+          cuisines: ['Pizza', 'Burgers'],
+          categories: ['Pizza', 'Burgers'],
+          rating: 4.4,
+          reviewCount: '140+',
+          deliveryTime: '20-30 min',
+          deliveryInfo: '₹50 up to 5 km · +₹10/km after 5 km (max 7 km)',
+          tagline: 'Wood-fired pizzas & grilled burgers',
+          artwork: 'pizza',
+          menu: [
+            { id: 'cp-1', name: 'Margherita Woodfire Pizza', price: 240, isVeg: true, desc: 'San Marzano tomato base, fresh mozzarella & sweet basil.', artwork: 'pizza' },
+            { id: 'cp-2', name: 'Smoky Chicken Burger', price: 180, isVeg: false, desc: 'Char-grilled chicken patty, cheddar, lettuce & chipotle mayo.', artwork: 'burger' },
+            { id: 'cp-3', name: 'Crispy Herb Veg Burger', price: 130, isVeg: true, desc: 'Crunchy spiced veggie patty with pickles and creamy herb sauce.', artwork: 'burger' }
+          ]
+        }
+      ];
+
+      var ORDER_STEPS = [
+        { title: 'Order confirmed', subtitle: 'Restaurant accepted your order' },
+        { title: 'Preparing your food', subtitle: 'Freshly made just for you' },
+        { title: 'Out for delivery', subtitle: 'Restaurant delivery staff is on the way' },
+        { title: 'Delivered', subtitle: 'Enjoy your meal' }
+      ];
+
+      var INITIAL_ADDRESSES = [
+        { id: 'addr-1', name: 'Aarav Das', label: 'Home', area: 'GS Road, Guwahati', address: 'Flat 4, Main Road, GS Road, Guwahati', landmark: 'Near the temple', distanceKm: 2.4 },
+        { id: 'addr-2', name: 'Aarav Das', label: 'Work', area: 'Zoo Road, Guwahati', address: 'House 12, RG Baruah Rd, Zoo Road, Guwahati', landmark: 'Opposite Central Mall', distanceKm: 5.8 },
+        { id: 'addr-3', name: 'Aarav Das', label: 'Other', area: 'Jalukbari, Guwahati', address: 'Near Gauhati University Gate, Jalukbari, Guwahati', landmark: 'Near GU Gate', distanceKm: 7.8 }
+      ];
+
+      var state = {
+        isAuthenticated: false,
+        authStep: 'phone',
+        loginPhone: '',
+        otpInput: '',
+        otpSeconds: 30,
+        customer: { name: 'Aarav Das', phone: '+91 98640 12345' },
+        currentView: 'home',
+        previousView: 'home',
+        activeNav: 'home',
+        savedAddresses: INITIAL_ADDRESSES.slice(),
+        selectedLocation: INITIAL_ADDRESSES[0],
+        addressForm: { name: '', house: '', area: '', landmark: '', label: 'Home', pinX: 168, pinY: 72, distanceKm: 2.8, error: '' },
+        selectedCategory: 'All',
+        homeSearchQuery: '',
+        favoriteRestaurants: [],
+        searchQuery: '',
+        searchVegOnly: false,
+        searchMinRating: 0,
+        searchCuisine: 'All',
+        activeRestaurantId: 'bamboo-kitchen',
+        menuDietFilter: 'all',
+        cart: { restaurantId: 'bamboo-kitchen', items: { 'bk-1': 1, 'bk-3': 1 } },
+        paymentMethod: 'upi',
+        upiScreenshot: '',
+        upiScreenshotName: '',
+        upiPaymentError: '',
+        ordersFilter: 'all',
+        trackingOrderId: 'ZYK482731',
+        orders: [
+          {
+            id: 'ZYK482731',
+            restaurantId: 'bamboo-kitchen',
+            restaurantName: 'Bamboo Kitchen',
+            itemsList: [{ id: 'bk-1', name: 'Assamese Veg Thali', qty: 1, price: 160 }, { id: 'bk-3', name: 'Steamed Momos', qty: 1, price: 100 }],
+            itemsSummary: '1 × Assamese Veg Thali, 1 × Steamed Momos',
+            itemsMap: { 'bk-1': 1, 'bk-3': 1 },
+            deliveryFee: 50,
+            total: 310,
+            date: 'Today',
+            eta: '12:35 - 12:45 PM',
+            stepIndex: 1,
+            riderName: 'Bikash Das',
+            riderPhone: '+91 98640 99001',
+            paymentMethod: 'UPI payment',
+            address: INITIAL_ADDRESSES[0].address,
+            itemRatings: {}
+          },
+          {
+            id: 'ZYK482640',
+            restaurantId: 'the-curry-leaf',
+            restaurantName: 'The Curry Leaf',
+            itemsList: [{ id: 'cl-2', name: 'Chicken Curry Meal', qty: 1, price: 220 }],
+            itemsSummary: '1 × Chicken Curry Meal',
+            itemsMap: { 'cl-2': 1 },
+            deliveryFee: 50,
+            total: 270,
+            date: '12 Nov',
+            eta: 'Delivered',
+            stepIndex: 3,
+            riderName: 'Suresh Kalita',
+            riderPhone: '+91 98640 54321',
+            paymentMethod: 'Cash on delivery',
+            address: INITIAL_ADDRESSES[0].address,
+            itemRatings: {}
+          },
+          {
+            id: 'ZYK482518',
+            restaurantId: 'green-leaf-kitchen',
+            restaurantName: 'Green Leaf Kitchen',
+            itemsList: [{ id: 'gl-1', name: 'Paneer Butter Masala', qty: 1, price: 220 }, { id: 'gl-3', name: 'Butter Naan', qty: 2, price: 80 }],
+            itemsSummary: '1 × Paneer Butter Masala, 2 × Butter Naan',
+            itemsMap: { 'gl-1': 1, 'gl-3': 2 },
+            deliveryFee: 50,
+            total: 350,
+            date: '8 Nov',
+            eta: 'Delivered',
+            stepIndex: 3,
+            riderName: 'Ramen Kalita',
+            riderPhone: '+91 98640 99002',
+            paymentMethod: 'UPI payment',
+            address: INITIAL_ADDRESSES[0].address,
+            itemRatings: { 'gl-1': 5, 'gl-3': 5 }
+          }
+        ],
+        draftItemRatings: {},
+        supportTab: 'raise',
+        supportOrderId: null,
+        selectedSupportTopic: 'Wrong or missing item',
+        supportNoteDraft: '',
+        supportError: '',
+        nextTicketNum: 305,
+        tickets: [
+          { id: 'SUP-304', source: 'customer', senderName: 'Aarav Das', senderPhone: '+91 98640 12345', orderId: 'ZYK482731', topic: 'Food quality', message: 'Please ask Bamboo Kitchen to keep the Assamese Veg Thali mild spicy.', status: 'open', createdAt: '10 mins ago', resolutionNote: '' },
+          { id: 'SUP-301', source: 'customer', senderName: 'Aarav Das', senderPhone: '+91 98640 12345', orderId: 'ZYK482518', topic: 'Payment issue', message: 'Checked if duplicate UPI debit occurred on my previous order.', status: 'resolved', createdAt: '8 Nov', resolutionNote: 'Verified with restaurant & customer — no duplicate UPI debit was captured.' }
+        ]
+      };
+
+      var androidShell = document.getElementById('android-shell');
+      var viewContainer = document.getElementById('view-container');
+      var floatingCartBar = document.getElementById('floating-cart-bar');
+      var floatingCartMeta = document.getElementById('floating-cart-meta');
+      var floatingCartRestaurant = document.getElementById('floating-cart-restaurant');
+      var bottomNav = document.getElementById('bottom-nav');
+      var locationModal = document.getElementById('location-modal');
+      var locationOptions = document.getElementById('location-options');
+      var supportModal = document.getElementById('support-modal');
+      var supportModalSheet = document.getElementById('support-modal-sheet');
+      var upiPaymentModal = document.getElementById('upi-payment-modal');
+      var upiPaymentSheet = document.getElementById('upi-payment-sheet');
+      var notificationsModal = document.getElementById('notifications-modal');
+      var notificationsSheet = document.getElementById('notifications-sheet');
+      var deviceClockEl = document.getElementById('device-clock');
+      var notifDotEl = document.getElementById('notif-dot');
+
+      function updateDeviceClock() {
+        if (!deviceClockEl) return;
+        var now = new Date();
+        var hh = String(now.getHours()).padStart(2, '0');
+        var mm = String(now.getMinutes()).padStart(2, '0');
+        deviceClockEl.textContent = hh + ':' + mm;
+      }
+      updateDeviceClock();
+      setInterval(updateDeviceClock, 30000);
+
+      var STORAGE_KEY = 'zayko_customer_android_v1';
+      function saveAppState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            isAuthenticated: state.isAuthenticated,
+            customer: state.customer,
+            savedAddresses: state.savedAddresses,
+            selectedLocationId: state.selectedLocation.id,
+            favoriteRestaurants: state.favoriteRestaurants,
+            cart: state.cart,
+            orders: state.orders,
+            tickets: state.tickets
+          }));
+        } catch (err) {}
+      }
+
+      function loadAppState() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var saved = JSON.parse(raw);
+          if (saved && typeof saved === 'object') {
+            if (typeof saved.isAuthenticated === 'boolean') state.isAuthenticated = saved.isAuthenticated;
+            if (saved.customer) state.customer = saved.customer;
+            if (Array.isArray(saved.savedAddresses) && saved.savedAddresses.length > 0) state.savedAddresses = saved.savedAddresses;
+            if (saved.selectedLocationId) {
+              var match = state.savedAddresses.find(function (a) { return a.id === saved.selectedLocationId; });
+              if (match) state.selectedLocation = match;
+            }
+            if (Array.isArray(saved.favoriteRestaurants)) state.favoriteRestaurants = saved.favoriteRestaurants;
+            if (saved.cart && saved.cart.restaurantId) state.cart = saved.cart;
+            if (Array.isArray(saved.orders) && saved.orders.length > 0) state.orders = saved.orders;
+            if (Array.isArray(saved.tickets)) state.tickets = saved.tickets;
+          }
+        } catch (err) {}
+      }
+      loadAppState();
+      var toastBanner = document.getElementById('toast-banner');
+      var toastMessage = document.getElementById('toast-message');
+      var toastTimer = null;
+      var otpTimer = null;
+
+      function showToast(message) {
+        toastMessage.textContent = message;
+        toastBanner.classList.remove('hidden');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          toastBanner.classList.add('hidden');
+        }, 2800);
+      }
+
+      function startOtpCountdown() {
+        clearInterval(otpTimer);
+        state.otpSeconds = 30;
+        otpTimer = setInterval(function () {
+          if (state.isAuthenticated || state.authStep !== 'otp') {
+            clearInterval(otpTimer);
+            return;
+          }
+          if (state.otpSeconds > 0) {
+            state.otpSeconds -= 1;
+            var labelEl = document.getElementById('otp-timer-label');
+            var resendBtn = document.getElementById('otp-resend-btn');
+            if (labelEl) {
+              var s = state.otpSeconds < 10 ? '0' + state.otpSeconds : String(state.otpSeconds);
+              labelEl.textContent = state.otpSeconds > 0 ? 'Resend OTP in 0:' + s : 'You can resend OTP now';
+            }
+            if (resendBtn && state.otpSeconds === 0) resendBtn.disabled = false;
+          } else {
+            clearInterval(otpTimer);
+          }
+        }, 1000);
+      }
+
+      function getRestaurantById(id) {
+        return RESTAURANTS.find(function (r) { return r.id === id; }) || RESTAURANTS[0];
+      }
+
+      function getActiveOrders() {
+        return state.orders.filter(function (o) { return o.stepIndex < 3; });
+      }
+
+      function getOpenTicketsCount() {
+        return state.tickets.filter(function (t) { return t.status === 'open'; }).length;
+      }
+
+      function getCartSummary() {
+        var restaurant = getRestaurantById(state.cart.restaurantId);
+        var itemCount = 0;
+        var itemTotal = 0;
+        var lineItems = [];
+
+        Object.keys(state.cart.items).forEach(function (itemId) {
+          var qty = state.cart.items[itemId];
+          if (!qty || qty <= 0) return;
+          var dish = restaurant.menu.find(function (m) { return m.id === itemId; });
+          if (!dish) return;
+          itemCount += qty;
+          itemTotal += dish.price * qty;
+          lineItems.push({ dish: dish, qty: qty });
+        });
+
+        var feeCalc = calculateDeliveryFee(state.selectedLocation.distanceKm);
+        var deliveryFee = itemCount > 0 && !feeCalc.outOfRange ? feeCalc.fee : 0;
+        var grandTotal = itemCount > 0 && !feeCalc.outOfRange ? itemTotal + deliveryFee : 0;
+
+        return {
+          restaurant: restaurant,
+          itemCount: itemCount,
+          itemTotal: itemTotal,
+          deliveryFee: deliveryFee,
+          taxes: 0,
+          grandTotal: grandTotal,
+          outOfRange: feeCalc.outOfRange,
+          lineItems: lineItems
+        };
+      }
+
+      function updateCartItem(restaurantId, itemId, delta) {
+        var currentCount = Object.keys(state.cart.items).reduce(function (sum, key) {
+          return sum + (state.cart.items[key] || 0);
+        }, 0);
+
+        if (state.cart.restaurantId !== restaurantId && currentCount > 0 && delta > 0) {
+          state.cart.restaurantId = restaurantId;
+          state.cart.items = {};
+          showToast('Started a new cart for ' + getRestaurantById(restaurantId).name);
+        } else if (currentCount === 0 && delta > 0) {
+          state.cart.restaurantId = restaurantId;
+        }
+
+        var nextQty = (state.cart.items[itemId] || 0) + delta;
+        if (nextQty <= 0) delete state.cart.items[itemId];
+        else state.cart.items[itemId] = nextQty;
+      }
+
+      function syncChrome() {
+        if (!state.isAuthenticated) {
+          androidShell.classList.remove('with-nav');
+          bottomNav.classList.add('hidden');
+          floatingCartBar.classList.add('hidden');
+          return;
+        }
+
+        androidShell.classList.add('with-nav');
+        bottomNav.classList.remove('hidden');
+
+        document.querySelectorAll('.m3-nav-item').forEach(function (btn) {
+          btn.classList.toggle('active', btn.dataset.tab === state.activeNav);
+        });
+
+        var summary = getCartSummary();
+        var hideCartOn = ['cart', 'track', 'addresses'];
+        if (summary.itemCount > 0 && hideCartOn.indexOf(state.currentView) === -1) {
+          floatingCartMeta.textContent = summary.itemCount + (summary.itemCount === 1 ? ' item' : ' items') + ' · ₹' + summary.itemTotal;
+          floatingCartRestaurant.textContent = summary.restaurant.name;
+          floatingCartBar.classList.remove('hidden');
+        } else {
+          floatingCartBar.classList.add('hidden');
+        }
+      }
+
+      // =========================================================================
+      // AUTH VIEW (ANDROID MATERIAL 3 OTP)
+      // =========================================================================
+      function renderAuthView() {
+        var sec = state.otpSeconds < 10 ? '0' + state.otpSeconds : String(state.otpSeconds);
+
+        if (state.authStep === 'otp') {
+          return (
+            '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px 36px;" class="animate-m3">' +
+            '<div style="text-align:center; margin-bottom:24px;">' +
+            '<div class="z-app-icon z-app-icon-lg">Z</div>' +
+            '<h1 style="font-size:24px; font-weight:800; margin-top:14px;">zayko</h1>' +
+            '<p class="text-xs text-muted font-bold" style="margin-top:2px;">Guwahati Food Delivery</p>' +
+            '</div>' +
+            '<div class="m3-card" style="padding:20px; display:flex; flex-direction:column; gap:16px;">' +
+            '<div>' +
+            '<h2 class="text-base font-bold">Verify your number</h2>' +
+            '<p class="text-xs text-muted" style="margin-top:4px;">Enter the 6-digit OTP sent to <strong>' + escapeHtml(formatPhoneDisplay(state.loginPhone)) + '</strong></p>' +
+            '</div>' +
+            '<div class="m3-banner-primary text-xs" style="display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+            '<span>Demo OTP: <strong>123456</strong></span>' +
+            '<button type="button" data-action="autofill-otp" class="m3-btn m3-btn-filled m3-btn-sm">Auto-fill</button>' +
+            '</div>' +
+            '<form id="otp-verify-form" novalidate style="display:flex; flex-direction:column; gap:14px;">' +
+            '<div>' +
+            '<label for="auth-otp-input" class="text-xs font-bold" style="display:block; margin-bottom:6px;">6-digit OTP</label>' +
+            '<input id="auth-otp-input" class="m3-input" type="tel" inputmode="numeric" maxlength="6" placeholder="123456" value="' + escapeHtml(state.otpInput) + '" style="text-align:center; letter-spacing:0.3em; font-size:20px; font-weight:700;" />' +
+            '</div>' +
+            '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+            '<span id="otp-timer-label" class="text-xxs text-muted font-bold">' + (state.otpSeconds > 0 ? 'Resend OTP in 0:' + sec : 'You can resend OTP now') + '</span>' +
+            '<div style="display:flex; gap:14px;">' +
+            '<button type="button" id="otp-resend-btn" data-action="resend-otp" class="text-xs font-bold text-primary"' + (state.otpSeconds > 0 ? ' disabled' : '') + '>Resend</button>' +
+            '<button type="button" data-action="change-login-number" class="text-xs font-bold text-muted" style="text-decoration:underline;">Change</button>' +
+            '</div>' +
+            '</div>' +
+            '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Verify &amp; Continue</button>' +
+            '</form>' +
+            '</div>' +
+            '</div>'
+          );
+        }
+
+        return (
+          '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 18px 36px;" class="animate-m3">' +
+          '<div style="text-align:center; margin-bottom:26px;">' +
+          '<div class="z-app-icon z-app-icon-lg">Z</div>' +
+          '<h1 style="font-size:26px; font-weight:800; margin-top:14px; letter-spacing:-0.02em;">zayko</h1>' +
+          '<p class="text-xs text-muted font-bold" style="margin-top:3px;">Zayko brings cravings home</p>' +
+          '</div>' +
+          '<div class="m3-card" style="padding:20px; display:flex; flex-direction:column; gap:16px;">' +
+          '<div>' +
+          '<h2 class="text-base font-bold">Sign in with mobile</h2>' +
+          '<p class="text-xs text-muted" style="margin-top:4px;">Enter your 10-digit Indian mobile number to continue.</p>' +
+          '</div>' +
+          '<button type="button" data-action="demo-autofill-customer" class="m3-btn m3-btn-tonal m3-btn-sm m3-btn-block">' +
+          'Demo Auto-fill: Aarav Das (+91 98640 12345)' +
+          '</button>' +
+          '<form id="phone-login-form" novalidate style="display:flex; flex-direction:column; gap:14px;">' +
+          '<div>' +
+          '<label for="auth-phone-input" class="text-xs font-bold" style="display:block; margin-bottom:6px;">Mobile number</label>' +
+          '<div class="phone-field">' +
+          '<span class="phone-code">+91</span>' +
+          '<input id="auth-phone-input" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" value="' + escapeHtml(state.loginPhone) + '" />' +
+          '</div>' +
+          '</div>' +
+          '<button type="submit" class="m3-btn m3-btn-filled m3-btn-block">Send OTP</button>' +
+          '</form>' +
+          '<p class="text-xxs text-muted" style="text-align:center;">Guwahati, Assam · Instant OTP login</p>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      // =========================================================================
+      // BOTTOM SHEETS
+      // =========================================================================
+      function openLocationModal() {
+        locationOptions.innerHTML = state.savedAddresses.map(function (addr) {
+          var isSelected = addr.id === state.selectedLocation.id;
+          var feeInfo = calculateDeliveryFee(addr.distanceKm);
+          return (
+            '<button type="button" data-action="select-saved-address" data-address-id="' + escapeHtml(addr.id) + '" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; border-color:' + (isSelected ? 'var(--md-primary)' : 'var(--md-outline-variant)') + '; background:' + (isSelected ? 'var(--md-primary-container)' : '#FFFFFF') + ';">' +
+            '<div style="min-width:0;">' +
+            '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">' +
+            '<span class="m3-badge m3-badge-primary">' + escapeHtml(addr.label) + '</span>' +
+            '<span class="text-xs font-bold">' + escapeHtml(addr.name) + '</span>' +
+            '<span class="m3-badge ' + (feeInfo.outOfRange ? 'm3-badge-error' : 'm3-badge-neutral') + '">' + addr.distanceKm.toFixed(1) + ' km · ' + (feeInfo.outOfRange ? 'Out of 7 km' : '₹' + feeInfo.fee) + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-muted" style="margin-top:6px;">' + escapeHtml(addr.address) + '</p>' +
+            (addr.landmark ? '<p class="text-xxs text-muted" style="margin-top:2px;">Landmark: ' + escapeHtml(addr.landmark) + '</p>' : '') +
+            '</div>' +
+            '<span style="width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:700; background:' + (isSelected ? 'var(--md-primary)' : 'transparent') + '; color:#FFFFFF; border:1.5px solid ' + (isSelected ? 'var(--md-primary)' : 'var(--md-outline)') + ';">' + (isSelected ? '✓' : '') + '</span>' +
+            '</button>'
+          );
+        }).join('');
+        locationModal.classList.remove('hidden');
+      }
+
+      function closeLocationModal() {
+        locationModal.classList.add('hidden');
+      }
+
+      function renderSupportModal() {
+        var openCount = getOpenTicketsCount();
+        var activeOrders = getActiveOrders();
+        var linkedOrder = state.supportOrderId ? activeOrders.find(function (o) { return o.id === state.supportOrderId; }) : null;
+        if (!linkedOrder && activeOrders.length > 0) {
+          linkedOrder = activeOrders[0];
+          state.supportOrderId = linkedOrder.id;
+        }
+
+        var bodyHtml = '';
+        if (state.supportTab === 'raise') {
+          if (activeOrders.length === 0) {
+            bodyHtml =
+              '<div class="m3-banner-amber text-xs" style="display:flex; flex-direction:column; gap:6px;">' +
+              '<strong>No active orders available</strong>' +
+              '<p style="color:var(--md-ink);">Issues can only be raised for active orders.</p>' +
+              '</div>' +
+              '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
+              '<a href="tel:+919864000111" data-action="call-support" class="m3-btn m3-btn-tonal">Call support</a>' +
+              '<button type="button" data-action="set-support-tab" data-tab="tickets" class="m3-btn m3-btn-filled">My Tickets</button>' +
+              '</div>';
+          } else {
+            bodyHtml =
+              '<div class="m3-card" style="display:flex; flex-direction:column; gap:8px;">' +
+              '<p class="text-xs font-bold">Select active order *</p>' +
+              activeOrders.map(function (ord) {
+                var isSel = linkedOrder && ord.id === linkedOrder.id;
+                return (
+                  '<button type="button" data-action="select-support-order" data-order-id="' + escapeHtml(ord.id) + '" style="width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1.5px solid ' + (isSel ? 'var(--md-primary)' : 'var(--md-outline-variant)') + '; background:' + (isSel ? 'var(--md-primary-container)' : 'var(--md-surface)') + '; display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+                  '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + escapeHtml(ord.restaurantName) + '</p><p class="text-xxs text-muted">Order #' + escapeHtml(ord.id) + ' · ₹' + ord.total + '</p></div>' +
+                  '<span class="m3-badge m3-badge-primary">' + escapeHtml(ORDER_STEPS[ord.stepIndex].title) + '</span>' +
+                  '</button>'
+                );
+              }).join('') +
+              '</div>' +
+              '<div class="m3-card" style="display:flex; flex-direction:column; gap:8px;">' +
+              '<p class="text-xs font-bold">What went wrong?</p>' +
+              SUPPORT_TOPICS.map(function (topic) {
+                var active = state.selectedSupportTopic === topic;
+                return (
+                  '<button type="button" data-action="select-support-topic" data-topic="' + escapeHtml(topic) + '" style="width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid ' + (active ? 'var(--md-primary)' : 'var(--md-outline-variant)') + '; background:' + (active ? 'var(--md-primary-container)' : 'var(--md-surface)') + '; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;">' +
+                  '<span style="width:16px; height:16px; border-radius:50%; border:2px solid ' + (active ? 'var(--md-primary)' : 'var(--md-outline)') + '; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">' +
+                  (active ? '<span style="width:8px; height:8px; border-radius:50%; background:var(--md-primary);"></span>' : '') +
+                  '</span>' +
+                  '<span>' + escapeHtml(topic) + '</span>' +
+                  '</button>'
+                );
+              }).join('') +
+              '</div>' +
+              '<div>' +
+              '<label for="support-note-input" class="text-xs font-bold" style="display:block; margin-bottom:6px;">Tell us more *</label>' +
+              '<textarea id="support-note-input" rows="3" class="m3-input" style="resize:none;" placeholder="Describe your issue...">' + escapeHtml(state.supportNoteDraft) + '</textarea>' +
+              '</div>' +
+              (state.supportError ? '<p class="text-xs font-bold text-error">' + escapeHtml(state.supportError) + '</p>' : '') +
+              '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
+              '<a href="tel:+919864000111" data-action="call-support" class="m3-btn m3-btn-tonal">Call support</a>' +
+              '<button type="button" data-action="submit-support" class="m3-btn m3-btn-filled">Submit Ticket</button>' +
+              '</div>';
+          }
+        } else {
+          bodyHtml =
+            '<div style="display:flex; flex-direction:column; gap:10px;">' +
+            state.tickets.map(function (t) {
+              var isOpen = t.status === 'open';
+              return (
+                '<article class="m3-card" style="display:flex; flex-direction:column; gap:8px;">' +
+                '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">' +
+                '<div style="display:flex; align-items:center; gap:6px;">' +
+                '<span class="text-xs font-bold">#' + escapeHtml(t.id) + '</span>' +
+                '<span class="m3-badge ' + (isOpen ? 'm3-badge-error' : 'm3-badge-primary') + '">' + (isOpen ? 'Open' : 'Resolved') + '</span>' +
+                '</div>' +
+                (t.orderId ? '<span class="m3-badge m3-badge-neutral">Order #' + escapeHtml(t.orderId) + '</span>' : '') +
+                '</div>' +
+                '<div><p class="text-xs font-bold">' + escapeHtml(t.topic) + '</p><p class="text-xs text-muted" style="margin-top:3px;">' + escapeHtml(t.message) + '</p></div>' +
+                (isOpen
+                  ? '<div class="m3-banner-amber text-xxs font-bold">Pending Zayko Admin verification</div>'
+                  : '<div class="m3-banner-primary text-xxs"><strong>Resolved by Zayko Admin</strong><p style="margin-top:3px;">' + escapeHtml(t.resolutionNote || 'Resolved.') + '</p></div>') +
+                '<div class="text-xxs text-muted" style="display:flex; justify-content:space-between;"><span>' + escapeHtml(t.senderName) + '</span><span>' + escapeHtml(t.createdAt) + '</span></div>' +
+                '</article>'
+              );
+            }).join('') +
+            '<a href="tel:+919864000111" data-action="call-support" class="m3-btn m3-btn-tonal m3-btn-block">Call support (' + SUPPORT_HOTLINE + ')</a>' +
+            '</div>';
+        }
+
+        supportModalSheet.innerHTML =
+          '<div class="sheet-drag-handle"></div>' +
+          '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">' +
+          '<div><h2 class="text-base font-bold">Help &amp; Support</h2><p class="text-xs text-muted" style="margin-top:2px;">Synced with Zayko Admin Support Desk</p></div>' +
+          '<button type="button" data-action="close-support-modal" aria-label="Close" class="m3-icon-btn">✕</button>' +
+          '</div>' +
+          '<div class="m3-segmented">' +
+          '<button type="button" data-action="set-support-tab" data-tab="raise" class="m3-seg-btn ' + (state.supportTab === 'raise' ? 'selected' : '') + '">Raise Issue</button>' +
+          '<button type="button" data-action="set-support-tab" data-tab="tickets" class="m3-seg-btn ' + (state.supportTab === 'tickets' ? 'selected' : '') + '">My Tickets (' + openCount + ')</button>' +
+          '</div>' +
+          bodyHtml;
+
+        supportModal.classList.remove('hidden');
+      }
+
+      function openSupportModal(orderId, defaultTab) {
+        var activeOrders = getActiveOrders();
+        var validActiveOrder = orderId ? activeOrders.find(function (o) { return o.id === orderId; }) : activeOrders[0];
+        state.supportOrderId = validActiveOrder ? validActiveOrder.id : null;
+        state.supportTab = defaultTab || (activeOrders.length > 0 ? 'raise' : 'tickets');
+        state.selectedSupportTopic = 'Wrong or missing item';
+        state.supportNoteDraft = '';
+        state.supportError = '';
+        renderSupportModal();
+      }
+
+      function closeSupportModal() {
+        supportModal.classList.add('hidden');
+      }
+
+      function renderUpiPaymentModal() {
+        var summary = getCartSummary();
+        if (summary.itemCount === 0 || summary.outOfRange) {
+          closeUpiPaymentModal();
+          return;
+        }
+        var hasShot = Boolean(state.upiScreenshot);
+        upiPaymentSheet.innerHTML =
+          '<div class="sheet-drag-handle"></div>' +
+          '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">' +
+          '<div>' +
+          '<h2 class="text-base font-bold">Complete UPI Payment</h2>' +
+          '<p class="text-xs text-muted" style="margin-top:2px;">' + escapeHtml(summary.restaurant.name) + ' · Total ₹' + summary.grandTotal + '</p>' +
+          '</div>' +
+          '<button type="button" data-action="close-upi-modal" aria-label="Close" class="m3-icon-btn">✕</button>' +
+          '</div>' +
+          '<div class="m3-banner-primary" style="display:flex; flex-direction:column; gap:10px;">' +
+          '<div>' +
+          '<p class="text-xxs font-bold" style="text-transform:uppercase;">Restaurant UPI ID</p>' +
+          '<p class="text-sm font-bold text-primary" style="margin-top:2px; word-break:break-all;">' + escapeHtml(summary.restaurant.upiId) + '</p>' +
+          '</div>' +
+          '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">' +
+          '<a href="' + escapeHtml(buildUpiDeepLink(summary.restaurant.upiId, summary.restaurant.name, summary.grandTotal)) + '" data-action="pay-upi-now" data-upi="' + escapeHtml(summary.restaurant.upiId) + '" data-amount="' + summary.grandTotal + '" class="m3-btn m3-btn-filled m3-btn-sm">Pay now · ₹' + summary.grandTotal + '</a>' +
+          '<button type="button" data-action="copy-upi-id" data-upi="' + escapeHtml(summary.restaurant.upiId) + '" class="m3-btn m3-btn-outlined m3-btn-sm">Copy UPI ID</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+          '<div>' +
+          '<p class="text-xs font-bold">Upload payment screenshot *</p>' +
+          '<p class="text-xxs text-muted" style="margin-top:2px;">Attach a screenshot from GPay, PhonePe, or Paytm after paying.</p>' +
+          '</div>' +
+          (hasShot
+            ? '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:12px; background:var(--md-surface-container-low); border:1px solid var(--md-outline-variant);">' +
+              '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+              '<img src="' + escapeHtml(state.upiScreenshot) + '" alt="Payment screenshot" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid var(--md-outline-variant); flex-shrink:0;" />' +
+              '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + escapeHtml(state.upiScreenshotName || 'payment-screenshot.png') + '</p><p class="text-xxs text-primary font-bold">✓ Screenshot attached</p></div>' +
+              '</div>' +
+              '<button type="button" data-action="remove-upi-screenshot" class="m3-btn m3-btn-outlined m3-btn-sm" style="flex-shrink:0;">Remove</button>' +
+              '</div>'
+            : '<label for="upi-screenshot-input" class="m3-btn m3-btn-tonal m3-btn-block" style="cursor:pointer;">+ Upload payment screenshot</label>') +
+          '<input id="upi-screenshot-input" type="file" accept="image/*" class="hidden" />' +
+          '</div>' +
+          (state.upiPaymentError ? '<p class="text-xs font-bold text-error">' + escapeHtml(state.upiPaymentError) + '</p>' : '') +
+          '<div style="display:grid; grid-template-columns:1fr 1.5fr; gap:10px;">' +
+          '<button type="button" data-action="close-upi-modal" class="m3-btn m3-btn-outlined">Cancel</button>' +
+          '<button type="button" data-action="confirm-upi-order" class="m3-btn m3-btn-filled"' + (hasShot ? '' : ' disabled') + '>Confirm Order</button>' +
+          '</div>';
+        upiPaymentModal.classList.remove('hidden');
+      }
+
+      function closeUpiPaymentModal() {
+        upiPaymentModal.classList.add('hidden');
+      }
+
+      function openNotificationsModal() {
+        var active = getActiveOrders();
+        var itemsHtml = active.length > 0
+          ? active.map(function (o) {
+              return (
+                '<button type="button" data-action="open-track-from-notif" data-order-id="' + escapeHtml(o.id) + '" class="m3-card m3-card-pressable" style="width:100%; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+                '<div style="min-width:0;">' +
+                '<p class="text-xs font-bold">' + escapeHtml(o.restaurantName) + ' · Order #' + escapeHtml(o.id) + '</p>' +
+                '<p class="text-xxs text-primary font-bold" style="margin-top:2px;">' + escapeHtml(ORDER_STEPS[o.stepIndex].title) + ' · ETA ' + escapeHtml(o.eta) + '</p>' +
+                '</div>' +
+                '<span class="m3-badge m3-badge-primary">Track</span>' +
+                '</button>'
+              );
+            }).join('')
+          : '<div class="m3-card-tonal text-xs text-muted" style="text-align:center; padding:18px;">No active order alerts right now.</div>';
+
+        notificationsSheet.innerHTML =
+          '<div class="sheet-drag-handle"></div>' +
+          '<div style="display:flex; align-items:center; justify-content:space-between;">' +
+          '<div><h2 class="text-base font-bold">Notifications</h2><p class="text-xxs text-muted">Live order &amp; delivery updates</p></div>' +
+          '<button type="button" data-action="close-notifications" aria-label="Close" class="m3-icon-btn">✕</button>' +
+          '</div>' +
+          itemsHtml;
+        notificationsModal.classList.remove('hidden');
+      }
+
+      function closeNotificationsModal() {
+        notificationsModal.classList.add('hidden');
+      }
+
+      // =========================================================================
+      // MAIN SCREEN RENDERERS
+      // =========================================================================
+      function getHomeRestaurantCardsHtml() {
+        var q = state.homeSearchQuery.trim().toLowerCase();
+        var filtered = RESTAURANTS.filter(function (rest) {
+          var catMatch = state.selectedCategory === 'All' || rest.categories.indexOf(state.selectedCategory) !== -1;
+          var qMatch = !q || rest.name.toLowerCase().indexOf(q) !== -1 ||
+            rest.cuisines.some(function (c) { return c.toLowerCase().indexOf(q) !== -1; }) ||
+            rest.menu.some(function (m) { return m.name.toLowerCase().indexOf(q) !== -1; });
+          return catMatch && qMatch;
+        });
+
+        if (filtered.length === 0) {
+          return '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No matching restaurants found</p><p class="text-xs text-muted" style="margin-top:4px;">Try another dish or clear your category chip.</p></div>';
+        }
+
+        return filtered.map(function (rest) {
+          return (
+            '<article data-action="open-restaurant" data-restaurant-id="' + escapeHtml(rest.id) + '" class="m3-card m3-card-pressable" style="display:flex; align-items:center; gap:14px;">' +
+            '<div style="width:80px; height:80px; border-radius:14px; overflow:hidden; border:1px solid var(--md-outline-variant); flex-shrink:0;">' + getFoodArtwork(rest.artwork) + '</div>' +
+            '<div style="flex:1; min-width:0;">' +
+            '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">' +
+            '<h3 class="text-sm font-bold truncate">' + escapeHtml(rest.name) + '</h3>' +
+            '<div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">' +
+            '<span class="m3-badge m3-badge-primary">★ ' + rest.rating.toFixed(1) + '</span>' +
+            '<button type="button" data-action="toggle-favorite" data-restaurant-id="' + escapeHtml(rest.id) + '" aria-label="Save restaurant" style="width:28px; height:28px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-size:15px; background:var(--md-surface-container-low); color:' + (state.favoriteRestaurants.indexOf(rest.id) !== -1 ? 'var(--md-error)' : 'var(--md-muted)') + ';">' + (state.favoriteRestaurants.indexOf(rest.id) !== -1 ? '♥' : '♡') + '</button>' +
+            '</div>' +
+            '</div>' +
+            '<p class="text-xs text-muted truncate" style="margin-top:2px;">' + escapeHtml(rest.cuisines.join(' · ')) + '</p>' +
+            '<p class="text-xxs text-muted truncate" style="margin-top:3px;">' + escapeHtml(rest.tagline) + '</p>' +
+            '<div class="text-xxs font-bold" style="margin-top:7px; display:flex; align-items:center; gap:6px;">' +
+            '<span class="text-primary">● ' + escapeHtml(rest.deliveryTime) + '</span>' +
+            '<span class="text-muted">·</span>' +
+            '<span class="text-muted">From ₹50</span>' +
+            '</div>' +
+            '</div>' +
+            '</article>'
+          );
+        }).join('');
+      }
+
+      function renderHomeView() {
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar">' +
+          '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+          '<div class="z-app-icon">Z</div>' +
+          '<div style="min-width:0;"><p class="text-base font-bold" style="line-height:1;">zayko</p><p class="text-xxs text-muted truncate" style="margin-top:2px;">Guwahati</p></div>' +
+          '</div>' +
+          '<button type="button" data-action="open-location-modal" style="display:flex; align-items:center; gap:7px; background:var(--md-surface-container-low); border:1px solid var(--md-outline-variant); border-radius:999px; padding:6px 12px; max-width:190px; text-align:left; flex-shrink:0;">' +
+          '<span style="color:var(--md-secondary); font-size:13px;">●</span>' +
+          '<div style="min-width:0;">' +
+          '<p class="text-xxs font-bold text-primary truncate" style="line-height:1.1;">' + escapeHtml(state.selectedLocation.label) + ' · ' + state.selectedLocation.distanceKm.toFixed(1) + ' km ▾</p>' +
+          '<p class="text-xs font-bold truncate">' + escapeHtml(state.selectedLocation.area) + '</p>' +
+          '</div>' +
+          '</button>' +
+          '<button type="button" data-action="open-notifications" aria-label="Notifications" class="m3-icon-btn" style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span id="notif-dot" style="position:absolute; top:9px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--md-secondary);"></span></button>' +
+          '</header>' +
+
+          '<div class="page-body">' +
+          '<div class="m3-search-bar">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--md-muted)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>' +
+          '<input id="home-search-input" type="text" value="' + escapeHtml(state.homeSearchQuery) + '" placeholder="Search dishes or restaurants" />' +
+          '<button type="button" data-action="open-search-with-query" class="m3-btn m3-btn-tonal m3-btn-sm">Filters</button>' +
+          '</div>' +
+
+          '<div>' +
+          '<h2 class="text-sm font-bold" style="margin-bottom:8px;">Categories</h2>' +
+          '<div class="chip-rail no-scrollbar">' +
+          CATEGORIES.map(function (cat) {
+            var sel = state.selectedCategory === cat;
+            return '<button type="button" data-action="select-category" data-category="' + escapeHtml(cat) + '" class="m3-chip ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + escapeHtml(cat) + '</button>';
+          }).join('') +
+          '</div>' +
+          '</div>' +
+
+          '<div>' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">' +
+          '<h2 class="text-sm font-bold">Popular near you</h2>' +
+          '<span class="text-xxs text-muted font-bold">Guwahati</span>' +
+          '</div>' +
+          '<div id="home-restaurants-list" style="display:flex; flex-direction:column; gap:12px;">' + getHomeRestaurantCardsHtml() + '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderMenuView() {
+        var rest = getRestaurantById(state.activeRestaurantId);
+        var filteredMenu = rest.menu.filter(function (item) {
+          if (state.menuDietFilter === 'veg') return item.isVeg;
+          if (state.menuDietFilter === 'nonveg') return !item.isVeg;
+          return true;
+        });
+
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar">' +
+          '<div style="display:flex; align-items:center; gap:8px; min-width:0;">' +
+          '<button type="button" data-action="go-back" aria-label="Back" class="m3-icon-btn">←</button>' +
+          '<div style="min-width:0;"><h1 class="text-base font-bold truncate">' + escapeHtml(rest.name) + '</h1><p class="text-xxs text-muted truncate">' + escapeHtml(rest.cuisines.join(' · ')) + '</p></div>' +
+          '</div>' +
+          '<button type="button" data-action="toggle-favorite" data-restaurant-id="' + escapeHtml(rest.id) + '" aria-label="Save restaurant" class="m3-icon-btn" style="font-size:19px; color:' + (state.favoriteRestaurants.indexOf(rest.id) !== -1 ? 'var(--md-error)' : 'var(--md-muted)') + ';">' + (state.favoriteRestaurants.indexOf(rest.id) !== -1 ? '♥' : '♡') + '</button>' +
+          '</header>' +
+          '<div class="page-body">' +
+          '<section class="m3-card-tonal" style="display:flex; flex-direction:column; gap:6px;">' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+          '<h2 class="text-base font-bold">' + escapeHtml(rest.name) + '</h2>' +
+          '<span class="m3-badge m3-badge-primary">★ ' + rest.rating.toFixed(1) + ' (' + escapeHtml(rest.reviewCount) + ')</span>' +
+          '</div>' +
+          '<p class="text-xs text-muted">' + escapeHtml(rest.cuisines.join(' · ')) + ' · ' + escapeHtml(rest.deliveryTime) + '</p>' +
+          '<span class="m3-badge m3-badge-primary" style="align-self:flex-start;">' + escapeHtml(rest.deliveryInfo) + '</span>' +
+          '</section>' +
+
+          '<div class="m3-segmented">' +
+          [{ id: 'all', label: 'All' }, { id: 'veg', label: 'Veg' }, { id: 'nonveg', label: 'Non-veg' }].map(function (t) {
+            var sel = state.menuDietFilter === t.id;
+            return '<button type="button" data-action="set-menu-filter" data-filter="' + t.id + '" class="m3-seg-btn ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + t.label + '</button>';
+          }).join('') +
+          '</div>' +
+
+          '<section style="display:flex; flex-direction:column; gap:12px;">' +
+          filteredMenu.map(function (item) {
+            var qty = state.cart.restaurantId === rest.id ? state.cart.items[item.id] || 0 : 0;
+            return (
+              '<article class="m3-card" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">' +
+              '<div style="flex:1; min-width:0;">' +
+              '<div style="display:flex; align-items:center; gap:6px;">' + renderDietBadge(item.isVeg) + '<h3 class="text-sm font-bold truncate">' + escapeHtml(item.name) + '</h3></div>' +
+              '<p class="text-xs font-bold" style="margin-top:4px;">₹' + item.price + '</p>' +
+              '<p class="text-xxs text-muted" style="margin-top:3px;">' + escapeHtml(item.desc) + '</p>' +
+              '</div>' +
+              '<div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0;">' +
+              '<div style="width:68px; height:68px; border-radius:14px; overflow:hidden; border:1px solid var(--md-outline-variant);">' + getFoodArtwork(item.artwork) + '</div>' +
+              (qty === 0
+                ? '<button type="button" data-action="cart-add" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(item.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm" style="width:92px;">+ Add</button>'
+                : '<div class="m3-stepper"><button type="button" data-action="cart-dec" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(item.id) + '">−</button><span>' + qty + '</span><button type="button" data-action="cart-inc" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(item.id) + '">+</button></div>') +
+              '</div>' +
+              '</article>'
+            );
+          }).join('') +
+          '</section>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderCartView() {
+        var summary = getCartSummary();
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar" style="justify-content:flex-start;">' +
+          '<button type="button" data-action="go-back" aria-label="Back" class="m3-icon-btn">←</button>' +
+          '<div style="min-width:0;"><h1 class="text-base font-bold">Your cart</h1>' + (summary.itemCount > 0 ? '<p class="text-xxs text-muted truncate">' + escapeHtml(summary.restaurant.name) + '</p>' : '') + '</div>' +
+          '</header>' +
+          '<div class="page-body">' +
+          (summary.itemCount === 0
+            ? '<div class="m3-card" style="text-align:center; padding:32px 18px;"><h2 class="text-base font-bold">Your cart is empty</h2><p class="text-xs text-muted" style="margin:6px 0 16px;">Browse Guwahati restaurants to add dishes.</p><button type="button" data-action="navigate-tab" data-tab="home" class="m3-btn m3-btn-filled m3-btn-sm">Browse restaurants</button></div>'
+            : '<section class="m3-card" style="display:flex; flex-direction:column; gap:12px;">' +
+              '<div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; border-bottom:1px solid var(--md-outline-variant);">' +
+              '<h2 class="text-sm font-bold">' + escapeHtml(summary.restaurant.name) + '</h2>' +
+              '<button type="button" data-action="open-restaurant" data-restaurant-id="' + escapeHtml(summary.restaurant.id) + '" class="text-xs font-bold text-primary">+ Add more</button>' +
+              '</div>' +
+              summary.lineItems.map(function (entry) {
+                return (
+                  '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+                  '<div style="display:flex; align-items:flex-start; gap:8px; min-width:0;">' +
+                  '<div style="margin-top:2px;">' + renderDietBadge(entry.dish.isVeg) + '</div>' +
+                  '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + escapeHtml(entry.dish.name) + '</p><p class="text-xxs text-muted">₹' + (entry.dish.price * entry.qty) + '</p></div>' +
+                  '</div>' +
+                  '<div class="m3-stepper tonal"><button type="button" data-action="cart-dec" data-restaurant-id="' + escapeHtml(summary.restaurant.id) + '" data-item-id="' + escapeHtml(entry.dish.id) + '">−</button><span>' + entry.qty + '</span><button type="button" data-action="cart-inc" data-restaurant-id="' + escapeHtml(summary.restaurant.id) + '" data-item-id="' + escapeHtml(entry.dish.id) + '">+</button></div>' +
+                  '</div>'
+                );
+              }).join('') +
+              '</section>' +
+
+              (summary.outOfRange
+                ? '<div class="m3-banner-error text-xs" style="display:flex; flex-direction:column; gap:6px;">' +
+                  '<strong>Outside our 7 km Guwahati delivery radius</strong>' +
+                  '<p>Selected address (' + escapeHtml(state.selectedLocation.area) + ') is <strong>' + state.selectedLocation.distanceKm.toFixed(1) + ' km</strong> away.</p>' +
+                  '<button type="button" data-action="open-location-modal" class="m3-btn m3-btn-outlined m3-btn-sm" style="align-self:flex-start; margin-top:4px;">Change delivery address</button>' +
+                  '</div>'
+                : '') +
+
+              '<section class="m3-card" style="display:flex; flex-direction:column; gap:8px;">' +
+              '<h2 class="text-sm font-bold">Bill details</h2>' +
+              '<div class="text-xs" style="display:flex; justify-content:space-between;"><span class="text-muted">Item total</span><strong>₹' + summary.itemTotal + '</strong></div>' +
+              '<div class="text-xs" style="display:flex; justify-content:space-between;"><span class="text-muted">Delivery fee (' + state.selectedLocation.distanceKm.toFixed(1) + ' km)</span><strong>' + (summary.outOfRange ? 'Out of 7 km range' : '₹' + summary.deliveryFee) + '</strong></div>' +
+              '<p class="text-xxs text-muted">₹50 up to 5 km · +₹10/km after 5 km (max 7 km)</p>' +
+              '<div class="text-sm" style="display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid var(--md-outline-variant);">' +
+              '<span class="font-bold">Total to pay</span><span class="font-bold text-primary">' + (summary.outOfRange ? '—' : '₹' + summary.grandTotal) + '</span>' +
+              '</div>' +
+              '</section>' +
+
+              '<section class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+              '<h2 class="text-sm font-bold">Payment method</h2>' +
+              '<button type="button" data-action="set-payment-method" data-method="upi" style="width:100%; text-align:left; padding:12px; border-radius:12px; border:1.5px solid ' + (state.paymentMethod === 'upi' ? 'var(--md-primary)' : 'var(--md-outline-variant)') + '; background:' + (state.paymentMethod === 'upi' ? 'var(--md-primary-container)' : 'var(--md-surface)') + '; display:flex; align-items:center; justify-content:space-between;">' +
+              '<div><p class="text-xs font-bold">UPI payment</p><p class="text-xxs text-muted">Pay via UPI when you place your order</p></div>' +
+              '<span style="width:18px; height:18px; border-radius:50%; border:2px solid ' + (state.paymentMethod === 'upi' ? 'var(--md-primary)' : 'var(--md-outline)') + '; display:inline-flex; align-items:center; justify-content:center;">' + (state.paymentMethod === 'upi' ? '<span style="width:9px; height:9px; border-radius:50%; background:var(--md-primary);"></span>' : '') + '</span>' +
+              '</button>' +
+              '<button type="button" data-action="set-payment-method" data-method="cod" style="width:100%; text-align:left; padding:12px; border-radius:12px; border:1.5px solid ' + (state.paymentMethod === 'cod' ? 'var(--md-primary)' : 'var(--md-outline-variant)') + '; background:' + (state.paymentMethod === 'cod' ? 'var(--md-primary-container)' : 'var(--md-surface)') + '; display:flex; align-items:center; justify-content:space-between;">' +
+              '<div><p class="text-xs font-bold">Cash on delivery</p><p class="text-xxs text-muted">Pay in cash when your order arrives</p></div>' +
+              '<span style="width:18px; height:18px; border-radius:50%; border:2px solid ' + (state.paymentMethod === 'cod' ? 'var(--md-primary)' : 'var(--md-outline)') + '; display:inline-flex; align-items:center; justify-content:center;">' + (state.paymentMethod === 'cod' ? '<span style="width:9px; height:9px; border-radius:50%; background:var(--md-primary);"></span>' : '') + '</span>' +
+              '</button>' +
+              '</section>' +
+
+              '<section class="m3-card" style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">' +
+              '<div style="min-width:0;">' +
+              '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;"><span class="text-xs font-bold">Delivery address</span><span class="m3-badge m3-badge-primary">' + escapeHtml(state.selectedLocation.label) + '</span><span class="m3-badge ' + (summary.outOfRange ? 'm3-badge-error' : 'm3-badge-neutral') + '">' + state.selectedLocation.distanceKm.toFixed(1) + ' km</span></div>' +
+              '<p class="text-xs font-bold" style="margin-top:4px;">' + escapeHtml(state.selectedLocation.name) + '</p>' +
+              '<p class="text-xxs text-muted" style="margin-top:2px;">' + escapeHtml(state.selectedLocation.address) + '</p>' +
+              '</div>' +
+              '<button type="button" data-action="open-location-modal" class="m3-btn m3-btn-tonal m3-btn-sm" style="flex-shrink:0;">Change</button>' +
+              '</section>' +
+
+              '<button type="button" data-action="place-order" class="m3-btn m3-btn-filled m3-btn-block"' + (summary.outOfRange ? ' disabled' : '') + '>' +
+              (summary.outOfRange ? 'Address outside 7 km radius' : 'Place order · ₹' + summary.grandTotal) +
+              '</button>') +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderTrackOrderView() {
+        var order = state.orders.find(function (o) { return o.id === state.trackingOrderId; }) || state.orders[0];
+        if (!order) return '';
+
+        var stepIndex = order.stepIndex;
+        var isOutForDelivery = stepIndex === 2;
+        var isCancelled = order.status === 'cancelled';
+        var isDelivered = stepIndex === 3 || isCancelled;
+        var riderCoords = [{ x: 76, y: 74 }, { x: 118, y: 74 }, { x: 205, y: 74 }, { x: 266, y: 108 }][stepIndex];
+
+        var perItemRatingHtml = '';
+        if (isDelivered) {
+          perItemRatingHtml =
+            '<section class="m3-card" style="display:flex; flex-direction:column; gap:12px;">' +
+            '<div><h2 class="text-sm font-bold">Rate Purchased Items</h2><p class="text-xxs text-muted" style="margin-top:2px;">Each item can be rated once per order and is locked after submission.</p></div>' +
+            order.itemsList.map(function (item) {
+              var lockedRating = order.itemRatings[item.id];
+              var draftKey = order.id + ':' + item.id;
+              var draftRating = state.draftItemRatings[draftKey] || 0;
+              return (
+                '<div class="m3-card-tonal" style="display:flex; flex-direction:column; gap:8px;">' +
+                '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">' +
+                '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + item.qty + ' × ' + escapeHtml(item.name) + '</p><p class="text-xxs text-muted">₹' + item.price + '</p></div>' +
+                (lockedRating ? '<span class="m3-badge m3-badge-primary">✓ Rated ★ ' + lockedRating + '/5</span>' : '<span class="m3-badge m3-badge-neutral">Not rated</span>') +
+                '</div>' +
+                (lockedRating
+                  ? '<div style="display:flex; align-items:center; gap:3px;">' + renderItemStars(order.id, item.id, lockedRating, true) + '</div>'
+                  : '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px;"><div style="display:flex; align-items:center;">' + renderItemStars(order.id, item.id, draftRating, false) + '</div><button type="button" data-action="submit-item-rating" data-order-id="' + escapeHtml(order.id) + '" data-item-id="' + escapeHtml(item.id) + '" class="m3-btn m3-btn-filled m3-btn-sm"' + (draftRating === 0 ? ' disabled' : '') + '>Submit</button></div>') +
+                '</div>'
+              );
+            }).join('') +
+            '</section>';
+        }
+
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar">' +
+          '<div style="display:flex; align-items:center; gap:8px; min-width:0;">' +
+          '<button type="button" data-action="navigate-tab" data-tab="orders" aria-label="Back" class="m3-icon-btn">←</button>' +
+          '<div style="min-width:0;"><h1 class="text-base font-bold truncate">Track order</h1><p class="text-xxs text-muted font-bold">Order #' + escapeHtml(order.id) + '</p></div>' +
+          '</div>' +
+          (!isDelivered
+            ? '<button type="button" data-action="report-order-issue" data-order-id="' + escapeHtml(order.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm">Help</button>'
+            : '<button type="button" data-action="open-support-tickets" class="m3-btn m3-btn-outlined m3-btn-sm">My Tickets</button>') +
+          '</header>' +
+
+          '<div class="page-body">' +
+          '<section class="m3-card" style="padding:0; overflow:hidden;">' +
+          '<div style="width:100%; height:152px; background:var(--md-primary-container);">' +
+          '<svg viewBox="0 0 340 150" width="100%" height="100%">' +
+          '<rect width="340" height="150" fill="#D4EDDF"/>' +
+          '<rect x="0" y="66" width="340" height="16" rx="8" fill="#FFFFFF"/>' +
+          '<rect x="148" y="0" width="16" height="150" rx="8" fill="#FFFFFF"/>' +
+          '<path d="M76 74 L156 74 L156 108 L266 108" fill="none" stroke="#135D3A" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>' +
+          '<circle cx="76" cy="54" r="15" fill="#135D3A"/><text x="76" y="58" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="800">R</text>' +
+          '<circle cx="266" cy="108" r="15" fill="#EA6A2B"/><circle cx="266" cy="108" r="5" fill="#FFFFFF"/>' +
+          '<circle cx="' + riderCoords.x + '" cy="' + riderCoords.y + '" r="6" fill="#135D3A" stroke="#FFFFFF" stroke-width="2.5"/>' +
+          '</svg>' +
+          '</div>' +
+          '<div style="padding:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+          '<div><p class="text-xxs text-muted font-bold">' + (isDelivered ? 'Order status' : 'Estimated arrival') + '</p><p class="text-sm font-bold" style="margin-top:2px;">' + (isCancelled ? ('Cancelled' + (order.cancelReason ? ' · ' + escapeHtml(order.cancelReason) : '')) : isDelivered ? 'Delivered successfully' : escapeHtml(order.eta)) + '</p></div>' +
+          '<div style="text-align:right;"><p class="text-xs font-bold">' + escapeHtml(order.restaurantName) + '</p><p class="text-xxs text-muted font-bold">₹' + order.total + ' · ' + escapeHtml(order.paymentMethod) + '</p></div>' +
+          '</div>' +
+          '</section>' +
+
+          '<section class="m3-card" style="display:flex; flex-direction:column; gap:12px;">' +
+          '<div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--md-outline-variant);">' +
+          '<p class="text-xs font-bold">Order progress</p>' +
+          (!isDelivered ? '<button type="button" data-action="simulate-next-step" data-order-id="' + escapeHtml(order.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm">Simulate next step</button>' : '<span class="m3-badge m3-badge-primary">Delivered</span>') +
+          '</div>' +
+          ORDER_STEPS.map(function (step, idx) {
+            var done = idx <= stepIndex;
+            var current = idx === stepIndex;
+            return (
+              '<div style="display:flex; align-items:flex-start; gap:10px;">' +
+              '<span style="width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; background:' + (done ? 'var(--md-primary)' : 'var(--md-surface-container)') + '; color:' + (done ? '#FFFFFF' : 'var(--md-muted)') + ';">' + (done ? '✓' : idx + 1) + '</span>' +
+              '<div><p class="text-xs font-bold" style="color:' + (current ? 'var(--md-primary)' : done ? 'var(--md-ink)' : 'var(--md-muted)') + ';">' + escapeHtml(step.title) + '</p><p class="text-xxs text-muted">' + escapeHtml(step.subtitle) + '</p></div>' +
+              '</div>'
+            );
+          }).join('') +
+          '</section>' +
+
+          (isOutForDelivery
+            ? '<section class="m3-banner-primary" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+              '<div style="min-width:0;"><p class="text-xs font-bold truncate">Rider: ' + escapeHtml(order.riderName) + '</p><p class="text-xxs">Restaurant delivery staff · ' + escapeHtml(order.riderPhone) + '</p></div>' +
+              '<a href="tel:' + escapeHtml(order.riderPhone.replace(/[^\d+]/g, '')) + '" data-action="call-rider" data-rider="' + escapeHtml(order.riderName) + '" class="m3-btn m3-btn-filled m3-btn-sm">Call rider</a>' +
+              '</section>'
+            : !isDelivered
+            ? '<section class="m3-banner-primary text-xs font-bold">Restaurant delivery staff will be assigned once your order is ready.</section>'
+            : '') +
+
+          perItemRatingHtml +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderOrdersView() {
+        var filteredOrders = state.orders.filter(function (order) {
+          var isActive = order.stepIndex < 3;
+          if (state.ordersFilter === 'active') return isActive;
+          if (state.ordersFilter === 'past') return !isActive;
+          return true;
+        });
+
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar">' +
+          '<h1 class="text-base font-bold">Your orders</h1>' +
+          '<button type="button" data-action="open-support-tickets" class="m3-btn m3-btn-tonal m3-btn-sm">My Tickets (' + getOpenTicketsCount() + ')</button>' +
+          '</header>' +
+          '<div class="page-body">' +
+          '<div class="m3-segmented">' +
+          [{ id: 'all', label: 'All' }, { id: 'active', label: 'Active' }, { id: 'past', label: 'Past' }].map(function (t) {
+            var sel = state.ordersFilter === t.id;
+            return '<button type="button" data-action="set-orders-filter" data-filter="' + t.id + '" class="m3-seg-btn ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + t.label + '</button>';
+          }).join('') +
+          '</div>' +
+          (filteredOrders.length === 0
+            ? '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No orders in this tab</p></div>'
+            : filteredOrders.map(function (order) {
+                var isActive = order.stepIndex < 3;
+                var isOut = order.stepIndex === 2;
+                var ratedCount = Object.keys(order.itemRatings || {}).length;
+                var allRated = order.itemsList.length > 0 && ratedCount === order.itemsList.length;
+
+                return (
+                  '<article class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+                  '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">' +
+                  '<div><h2 class="text-sm font-bold">' + escapeHtml(order.restaurantName) + '</h2><p class="text-xxs text-muted">' + escapeHtml(order.date) + ' · Order #' + escapeHtml(order.id) + '</p></div>' +
+                  '<span class="m3-badge ' + (isActive ? 'm3-badge-primary' : 'm3-badge-neutral') + '">' + escapeHtml(ORDER_STEPS[order.stepIndex].title) + '</span>' +
+                  '</div>' +
+                  '<p class="text-xs text-muted">' + escapeHtml(order.itemsSummary) + ' · <strong style="color:var(--md-ink);">₹' + order.total + '</strong></p>' +
+                  '<div style="display:flex; gap:8px;">' +
+                  (isActive
+                    ? '<button type="button" data-action="open-track-order" data-order-id="' + escapeHtml(order.id) + '" class="m3-btn m3-btn-filled m3-btn-sm" style="flex:1;">Track order</button>' +
+                      (isOut ? '<a href="tel:' + escapeHtml(order.riderPhone.replace(/[^\d+]/g, '')) + '" data-action="call-rider" data-rider="' + escapeHtml(order.riderName) + '" class="m3-btn m3-btn-tonal m3-btn-sm" style="flex:1;">Call rider</a>' : '')
+                    : '<button type="button" data-action="reorder-order" data-order-id="' + escapeHtml(order.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm" style="flex:1;">Reorder</button>' +
+                      '<button type="button" data-action="open-track-order" data-order-id="' + escapeHtml(order.id) + '" class="m3-btn ' + (allRated ? 'm3-btn-outlined' : 'm3-btn-filled') + ' m3-btn-sm" style="flex:1;">' + (allRated ? '✓ Rated' : 'Rate items') + '</button>') +
+                  '</div>' +
+                  (isActive
+                    ? '<div style="padding-top:8px; border-top:1px solid var(--md-outline-variant); display:flex; align-items:center; justify-content:space-between;"><span class="text-xxs text-muted">Need help?</span><button type="button" data-action="report-order-issue" data-order-id="' + escapeHtml(order.id) + '" class="text-xs font-bold text-primary">Report an issue</button></div>'
+                    : '') +
+                  '</article>'
+                );
+              }).join('')) +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function getSearchResultsHtml() {
+        var q = state.searchQuery.trim().toLowerCase();
+        var matchingRestaurants = RESTAURANTS.filter(function (rest) {
+          if (rest.rating < state.searchMinRating) return false;
+          if (state.searchCuisine !== 'All' && rest.cuisines.indexOf(state.searchCuisine) === -1) return false;
+          if (state.searchVegOnly && !rest.menu.some(function (m) { return m.isVeg; })) return false;
+          if (!q) return true;
+          return rest.name.toLowerCase().indexOf(q) !== -1 ||
+            rest.cuisines.some(function (c) { return c.toLowerCase().indexOf(q) !== -1; }) ||
+            rest.menu.some(function (m) { return m.name.toLowerCase().indexOf(q) !== -1; });
+        });
+
+        if (matchingRestaurants.length === 0) {
+          return '<div class="m3-card" style="text-align:center; padding:24px;"><p class="text-sm font-bold">No matching results</p></div>';
+        }
+
+        var matchingDishes = [];
+        matchingRestaurants.forEach(function (rest) {
+          rest.menu.forEach(function (dish) {
+            if (state.searchVegOnly && !dish.isVeg) return;
+            if (q && dish.name.toLowerCase().indexOf(q) === -1 && rest.name.toLowerCase().indexOf(q) === -1) return;
+            matchingDishes.push({ rest: rest, dish: dish });
+          });
+        });
+
+        return (
+          '<div style="display:flex; flex-direction:column; gap:14px;">' +
+          '<div style="display:flex; flex-direction:column; gap:8px;">' +
+          '<h2 class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Restaurants (' + matchingRestaurants.length + ')</h2>' +
+          matchingRestaurants.map(function (rest) {
+            return (
+              '<article data-action="open-restaurant" data-restaurant-id="' + escapeHtml(rest.id) + '" class="m3-card m3-card-pressable" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+              '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+              '<div style="width:46px; height:46px; border-radius:12px; overflow:hidden; border:1px solid var(--md-outline-variant); flex-shrink:0;">' + getFoodArtwork(rest.artwork) + '</div>' +
+              '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + escapeHtml(rest.name) + '</p><p class="text-xxs text-muted truncate">' + escapeHtml(rest.cuisines.join(' · ')) + '</p></div>' +
+              '</div>' +
+              '<span class="m3-badge m3-badge-primary">★ ' + rest.rating.toFixed(1) + '</span>' +
+              '</article>'
+            );
+          }).join('') +
+          '</div>' +
+          '<div style="display:flex; flex-direction:column; gap:8px;">' +
+          '<h2 class="text-xxs font-bold text-muted" style="text-transform:uppercase;">Dishes (' + matchingDishes.length + ')</h2>' +
+          matchingDishes.map(function (entry) {
+            var qty = state.cart.restaurantId === entry.rest.id ? state.cart.items[entry.dish.id] || 0 : 0;
+            return (
+              '<article class="m3-card" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+              '<button type="button" data-action="open-restaurant" data-restaurant-id="' + escapeHtml(entry.rest.id) + '" style="text-align:left; flex:1; min-width:0;">' +
+              '<div style="display:flex; align-items:center; gap:6px;">' + renderDietBadge(entry.dish.isVeg) + '<span class="text-xs font-bold truncate">' + escapeHtml(entry.dish.name) + '</span></div>' +
+              '<p class="text-xxs text-muted" style="margin-top:2px;">' + escapeHtml(entry.rest.name) + ' · ₹' + entry.dish.price + '</p>' +
+              '</button>' +
+              (qty === 0
+                ? '<button type="button" data-action="cart-add" data-restaurant-id="' + escapeHtml(entry.rest.id) + '" data-item-id="' + escapeHtml(entry.dish.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm">+ Add</button>'
+                : '<div class="m3-stepper"><button type="button" data-action="cart-dec" data-restaurant-id="' + escapeHtml(entry.rest.id) + '" data-item-id="' + escapeHtml(entry.dish.id) + '">−</button><span>' + qty + '</span><button type="button" data-action="cart-inc" data-restaurant-id="' + escapeHtml(entry.rest.id) + '" data-item-id="' + escapeHtml(entry.dish.id) + '">+</button></div>') +
+              '</article>'
+            );
+          }).join('') +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderSearchView() {
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar" style="justify-content:flex-start;"><button type="button" data-action="go-back" aria-label="Back" class="m3-icon-btn">←</button><h1 class="text-base font-bold">Search &amp; filters</h1></header>' +
+          '<div class="page-body">' +
+          '<div class="m3-search-bar">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--md-muted)" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>' +
+          '<input id="search-tab-input" type="text" value="' + escapeHtml(state.searchQuery) + '" placeholder="Search dishes or restaurants" />' +
+          '</div>' +
+          '<section class="m3-card" style="display:flex; flex-direction:column; gap:12px;">' +
+          '<div><p class="text-xs font-bold" style="margin-bottom:6px;">Rating</p><div style="display:flex; gap:6px; flex-wrap:wrap;">' +
+          [{ v: 0, l: 'Any' }, { v: 3.5, l: '3.5+' }, { v: 4.0, l: '4.0+' }, { v: 4.5, l: '4.5+' }].map(function (r) {
+            var sel = state.searchMinRating === r.v;
+            return '<button type="button" data-action="set-search-rating" data-rating="' + r.v + '" class="m3-chip ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + r.l + '</button>';
+          }).join('') +
+          '</div></div>' +
+          '<div><p class="text-xs font-bold" style="margin-bottom:6px;">Cuisine</p><div style="display:flex; gap:6px; flex-wrap:wrap;">' +
+          SEARCH_CUISINES.map(function (c) {
+            var sel = state.searchCuisine === c;
+            return '<button type="button" data-action="set-search-cuisine" data-cuisine="' + escapeHtml(c) + '" class="m3-chip ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + escapeHtml(c) + '</button>';
+          }).join('') +
+          '</div></div>' +
+          '</section>' +
+          '<div id="search-results-container">' + getSearchResultsHtml() + '</div>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderAddressesView() {
+        var f = state.addressForm;
+        var previewFee = calculateDeliveryFee(f.distanceKm);
+
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar" style="justify-content:flex-start;">' +
+          '<button type="button" data-action="go-back" aria-label="Back" class="m3-icon-btn">←</button>' +
+          '<h1 class="text-base font-bold">Saved &amp; add address</h1>' +
+          '</header>' +
+          '<div class="page-body">' +
+          '<section class="m3-card" style="padding:0; overflow:hidden;">' +
+          '<div id="address-pin-map" data-action="move-address-pin" style="width:100%; height:144px; background:var(--md-primary-container); position:relative; cursor:crosshair;">' +
+          '<svg viewBox="0 0 340 144" width="100%" height="100%" style="pointer-events:none;">' +
+          '<rect width="340" height="144" fill="#D4EDDF"/>' +
+          '<rect x="0" y="64" width="340" height="14" rx="7" fill="#FFFFFF"/>' +
+          '<rect x="145" y="0" width="14" height="144" rx="7" fill="#FFFFFF"/>' +
+          '<circle cx="152" cy="71" r="9" fill="#135D3A"/><text x="152" y="74" text-anchor="middle" fill="#FFFFFF" font-size="8" font-weight="800">Z</text>' +
+          '<circle cx="' + f.pinX + '" cy="' + f.pinY + '" r="11" fill="#EA6A2B"/><circle cx="' + f.pinX + '" cy="' + f.pinY + '" r="4" fill="#FFFFFF"/>' +
+          '</svg>' +
+          '<span style="position:absolute; bottom:8px; left:10px; background:rgba(255,255,255,0.94); border:1px solid var(--md-outline-variant); border-radius:8px; padding:4px 8px; font-size:10.5px; font-weight:700; pointer-events:none;">' +
+          'Tap map to pin · ' + f.distanceKm.toFixed(1) + ' km (' + (previewFee.outOfRange ? 'Outside 7 km' : '₹' + previewFee.fee) + ')' +
+          '</span>' +
+          '</div>' +
+          '<div style="padding:10px;"><button type="button" data-action="autofill-gps" class="m3-btn m3-btn-tonal m3-btn-block m3-btn-sm">Use my current location (GPS)</button></div>' +
+          '</section>' +
+
+          '<section class="m3-card" style="display:flex; flex-direction:column; gap:10px;">' +
+          '<h2 class="text-sm font-bold">Add address manually</h2>' +
+          '<div><label for="addr-name-input" class="text-xs font-bold" style="display:block; margin-bottom:4px;">Full name *</label><input id="addr-name-input" class="m3-input" type="text" value="' + escapeHtml(f.name) + '" placeholder="Recipient\'s full name" /></div>' +
+          '<div><label for="addr-house-input" class="text-xs font-bold" style="display:block; margin-bottom:4px;">House / Flat &amp; Street *</label><input id="addr-house-input" class="m3-input" type="text" value="' + escapeHtml(f.house) + '" placeholder="e.g. Flat 4, Main Road" /></div>' +
+          '<div><label for="addr-area-input" class="text-xs font-bold" style="display:block; margin-bottom:4px;">Area / Locality *</label><input id="addr-area-input" class="m3-input" type="text" value="' + escapeHtml(f.area) + '" placeholder="e.g. GS Road, Guwahati" /></div>' +
+          '<div><label for="addr-landmark-input" class="text-xs font-bold" style="display:block; margin-bottom:4px;">Landmark (optional)</label><input id="addr-landmark-input" class="m3-input" type="text" value="' + escapeHtml(f.landmark) + '" placeholder="e.g. Near the temple" /></div>' +
+          '<div><p class="text-xs font-bold" style="margin-bottom:6px;">Save as</p><div style="display:flex; gap:8px;">' +
+          ['Home', 'Work', 'Other'].map(function (lbl) {
+            var sel = f.label === lbl;
+            return '<button type="button" data-action="set-address-label" data-label="' + lbl + '" class="m3-chip ' + (sel ? 'selected' : '') + '">' + (sel ? '✓ ' : '') + lbl + '</button>';
+          }).join('') +
+          '</div></div>' +
+          (f.error ? '<p class="text-xs font-bold text-error">' + escapeHtml(f.error) + '</p>' : '') +
+          '<button type="button" data-action="save-manual-address" class="m3-btn m3-btn-filled m3-btn-block">Save address</button>' +
+          '</section>' +
+
+          '<section style="display:flex; flex-direction:column; gap:10px;">' +
+          '<h2 class="text-sm font-bold">Saved addresses (' + state.savedAddresses.length + ')</h2>' +
+          state.savedAddresses.map(function (addr) {
+            var isSelected = addr.id === state.selectedLocation.id;
+            var canDelete = state.savedAddresses.length > 1;
+            var feeInfo = calculateDeliveryFee(addr.distanceKm);
+            return (
+              '<div class="m3-card" style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; border-color:' + (isSelected ? 'var(--md-primary)' : 'var(--md-outline-variant)') + ';">' +
+              '<button type="button" data-action="select-saved-address" data-address-id="' + escapeHtml(addr.id) + '" style="text-align:left; flex:1; min-width:0;">' +
+              '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;"><span class="m3-badge m3-badge-primary">' + escapeHtml(addr.label) + '</span><span class="text-xs font-bold">' + escapeHtml(addr.name) + '</span><span class="m3-badge ' + (feeInfo.outOfRange ? 'm3-badge-error' : 'm3-badge-neutral') + '">' + addr.distanceKm.toFixed(1) + ' km</span>' + (isSelected ? '<span class="text-xxs font-bold text-primary">✓ Active</span>' : '') + '</div>' +
+              '<p class="text-xs text-muted" style="margin-top:4px;">' + escapeHtml(addr.address) + '</p>' +
+              '</button>' +
+              '<button type="button" data-action="delete-saved-address" data-address-id="' + escapeHtml(addr.id) + '" class="m3-btn m3-btn-outlined m3-btn-sm"' + (canDelete ? '' : ' disabled') + '>Delete</button>' +
+              '</div>'
+            );
+          }).join('') +
+          '</section>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderProfileView() {
+        var openCount = getOpenTicketsCount();
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar"><h1 class="text-base font-bold">Profile</h1></header>' +
+          '<div class="page-body">' +
+          '<section class="m3-card" style="display:flex; align-items:center; gap:14px;">' +
+          '<div class="z-app-icon" style="width:48px; height:48px; border-radius:16px;">' + escapeHtml(state.customer.name.charAt(0)) + '</div>' +
+          '<div><h2 class="text-sm font-bold">' + escapeHtml(state.customer.name) + '</h2><p class="text-xs text-muted font-bold">' + escapeHtml(state.customer.phone) + '</p></div>' +
+          '</section>' +
+          '<section class="m3-card" style="padding:0; overflow:hidden;">' +
+          '<button type="button" data-action="open-addresses" style="width:100%; padding:15px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--md-outline-variant); text-align:left;">' +
+          '<div><p class="text-xs font-bold">Saved addresses</p><p class="text-xxs text-muted">' + state.savedAddresses.length + ' saved · ' + escapeHtml(state.selectedLocation.area) + '</p></div><span class="text-muted font-bold">›</span>' +
+          '</button>' +
+          '<button type="button" data-action="navigate-tab" data-tab="orders" style="width:100%; padding:15px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--md-outline-variant); text-align:left;">' +
+          '<div><p class="text-xs font-bold">Your orders</p><p class="text-xxs text-muted">' + state.orders.length + ' total orders</p></div><span class="text-muted font-bold">›</span>' +
+          '</button>' +
+          '<button type="button" data-action="open-support-modal" style="width:100%; padding:15px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--md-outline-variant); text-align:left;">' +
+          '<div><p class="text-xs font-bold">Help and support</p><p class="text-xxs text-muted">' + openCount + ' open ticket' + (openCount === 1 ? '' : 's') + ' · Hotline ' + SUPPORT_HOTLINE + '</p></div><span class="text-muted font-bold">›</span>' +
+          '</button>' +
+          '<button type="button" data-action="logout" style="width:100%; padding:15px 16px; display:flex; align-items:center; justify-content:space-between; text-align:left;">' +
+          '<div><p class="text-xs font-bold text-error">Log out</p><p class="text-xxs text-muted">Return to mobile OTP login</p></div><span class="text-error font-bold">›</span>' +
+          '</button>' +
+          '</section>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderSavedView() {
+        var savedList = RESTAURANTS.filter(function (r) {
+          return state.favoriteRestaurants.indexOf(r.id) !== -1;
+        });
+
+        return (
+          '<div class="animate-m3">' +
+          '<header class="m3-top-bar">' +
+          '<h1 class="text-base font-bold">Saved &amp; Favorites</h1>' +
+          '<span class="m3-badge m3-badge-primary">' + savedList.length + ' saved</span>' +
+          '</header>' +
+          '<div class="page-body">' +
+          (savedList.length === 0
+            ? '<div class="m3-card" style="text-align:center; padding:28px 18px; display:flex; flex-direction:column; align-items:center; gap:10px;">' +
+              '<div style="width:52px; height:52px; border-radius:16px; background:var(--md-primary-container); color:var(--md-primary); display:flex; align-items:center; justify-content:center; font-size:24px;">♡</div>' +
+              '<h2 class="text-base font-bold">No saved restaurants yet</h2>' +
+              '<p class="text-xs text-muted">Tap the heart icon on any restaurant to save your go-to spots for quick ordering.</p>' +
+              '<button type="button" data-action="navigate-tab" data-tab="home" class="m3-btn m3-btn-filled m3-btn-sm" style="margin-top:4px;">Explore restaurants</button>' +
+              '</div>'
+            : '<div style="display:flex; flex-direction:column; gap:12px;">' +
+              savedList.map(function (rest) {
+                return (
+                  '<article data-action="open-restaurant" data-restaurant-id="' + escapeHtml(rest.id) + '" class="m3-card m3-card-pressable" style="display:flex; align-items:center; gap:14px;">' +
+                  '<div style="width:72px; height:72px; border-radius:14px; overflow:hidden; border:1px solid var(--md-outline-variant); flex-shrink:0;">' + getFoodArtwork(rest.artwork) + '</div>' +
+                  '<div style="flex:1; min-width:0;">' +
+                  '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">' +
+                  '<h3 class="text-sm font-bold truncate">' + escapeHtml(rest.name) + '</h3>' +
+                  '<button type="button" data-action="toggle-favorite" data-restaurant-id="' + escapeHtml(rest.id) + '" aria-label="Remove from saved" style="width:28px; height:28px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-size:15px; background:var(--md-error-container); color:var(--md-error); flex-shrink:0;">♥</button>' +
+                  '</div>' +
+                  '<p class="text-xs text-muted truncate" style="margin-top:2px;">' + escapeHtml(rest.cuisines.join(' · ')) + '</p>' +
+                  '<div class="text-xxs font-bold" style="margin-top:6px; display:flex; align-items:center; gap:6px;"><span class="text-primary">★ ' + rest.rating.toFixed(1) + '</span><span class="text-muted">· ' + escapeHtml(rest.deliveryTime) + '</span></div>' +
+                  '</div>' +
+                  '</article>'
+                );
+              }).join('') +
+              '</div>') +
+          '<div>' +
+          '<h2 class="text-sm font-bold" style="margin-bottom:8px;">Quick Picks Near You</h2>' +
+          '<div style="display:flex; flex-direction:column; gap:10px;">' +
+          RESTAURANTS.slice(0, 2).map(function (rest) {
+            var dish = rest.menu[0];
+            var qty = state.cart.restaurantId === rest.id ? state.cart.items[dish.id] || 0 : 0;
+            return (
+              '<div class="m3-card-tonal" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">' +
+              '<div style="display:flex; align-items:center; gap:10px; min-width:0;">' +
+              '<div style="width:46px; height:46px; border-radius:10px; overflow:hidden; border:1px solid var(--md-outline-variant); flex-shrink:0;">' + getFoodArtwork(dish.artwork) + '</div>' +
+              '<div style="min-width:0;"><p class="text-xs font-bold truncate">' + escapeHtml(dish.name) + '</p><p class="text-xxs text-muted truncate">' + escapeHtml(rest.name) + ' · ₹' + dish.price + '</p></div>' +
+              '</div>' +
+              (qty === 0
+                ? '<button type="button" data-action="cart-add" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(dish.id) + '" class="m3-btn m3-btn-tonal m3-btn-sm">+ Add</button>'
+                : '<div class="m3-stepper"><button type="button" data-action="cart-dec" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(dish.id) + '">−</button><span>' + qty + '</span><button type="button" data-action="cart-inc" data-restaurant-id="' + escapeHtml(rest.id) + '" data-item-id="' + escapeHtml(dish.id) + '">+</button></div>') +
+              '</div>'
+            );
+          }).join('') +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderActiveView() {
+        if (!state.isAuthenticated) {
+          viewContainer.innerHTML = renderAuthView();
+          syncChrome();
+          return;
+        }
+        switch (state.currentView) {
+          case 'menu': viewContainer.innerHTML = renderMenuView(); break;
+          case 'cart': viewContainer.innerHTML = renderCartView(); break;
+          case 'addresses': viewContainer.innerHTML = renderAddressesView(); break;
+          case 'track': viewContainer.innerHTML = renderTrackOrderView(); break;
+          case 'saved': viewContainer.innerHTML = renderSavedView(); break;
+          case 'search': viewContainer.innerHTML = renderSearchView(); break;
+          case 'orders': viewContainer.innerHTML = renderOrdersView(); break;
+          case 'profile': viewContainer.innerHTML = renderProfileView(); break;
+          case 'home':
+          default: viewContainer.innerHTML = renderHomeView(); break;
+        }
+        syncChrome();
+        if (notifDotEl) {
+          notifDotEl.style.display = getActiveOrders().length > 0 ? 'inline-block' : 'none';
+        }
+        saveAppState();
+      }
+
+      function navigateTo(view, navTab) {
+        if (state.currentView !== view) state.previousView = state.currentView;
+        state.currentView = view;
+        if (navTab) state.activeNav = navTab;
+  
+      // =========================================================================
+      // FIREBASE REAL-TIME SYNC (CUSTOMER APP)
+      // =========================================================================
+      var STATUS_TO_STEP = { new: 0, preparing: 1, ready: 1, out: 2, delivered: 3, cancelled: 3 };
+
+      function syncCustomerFromFirestore() {
+        if (!window.ZaykoDB) return;
+        var db = window.ZaykoDB;
+
+        db.seedIfEmpty('settings', {
+          global: { deliveryFee: 50, baseDistanceKm: 5, extraPerKmFee: 10, maxRadiusKm: 7, supportPhone: '+91 98640 00111' }
+        });
+
+        db.listenDoc('settings', 'global', function (s) {
+          if (!s) return;
+          if (s.deliveryFee != null) MIN_DELIVERY_FEE = Number(s.deliveryFee);
+          if (s.baseDistanceKm != null) BASE_DISTANCE_KM = Number(s.baseDistanceKm);
+          if (s.extraPerKmFee != null) EXTRA_PER_KM_FEE = Number(s.extraPerKmFee);
+          if (s.maxRadiusKm != null) MAX_RADIUS_KM = Number(s.maxRadiusKm);
+          if (s.supportPhone) SUPPORT_HOTLINE = String(s.supportPhone);
+          renderActiveView();
+        });
+
+        db.listenCollection('restaurants', function (list) {
+          var liveRests = list.filter(function (r) { return r.status === 'live' && r.isOnline !== false; });
+          if (liveRests.length > 0) {
+            RESTAURANTS = liveRests.map(function (r) {
+              return {
+                id: r.id || r._docId,
+                name: r.name || 'Restaurant',
+                upiId: r.upiId || '',
+                cuisines: Array.isArray(r.cuisines) ? r.cuisines : String(r.cuisine || 'North Indian').split(',').map(function (x) { return x.trim(); }),
+                categories: Array.isArray(r.categories) ? r.categories : ['Meals'],
+                rating: Number(r.rating || 4.5),
+                reviewCount: r.reviewCount || '100+',
+                deliveryTime: r.deliveryTime || '25-35 min',
+                deliveryInfo: '₹' + MIN_DELIVERY_FEE + ' up to ' + BASE_DISTANCE_KM + ' km · +₹' + EXTRA_PER_KM_FEE + '/km (max ' + MAX_RADIUS_KM + ' km)',
+                tagline: r.tagline || r.cuisine || 'Fresh local favourites',
+                artwork: r.artwork || 'thali',
+                menu: (Array.isArray(r.menu) ? r.menu : []).filter(function (m) { return m.inStock !== false; })
+              };
+            });
+            renderActiveView();
+          }
+        });
+
+        db.listenCollection('orders', function (list) {
+          if (!list || list.length === 0) return;
+          var mapped = list.map(function (o) {
+            var st = o.status || 'new';
+            var step = STATUS_TO_STEP[st] != null ? STATUS_TO_STEP[st] : (o.stepIndex || 0);
+            return {
+              id: String(o.id || o._docId),
+              restaurantId: o.restaurantId || 'green-leaf-kitchen',
+              restaurantName: o.restaurantName || 'Restaurant',
+              itemsList: o.itemsList || o.items || [],
+              itemsSummary: o.itemsSummary || (Array.isArray(o.items) ? o.items.map(function (it) { return it.qty + ' × ' + it.name; }).join(', ') : ''),
+              itemsMap: o.itemsMap || {},
+              deliveryFee: Number(o.deliveryFee || MIN_DELIVERY_FEE),
+              total: Number(o.total || 0),
+              date: o.date || o.placedAt || 'Today',
+              eta: st === 'delivered' ? 'Delivered' : st === 'cancelled' ? 'Cancelled' : (o.eta || '25-35 min'),
+              status: st,
+              cancelReason: o.cancelReason || '',
+              stepIndex: step,
+              riderName: o.riderName || o.staffName || 'Delivery Staff',
+              riderPhone: o.riderPhone || o.staffPhone || '+91 98640 99001',
+              paymentMethod: o.paymentMethod === 'upi' || o.paymentMethod === 'UPI' || o.paymentMethod === 'UPI payment' ? 'UPI payment' : 'Cash on delivery',
+              address: o.customerAddress || o.address || '',
+              itemRatings: o.itemRatings || {}
+            };
+          });
+          mapped.sort(function (a, b) { return Number(b.id) - Number(a.id); });
+          state.orders = mapped;
+          renderActiveView();
+        });
+
+        db.listenCollection('tickets', function (list) {
+          if (!list || list.length === 0) return;
+          state.tickets = list.filter(function (t) { return !t.source || t.source === 'customer'; });
+          renderActiveView();
+        });
+      }
+
+      if (window.ZaykoDB) syncCustomerFromFirestore();
+      else window.addEventListener('zayko-db-ready', syncCustomerFromFirestore);
+
+      renderActiveView();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
+      androidShell.addEventListener('click', function (event) {
+        var el = event.target.closest('[data-action]');
+        if (!el) return;
+        var action = el.dataset.action;
+
+        switch (action) {
+          case 'demo-autofill-customer':
+            state.loginPhone = '9864012345';
+            renderActiveView();
+            showToast('Filled Aarav Das (+91 98640 12345)');
+            break;
+          case 'autofill-otp':
+            state.otpInput = '123456';
+            renderActiveView();
+            break;
+          case 'resend-otp':
+            startOtpCountdown();
+            renderActiveView();
+            showToast('New 6-digit OTP sent (Demo: 123456)');
+            break;
+          case 'change-login-number':
+            clearInterval(otpTimer);
+            state.authStep = 'phone';
+            state.otpInput = '';
+            renderActiveView();
+            break;
+          case 'logout':
+            clearInterval(otpTimer);
+            state.isAuthenticated = false;
+            state.authStep = 'phone';
+            state.otpInput = '';
+            state.currentView = 'home';
+            state.activeNav = 'home';
+            closeLocationModal();
+            closeSupportModal();
+            renderActiveView();
+            showToast('Logged out of Zayko');
+            break;
+          case 'navigate-tab': {
+            var tab = el.dataset.tab || 'home';
+            navigateTo(tab, tab);
+            break;
+          }
+          case 'go-back': {
+            var target = state.previousView && state.previousView !== state.currentView ? state.previousView : 'home';
+            var navTab = ['home', 'saved', 'orders', 'profile'].indexOf(target) !== -1 ? target : state.activeNav;
+            navigateTo(target, navTab);
+            break;
+          }
+          case 'toggle-favorite': {
+            event.stopPropagation();
+            var favId = el.dataset.restaurantId;
+            var favRest = getRestaurantById(favId);
+            var idx = state.favoriteRestaurants.indexOf(favId);
+            if (idx === -1) {
+              state.favoriteRestaurants.unshift(favId);
+              showToast('Saved ' + favRest.name + ' to Favorites');
+            } else {
+              state.favoriteRestaurants.splice(idx, 1);
+              showToast('Removed ' + favRest.name + ' from Favorites');
+            }
+            renderActiveView();
+            break;
+          }
+          case 'select-category':
+            state.selectedCategory = el.dataset.category || 'All';
+            renderActiveView();
+            break;
+          case 'open-search-with-query':
+            state.searchQuery = state.homeSearchQuery;
+            navigateTo('search', 'home');
+            break;
+          case 'open-restaurant':
+            state.activeRestaurantId = el.dataset.restaurantId;
+            state.menuDietFilter = 'all';
+            navigateTo('menu', state.activeNav);
+            break;
+          case 'set-menu-filter':
+            state.menuDietFilter = el.dataset.filter || 'all';
+            renderActiveView();
+            break;
+          case 'cart-add':
+          case 'cart-inc':
+            updateCartItem(el.dataset.restaurantId, el.dataset.itemId, 1);
+            renderActiveView();
+            break;
+          case 'cart-dec':
+            updateCartItem(el.dataset.restaurantId, el.dataset.itemId, -1);
+            renderActiveView();
+            break;
+          case 'open-cart':
+            navigateTo('cart', state.activeNav);
+            break;
+          case 'set-payment-method':
+            state.paymentMethod = el.dataset.method === 'cod' ? 'cod' : 'upi';
+            renderActiveView();
+            break;
+          case 'copy-upi-id':
+            copyTextToClipboard(el.dataset.upi || '');
+            showToast('Copied UPI ID: ' + (el.dataset.upi || ''));
+            break;
+          case 'pay-upi-now':
+            showToast('Opening UPI app for ' + (el.dataset.upi || '') + '...');
+            break;
+          case 'place-order': {
+            var summary = getCartSummary();
+            if (summary.itemCount === 0 || summary.outOfRange) return;
+            if (state.paymentMethod === 'upi') {
+              state.upiScreenshot = '';
+              state.upiScreenshotName = '';
+              state.upiPaymentError = '';
+              renderUpiPaymentModal();
+              break;
+            }
+            var newId = String(Math.floor(1000 + Math.random() * 9000));
+            var itemsList = summary.lineItems.map(function (entry) {
+              return { id: entry.dish.id, name: entry.dish.name, qty: entry.qty, price: entry.dish.price * entry.qty };
+            });
+            state.orders.unshift({
+              id: newId,
+              restaurantId: summary.restaurant.id,
+              restaurantName: summary.restaurant.name,
+              itemsList: itemsList,
+              itemsSummary: itemsList.map(function (it) { return it.qty + ' × ' + it.name; }).join(', '),
+              itemsMap: Object.assign({}, state.cart.items),
+              deliveryFee: summary.deliveryFee,
+              total: summary.grandTotal,
+              date: 'Today',
+              eta: '12:35 - 12:45 PM',
+              stepIndex: 0,
+              riderName: 'Bikash Das',
+              riderPhone: '+91 98640 99001',
+              paymentMethod: 'Cash on delivery',
+              address: state.selectedLocation.address,
+              itemRatings: {}
+            });
+            if (window.ZaykoDB) {
+              window.ZaykoDB.setDoc('orders', newId, {
+                id: newId, restaurantId: summary.restaurant.id, restaurantName: summary.restaurant.name,
+                customerName: state.customer.name, customerPhone: state.customer.phone, customerAddress: state.selectedLocation.address,
+                address: state.selectedLocation.address, distanceKm: state.selectedLocation.distanceKm.toFixed(1) + ' km',
+                items: itemsList, itemsList: itemsList, deliveryFee: summary.deliveryFee, total: summary.grandTotal,
+                paymentMethod: 'COD', paymentType: 'cod', status: 'new', upiConfirmed: false, placedAt: 'Just now', itemRatings: {}
+              });
+            }
+            state.trackingOrderId = newId;
+            state.cart.items = {};
+            showToast('Order #' + newId + ' confirmed!');
+            navigateTo('track', 'orders');
+            break;
+          }
+          case 'open-notifications':
+            openNotificationsModal();
+            break;
+          case 'close-notifications':
+            closeNotificationsModal();
+            break;
+          case 'open-track-from-notif':
+            closeNotificationsModal();
+            state.trackingOrderId = el.dataset.orderId;
+            if (state.isAuthenticated) navigateTo('track', 'orders');
+            break;
+          case 'close-upi-modal':
+            closeUpiPaymentModal();
+            break;
+          case 'remove-upi-screenshot':
+            state.upiScreenshot = '';
+            state.upiScreenshotName = '';
+            state.upiPaymentError = '';
+            renderUpiPaymentModal();
+            break;
+          case 'confirm-upi-order': {
+            var upiSummary = getCartSummary();
+            if (upiSummary.itemCount === 0 || upiSummary.outOfRange) return;
+            if (!state.upiScreenshot) {
+              state.upiPaymentError = 'Please upload your UPI payment screenshot first.';
+              renderUpiPaymentModal();
+              break;
+            }
+            var upiOrderId = String(Math.floor(1000 + Math.random() * 9000));
+            var upiItemsList = upiSummary.lineItems.map(function (entry) {
+              return { id: entry.dish.id, name: entry.dish.name, qty: entry.qty, price: entry.dish.price * entry.qty };
+            });
+            state.orders.unshift({
+              id: upiOrderId,
+              restaurantId: upiSummary.restaurant.id,
+              restaurantName: upiSummary.restaurant.name,
+              itemsList: upiItemsList,
+              itemsSummary: upiItemsList.map(function (it) { return it.qty + ' × ' + it.name; }).join(', '),
+              itemsMap: Object.assign({}, state.cart.items),
+              deliveryFee: upiSummary.deliveryFee,
+              total: upiSummary.grandTotal,
+              date: 'Today',
+              eta: '12:35 - 12:45 PM',
+              stepIndex: 0,
+              riderName: 'Bikash Das',
+              riderPhone: '+91 98640 99001',
+              paymentMethod: 'UPI payment',
+              paymentScreenshot: state.upiScreenshot,
+              address: state.selectedLocation.address,
+              itemRatings: {}
+            });
+            if (window.ZaykoDB) {
+              window.ZaykoDB.setDoc('orders', upiOrderId, {
+                id: upiOrderId, restaurantId: upiSummary.restaurant.id, restaurantName: upiSummary.restaurant.name,
+                customerName: state.customer.name, customerPhone: state.customer.phone, customerAddress: state.selectedLocation.address,
+                address: state.selectedLocation.address, distanceKm: state.selectedLocation.distanceKm.toFixed(1) + ' km',
+                items: upiItemsList, itemsList: upiItemsList, deliveryFee: upiSummary.deliveryFee, total: upiSummary.grandTotal,
+                paymentMethod: 'UPI', paymentType: 'upi', upiScreenshot: state.upiScreenshot, hasScreenshot: true, upiConfirmed: false, status: 'new', placedAt: 'Just now', itemRatings: {}
+              });
+            }
+            state.upiScreenshot = '';
+            state.upiScreenshotName = '';
+            state.upiPaymentError = '';
+            closeUpiPaymentModal();
+            state.trackingOrderId = upiOrderId;
+            state.cart.items = {};
+            showToast('UPI Order #' + upiOrderId + ' confirmed!');
+            navigateTo('track', 'orders');
+            break;
+          }
+          case 'open-track-order':
+            state.trackingOrderId = el.dataset.orderId;
+            navigateTo('track', 'orders');
+            break;
+          case 'simulate-next-step': {
+            var order = state.orders.find(function (o) { return o.id === el.dataset.orderId; });
+            if (!order || order.stepIndex >= 3) return;
+            order.stepIndex += 1;
+            if (order.stepIndex === 2) showToast('Rider ' + order.riderName + ' is out for delivery!');
+            else if (order.stepIndex === 3) { order.eta = 'Delivered'; showToast('Order delivered! Rate each item once.'); }
+            else showToast('Status: ' + ORDER_STEPS[order.stepIndex].title);
+            renderActiveView();
+            break;
+          }
+          case 'call-rider':
+            showToast('Calling rider ' + (el.dataset.rider || 'delivery staff') + '...');
+            break;
+          case 'set-item-star': {
+            var key = el.dataset.orderId + ':' + el.dataset.itemId;
+            state.draftItemRatings[key] = parseInt(el.dataset.value, 10) || 0;
+            renderActiveView();
+            break;
+          }
+          case 'submit-item-rating': {
+            var rOrder = state.orders.find(function (o) { return o.id === el.dataset.orderId; });
+            var itemId = el.dataset.itemId;
+            if (!rOrder || rOrder.itemRatings[itemId]) return;
+            var rKey = rOrder.id + ':' + itemId;
+            var stars = state.draftItemRatings[rKey] || 0;
+            if (stars < 1) return;
+            rOrder.itemRatings[itemId] = stars;
+            if (window.ZaykoDB) window.ZaykoDB.setDoc('orders', rOrder.id, { itemRatings: rOrder.itemRatings });
+            delete state.draftItemRatings[rKey];
+            showToast('Rating saved & locked (★ ' + stars + '/5)');
+            renderActiveView();
+            break;
+          }
+          case 'set-orders-filter':
+            state.ordersFilter = el.dataset.filter || 'all';
+            renderActiveView();
+            break;
+          case 'reorder-order': {
+            var reOrder = state.orders.find(function (o) { return o.id === el.dataset.orderId; });
+            if (!reOrder) return;
+            state.cart.restaurantId = reOrder.restaurantId;
+            state.cart.items = Object.assign({}, reOrder.itemsMap);
+            showToast('Loaded items from ' + reOrder.restaurantName);
+            navigateTo('cart', 'orders');
+            break;
+          }
+          case 'toggle-search-veg':
+            state.searchVegOnly = !state.searchVegOnly;
+            renderActiveView();
+            break;
+          case 'set-search-rating':
+            state.searchMinRating = parseFloat(el.dataset.rating) || 0;
+            renderActiveView();
+            break;
+          case 'set-search-cuisine':
+            state.searchCuisine = el.dataset.cuisine || 'All';
+            renderActiveView();
+            break;
+          case 'open-location-modal':
+            openLocationModal();
+            break;
+          case 'close-location-modal':
+            closeLocationModal();
+            break;
+          case 'open-addresses':
+            state.addressForm.error = '';
+            navigateTo('addresses', state.activeNav);
+            break;
+          case 'open-addresses-from-modal':
+            closeLocationModal();
+            state.addressForm.error = '';
+            navigateTo('addresses', state.activeNav);
+            break;
+          case 'select-saved-address': {
+            var found = state.savedAddresses.find(function (a) { return a.id === el.dataset.addressId; });
+            if (found) {
+              state.selectedLocation = found;
+              closeLocationModal();
+              showToast('Delivering to ' + found.label + ' (' + found.distanceKm.toFixed(1) + ' km)');
+              renderActiveView();
+            }
+            break;
+          }
+          case 'delete-saved-address': {
+            if (state.savedAddresses.length <= 1) return;
+            var idDel = el.dataset.addressId;
+            state.savedAddresses = state.savedAddresses.filter(function (a) { return a.id !== idDel; });
+            if (state.selectedLocation.id === idDel) state.selectedLocation = state.savedAddresses[0];
+            showToast('Address removed');
+            renderActiveView();
+            break;
+          }
+          case 'move-address-pin': {
+            var rect = el.getBoundingClientRect();
+            var relX = Math.max(20, Math.min(320, ((event.clientX - rect.left) / rect.width) * 340));
+            var relY = Math.max(18, Math.min(126, ((event.clientY - rect.top) / rect.height) * 144));
+            var distPx = Math.sqrt(Math.pow(relX - 152, 2) + Math.pow(relY - 71, 2));
+            state.addressForm.pinX = Math.round(relX);
+            state.addressForm.pinY = Math.round(relY);
+            state.addressForm.distanceKm = Math.max(1.5, Math.min(8.5, Number((1.5 + (distPx / 160) * 7).toFixed(1))));
+            renderActiveView();
+            break;
+          }
+          case 'autofill-gps':
+            state.addressForm = { name: state.customer.name, house: 'Flat 7B, Christian Basti', area: 'GS Road, Guwahati', landmark: 'Near Apollo Hospital', label: state.addressForm.label, pinX: 212, pinY: 68, distanceKm: 3.2, error: '' };
+            showToast('GPS location detected in Guwahati (3.2 km)');
+            renderActiveView();
+            break;
+          case 'set-address-label':
+            state.addressForm.label = el.dataset.label || 'Home';
+            renderActiveView();
+            break;
+          case 'save-manual-address': {
+            var name = state.addressForm.name.trim();
+            var house = state.addressForm.house.trim();
+            var area = state.addressForm.area.trim();
+            var landmark = state.addressForm.landmark.trim();
+            if (!name || !house || !area) {
+              state.addressForm.error = 'Please fill in Full name, House / Flat & Street, and Area / Locality.';
+              renderActiveView();
+              return;
+            }
+            var newAddr = { id: 'addr-' + Date.now(), name: name, label: state.addressForm.label, area: area, address: house + ', ' + area, landmark: landmark, distanceKm: state.addressForm.distanceKm };
+            state.savedAddresses.unshift(newAddr);
+            state.selectedLocation = newAddr;
+            state.addressForm = { name: '', house: '', area: '', landmark: '', label: 'Home', pinX: 168, pinY: 72, distanceKm: 2.8, error: '' };
+            showToast('Saved ' + newAddr.label + ' address');
+            renderActiveView();
+            break;
+          }
+          case 'open-support-modal':
+            openSupportModal(null);
+            break;
+          case 'open-support-tickets':
+            openSupportModal(null, 'tickets');
+            break;
+          case 'report-order-issue': {
+            var targetOrder = state.orders.find(function (o) { return o.id === el.dataset.orderId; });
+            if (!targetOrder || targetOrder.stepIndex >= 3) {
+              showToast('Issues can only be raised for active orders');
+              break;
+            }
+            openSupportModal(targetOrder.id, 'raise');
+            break;
+          }
+          case 'select-support-order':
+            state.supportOrderId = el.dataset.orderId || null;
+            state.supportError = '';
+            renderSupportModal();
+            break;
+          case 'close-support-modal':
+            closeSupportModal();
+            break;
+          case 'set-support-tab':
+            state.supportTab = el.dataset.tab || 'raise';
+            renderSupportModal();
+            break;
+          case 'select-support-topic':
+            state.selectedSupportTopic = el.dataset.topic || 'Something else';
+            state.supportError = '';
+            renderSupportModal();
+            break;
+          case 'call-support':
+            showToast('Calling Zayko Support (' + SUPPORT_HOTLINE + ')...');
+            break;
+          case 'submit-support': {
+            var activeOrder = getActiveOrders().find(function (o) { return o.id === state.supportOrderId; });
+            if (!activeOrder) { state.supportError = 'Issues can only be raised for active orders.'; renderSupportModal(); return; }
+            var msg = state.supportNoteDraft.trim();
+            if (!msg) { state.supportError = 'Please describe your issue before submitting.'; renderSupportModal(); return; }
+            var newTicketId = 'SUP-' + state.nextTicketNum;
+            state.nextTicketNum += 1;
+            var tObj = { id: newTicketId, source: 'customer', senderName: state.customer.name, senderPhone: state.customer.phone, orderId: activeOrder.id, topic: state.selectedSupportTopic, message: msg, status: 'open', createdAt: 'Just now', resolutionNote: '' };
+            state.tickets.unshift(tObj);
+            if (window.ZaykoDB) window.ZaykoDB.setDoc('tickets', newTicketId, tObj);
+            state.supportNoteDraft = '';
+            state.supportError = '';
+            state.supportTab = 'tickets';
+            renderSupportModal();
+            renderActiveView();
+            showToast('Ticket #' + newTicketId + ' submitted');
+            break;
+          }
+        }
+      });
+
+      androidShell.addEventListener('input', function (event) {
+        var t = event.target;
+        if (!t || !t.id) return;
+        if (t.id === 'auth-phone-input') { t.value = t.value.replace(/\D/g, '').slice(0, 10); state.loginPhone = t.value; }
+        else if (t.id === 'auth-otp-input') { t.value = t.value.replace(/\D/g, '').slice(0, 6); state.otpInput = t.value; }
+        else if (t.id === 'home-search-input') { state.homeSearchQuery = t.value; var listEl = document.getElementById('home-restaurants-list'); if (listEl) listEl.innerHTML = getHomeRestaurantCardsHtml(); }
+        else if (t.id === 'search-tab-input') { state.searchQuery = t.value; var resEl = document.getElementById('search-results-container'); if (resEl) resEl.innerHTML = getSearchResultsHtml(); }
+        else if (t.id === 'addr-name-input') state.addressForm.name = t.value;
+        else if (t.id === 'addr-house-input') state.addressForm.house = t.value;
+        else if (t.id === 'addr-area-input') state.addressForm.area = t.value;
+        else if (t.id === 'addr-landmark-input') state.addressForm.landmark = t.value;
+        else if (t.id === 'support-note-input') { state.supportNoteDraft = t.value; state.supportError = ''; }
+      });
+
+      androidShell.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || !form.id) return;
+        event.preventDefault();
+        if (form.id === 'phone-login-form') {
+          var digits = state.loginPhone.replace(/\D/g, '');
+          if (digits.length !== 10) { showToast('Enter a valid 10-digit mobile number'); return; }
+          state.authStep = 'otp';
+          state.otpInput = '';
+          startOtpCountdown();
+          renderActiveView();
+          showToast('OTP sent to ' + formatPhoneDisplay(digits) + ' (Demo: 123456)');
+        } else if (form.id === 'otp-verify-form') {
+          if (state.otpInput.trim() !== '123456') { showToast('Invalid OTP. Use demo code 123456'); return; }
+          clearInterval(otpTimer);
+          state.customer.phone = formatPhoneDisplay(state.loginPhone);
+          state.isAuthenticated = true;
+          if (window.ZaykoDB) { window.ZaykoDB.signInAnon().then(function(u){ if(u) window.ZaykoDB.setDoc('users', u.uid, { phone: state.customer.phone, name: state.customer.name, role: 'customer' }); }).catch(function(){}); }
+          state.currentView = 'home';
+          state.activeNav = 'home';
+          renderActiveView();
+          showToast('Welcome to Zayko!');
+        }
+      });
+
+      androidShell.addEventListener('change', function (event) {
+        var t = event.target;
+        if (!t || t.id !== 'upi-screenshot-input') return;
+        var file = t.files && t.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = async function (ev) {
+          var rawUrl = String(ev.target.result || '');
+          state.upiScreenshot = window.ZaykoDB ? await window.ZaykoDB.compressImage(rawUrl, 720, 0.65) : rawUrl;
+          state.upiScreenshotName = file.name || 'payment-screenshot.png';
+          state.upiPaymentError = '';
+          renderUpiPaymentModal();
+          showToast('Payment screenshot attached');
+        };
+        reader.readAsDataURL(file);
+      });
+
+      locationModal.addEventListener('click', function (e) { if (e.target === locationModal) closeLocationModal(); });
+      supportModal.addEventListener('click', function (e) { if (e.target === supportModal) closeSupportModal(); });
+      upiPaymentModal.addEventListener('click', function (e) { if (e.target === upiPaymentModal) closeUpiPaymentModal(); });
+      notificationsModal.addEventListener('click', function (e) { if (e.target === notificationsModal) closeNotificationsModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeLocationModal(); closeSupportModal(); closeUpiPaymentModal(); closeNotificationsModal(); } });
+
+      renderActiveView();
+    })();
+  </script>
+</body>
+</html>
